@@ -1,15 +1,11 @@
 [run]
 branch = True
-include = */odoo-openproject/*
 omit =
-    */scenario/*
-    */scenarios/*
     */test/*
     */tests/*
     *__init__.py
     *__openerp__.py
-    *system_site_packages*
-cover_pylib = False
+include = */odoo-openproject/*
 
 [report]
 # Regexes for lines to exclude from consideration
