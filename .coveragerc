@@ -1,10 +1,10 @@
+[run]
+include =
+    */hr_timesheet_openproject/*
 [report]
 omit =
     */test/*
     */tests/*
-    *__init__.py
-    *__openerp__.py
-include = */odoo-openproject/*
 # Regexes for lines to exclude from consideration
 exclude_lines =
     # Have to re-enable the standard pragma
