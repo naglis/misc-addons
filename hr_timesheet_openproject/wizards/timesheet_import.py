@@ -124,12 +124,20 @@ class OPTimesheet(models.TransientModel):
                 'employee_id': employee_id,
                 'total_hours': sum(entries.itervalues())
             }))
-        self.write({
+
+        values = {
             'state': 'draft',
-            'date_from': min_date,
-            'date_to': max_date,
             'employee_map_ids': line_vals,
-        })
+        }
+
+        # If date_from/date_to are not set, set them from min/max dates in the
+        # CSV files.
+        if not self.date_from:
+            values['date_from'] = min_date
+        if not self.date_to:
+            values['date_to'] = max_date
+
+        self.write(values)
         return self._get_wizard_action(_('Map Employees'))
 
     @api.multi
