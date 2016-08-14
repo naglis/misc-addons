@@ -62,7 +62,8 @@ class OPTimesheet(models.TransientModel):
     @api.one
     @api.constrains('date_from', 'date_to')
     def _check_period(self):
-        if self.date_to < self.date_from:
+        if (all((self.date_from, self.date_to)) and
+                self.date_to < self.date_from):
             raise exceptions.ValidationError(
                 _('Period end date can\'t be earlier than the start date!')
             )
