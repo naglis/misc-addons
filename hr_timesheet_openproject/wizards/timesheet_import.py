@@ -183,7 +183,6 @@ class op_timesheet(osv.TransientModel):
             date_from_string, (wizard.date_from, wizard.date_to))
         time_entries = self._parse_csv_file(cr, uid, id, context=None)
         sheet_obj = self.pool.get('hr_timesheet_sheet.sheet')
-        line_obj = self.pool.get('op.timesheet.employee.map')
         for line in wizard.employee_map_ids:
             if not line.employee_id:
                 continue
