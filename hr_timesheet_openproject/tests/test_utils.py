@@ -21,7 +21,14 @@ class TestParse(unittest2.TestCase):
     def test_parse_cell_non_float_raises_invalid_time_entry_exception(self):
         fobj = io.BytesIO(
             'Member,2000-01-01,2000-01-02\n'
-            'David Bowie,1.0,a'
+            'Nancy Wheeler,1.0,a'
         )
         with self.assertRaises(utils.InvalidTimeEntryException):
             utils.parse_op_timesheet_csv(fobj)
+
+    def test_parse_totals_column_is_removed(self):
+        fobj = io.BytesIO(
+            'Member,2000-01-01,2000-01-02,Total\n'
+            'Nancy Wheeler,1.0,1.2,2.2'
+        )
+        self.assertNotIn('Total', utils.parse_op_timesheet_csv(fobj))
