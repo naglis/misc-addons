@@ -85,10 +85,6 @@ class OPTimesheet(models.TransientModel):
     @api.multi
     def _parse_csv_file(self):
         self.ensure_one()
-        if not self.csv_file:
-            raise exceptions.ValidationError(
-                _('CSV file must be uploaded before importing!'))
-
         with contextlib.closing(
                 io.BytesIO(base64.b64decode(self.csv_file))) as fobj:
             time_entries = utils.parse_op_timesheet_csv(
