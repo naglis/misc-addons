@@ -1,13 +1,10 @@
-[run]
-branch = True
+[report]
 omit =
     */test/*
     */tests/*
     *__init__.py
     *__openerp__.py
 include = */odoo-openproject/*
-
-[report]
 # Regexes for lines to exclude from consideration
 exclude_lines =
     # Have to re-enable the standard pragma
