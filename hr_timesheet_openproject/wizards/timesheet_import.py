@@ -1,13 +1,17 @@
 # -*- coding: utf-8 -*-
-# This file is part of Odoo. The COPYRIGHT file at the top level of
+# This file is part of OpenERP. The COPYRIGHT file at the top level of
 # this module contains the full copyright notices and license terms.
 
 import base64
 import contextlib
+import datetime
 import io
 
-from openerp import _, api, exceptions, fields, models, tools
+from openerp import tools
 from openerp.addons.hr_timesheet_openproject import utils
+from openerp.osv import fields, osv
+from openerp.tools.translate import _
+
 
 ENCODINGS = [
     ('utf-8', 'UTF-8'),
@@ -23,102 +27,132 @@ DELIMITERS = [
 ]
 
 
-class OPTimesheet(models.TransientModel):
+def date_from_string(s):
+    return datetime.datetime.strptime(
+        s, tools.DEFAULT_SERVER_DATE_FORMAT).date()
+
+
+class op_timesheet(osv.TransientModel):
     _name = 'op.timesheet'
 
-    state = fields.Selection(
-        selection=[('new', 'New'), ('draft', 'Draft'), ('done', 'Done')],
-        string='State', readonly=True, default='new', required=True,
-    )
-    company_id = fields.Many2one(
-        comodel_name='res.company', required=True, string='Company',
-        default=lambda self: self.env.user.company_id,
-    )
-    account_id = fields.Many2one(
-        comodel_name='account.analytic.account', string='Account',
-        required=True,
-    )
-    date_from = fields.Date(
-        string='Date From', help='Timesheet period beginning date')
-    date_to = fields.Date(
-        string='Date To', help='Timesheet period end date')
-    csv_file = fields.Binary(
-        string='CSV File', required=True,
-        help='The CSV file which was exported from OpenProject',
-    )
-    encoding = fields.Selection(
-        selection=ENCODINGS, required=True, default='utf-8')
-    delimiter = fields.Selection(
-        selection=DELIMITERS, required=True, default=',',
-        help='The delimiter which separates column data in the CSV file',
-    )
-    ignore_totals = fields.Boolean(
-        string='Ignore Totals', default=True,
-        help='Don\'t include the totals line from the CSV file',
-    )
-    employee_map_ids = fields.One2many(
-        comodel_name='op.timesheet.employee.map', inverse_name='import_id')
+    def _get_default_company(self, cr, uid, context=None):
+        return self.pool.get('res.users').browse(
+            cr, uid, uid, context).company_id.id
 
-    @api.one
-    @api.constrains('date_from', 'date_to')
-    def _check_period(self):
-        if (all((self.date_from, self.date_to)) and
-                self.date_to < self.date_from):
-            raise exceptions.ValidationError(
-                _('Period end date can\'t be earlier than the start date!')
-            )
+    def _check_period(self, cr, uid, ids, context=None):
+        if context is None:
+            context = {}
+        wizard = self.browse(cr, uid, ids[0], context=context)
+        if (all((wizard.date_from, wizard.date_to)) and
+                wizard.date_to < wizard.date_from):
+            return False
+        return True
 
-    @api.multi
-    def _get_wizard_action(self, name):
-        self.ensure_one()
+    _columns = {
+        'state': fields.selection(
+            selection=[('new', 'New'), ('draft', 'Draft'), ('done', 'Done')],
+            string='State', readonly=True, required=True,
+        ),
+        'company_id': fields.many2one(
+            'res.company', required=True, string='Company',
+        ),
+        'account_id': fields.many2one(
+            'account.analytic.account', string='Account', required=True,
+        ),
+        'date_from': fields.date(
+            string='Date From', help='Timesheet period beginning date',
+        ),
+        'date_to': fields.date(
+            string='Date To', help='Timesheet period end date',
+        ),
+        'csv_file': fields.binary(
+            string='CSV File', required=True,
+            help='The CSV file which was exported from OpenProject',
+        ),
+        'encoding': fields.selection(
+            selection=ENCODINGS, required=True,
+        ),
+        'delimiter': fields.selection(
+            selection=DELIMITERS, required=True,
+            help='The delimiter which separates column data in the CSV file',
+        ),
+        'ignore_totals': fields.boolean(
+            string='Ignore Totals',
+            help='Don\'t include the totals line from the CSV file',
+        ),
+        'employee_map_ids': fields.one2many(
+            'op.timesheet.employee.map', 'import_id',
+        ),
+    }
+    _defaults = {
+        'company_id': _get_default_company,
+        'delimiter': ',',
+        'encoding': 'utf-8',
+        'ignore_totals': True,
+        'state': 'new',
+    }
+    _constraints = [
+        (
+            _check_period,
+            'Error! Period end date can\'t be earlier than the start date!',
+            ['date_from', 'date_to'],
+        ),
+    ]
+
+    def _get_wizard_action(self, cr, uid, ids, name, context=None):
+        if context is None:
+            context = {}
         return {
             'name': name,
-            'context': self.env.context,
+            'context': context,
             'view_type': 'form',
             'view_mode': 'form',
             'res_model': 'op.timesheet',
             'type': 'ir.actions.act_window',
             'target': 'new',
-            'res_id': self.id,
+            'res_id': ids[0],
         }
 
-    @api.multi
-    def _parse_csv_file(self):
-        self.ensure_one()
+    def _parse_csv_file(self, cr, uid, id, context=None):
+        if context is None:
+            context = {}
+        wizard = self.browse(cr, uid, id, context=context)[0]
         with contextlib.closing(
-                io.BytesIO(base64.b64decode(self.csv_file))) as fobj:
+                io.BytesIO(base64.b64decode(wizard.csv_file))) as fobj:
             time_entries = utils.parse_op_timesheet_csv(
-                fobj, encoding=self.encoding,
-                delimiter=self.delimiter.encode('utf-8'),
+                fobj, encoding=wizard.encoding,
+                delimiter=wizard.delimiter.encode('utf-8'),
             )
 
-        if self.ignore_totals:
+        if wizard.ignore_totals:
             time_entries.pop(time_entries.keys()[-1])
 
         empty_csv = (
             len(time_entries) == 0 or len(time_entries.values()[0]) == 0
         )
         if empty_csv:
-            raise exceptions.ValidationError(
+            raise osv.except_osv(
+                _('Error!'),
                 _('There are no time entries in the CSV file!'
                   'Or maybe incorrect delimiter was specified?')
             )
         return time_entries
 
-    @api.multi
-    def action_upload_file(self):
-        self.ensure_one()
-        time_entries = self._parse_csv_file()
+    def action_upload_file(self, cr, uid, id, context=None):
+        if context is None:
+            context = {}
+        employee_obj = self.pool.get('hr.employee')
+        time_entries = self._parse_csv_file(cr, uid, id, context=context)
+        wizard = self.browse(cr, uid, id, context=context)[0]
         entries = time_entries.values()[0]
         min_date, max_date = min(entries), max(entries)
         line_vals = []
         for name, entries in time_entries.iteritems():
-            employee_matches = self.env['hr.employee'].search([
+            employee_matches = employee_obj.search(cr, uid, [
                 ('name', 'ilike', name),
-                ('company_id', '=', self.company_id.id),
-            ], limit=1)
-            employee_id = employee_matches[0].id if employee_matches else False
-
+                ('company_id', '=', wizard.company_id.id),
+            ], limit=1, context=context)
+            employee_id = employee_matches[0] if employee_matches else False
             line_vals.append((0, False, {
                 'name': name,
                 'employee_id': employee_id,
@@ -132,34 +166,35 @@ class OPTimesheet(models.TransientModel):
 
         # If date_from/date_to are not set, set them from min/max dates in the
         # CSV files.
-        if not self.date_from:
+        if not wizard.date_from:
             values['date_from'] = min_date
-        if not self.date_to:
+        if not wizard.date_to:
             values['date_to'] = max_date
 
-        self.write(values)
-        return self._get_wizard_action(_('Map Employees'))
+        wizard.write(values, context=context)
+        return self._get_wizard_action(
+            cr, uid, id, _('Map Employees'), context=context)
 
-    @api.multi
-    def action_import_file(self):
-        self.ensure_one()
-
+    def action_import_file(self, cr, uid, id, context=None):
+        if context is None:
+            context = {}
+        wizard = self.browse(cr, uid, id, context=context)[0]
         min_date, max_date = map(
-            fields.Date.from_string, (self.date_from, self.date_to))
-        time_entries = self._parse_csv_file()
-        for line in self.employee_map_ids:
+            date_from_string, (wizard.date_from, wizard.date_to))
+        time_entries = self._parse_csv_file(cr, uid, id, context=None)
+        sheet_obj = self.pool.get('hr_timesheet_sheet.sheet')
+        line_obj = self.pool.get('op.timesheet.employee.map')
+        for line in wizard.employee_map_ids:
             if not line.employee_id:
                 continue
             line_vals = []
-            sheet_obj = self.env['hr_timesheet_sheet.sheet'].with_context(
-                user_id=line.employee_id.user_id.id)
             for dt, hours in time_entries[line.name].iteritems():
                 if not min_date <= dt <= max_date:
                     continue
                 if tools.float_is_zero(hours, precision_digits=2):
                     continue
                 line_vals.append((0, False, {
-                    'account_id': self.account_id.id,
+                    'account_id': wizard.account_id.id,
                     'date': dt,
                     'journal_id': line.employee_id.journal_id.id,
                     'name': '/',
@@ -168,28 +203,39 @@ class OPTimesheet(models.TransientModel):
 
             # Create the timesheet only if there is at least one line.
             if line_vals:
-                line.timesheet_id = sheet_obj.create({
-                    'date_from': self.date_from,
-                    'date_to': self.date_to,
+                ctx = context.copy()
+                ctx.update({'user_id': line.employee_id.user_id.id})
+                timesheet_id = sheet_obj.create(cr, uid, {
+                    'date_from': wizard.date_from,
+                    'date_to': wizard.date_to,
                     'employee_id': line.employee_id.id,
                     'timesheet_ids': line_vals,
-                })
-        self.state = 'done'
-        return self._get_wizard_action(_('Import Finished'))
+                }, context=ctx)
+                line.write({'timesheet_id': timesheet_id}, context=context)
+
+        wizard.state = 'done'
+        return self._get_wizard_action(
+            cr, uid, id, _('Import Finished'), context=context)
 
 
-class OPTimesheetEmployeeMap(models.TransientModel):
+class op_timesheet_employee_map(osv.TransientModel):
     _name = 'op.timesheet.employee.map'
 
-    name = fields.Char(string='Employee Name', readonly=True)
-    import_id = fields.Many2one(
-        comodel_name='op.timesheet', ondelete='cascade')
-    employee_id = fields.Many2one(
-        comodel_name='hr.employee', string='Employee')
-    total_hours = fields.Float(
-        string='Hours', readonly=True, digits=(16, 2),
-        help='Hours worked in the period of the timesheet')
-    timesheet_id = fields.Many2one(
-        comodel_name='hr_timesheet_sheet.sheet', string='Timesheet',
-        readonly=True,
-    )
+    _columns = {
+        'name': fields.char(
+            string='Employee Name', readonly=True,
+        ),
+        'import_id': fields.many2one(
+            'op.timesheet', ondelete='cascade', required=True,
+        ),
+        'employee_id': fields.many2one(
+            'hr.employee', string='Employee',
+        ),
+        'total_hours': fields.float(
+            string='Hours', readonly=True, digits=(16, 2),
+            help='Hours worked in the period of the timesheet',
+        ),
+        'timesheet_id': fields.many2one(
+            'hr_timesheet_sheet.sheet', string='Timesheet', readonly=True,
+        ),
+    }
