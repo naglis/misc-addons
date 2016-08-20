@@ -148,36 +148,32 @@ class OPTimesheet(models.TransientModel):
         min_date, max_date = map(
             fields.Date.from_string, (self.date_from, self.date_to))
         time_entries = self._parse_csv_file()
-        for line in self.line_ids:
-            if not line.employee_id:
-                continue
+        for line in self.line_ids.filtered('employee_id'):
             line_vals = []
             sheet_obj = self.env['hr_timesheet_sheet.sheet'].with_context(
                 user_id=line.employee_id.user_id.id)
-            for dt, hours in time_entries[line.name].iteritems():
-                if not min_date <= dt <= max_date:
+            for date, hours in time_entries[line.name].iteritems():
+                if not min_date <= date <= max_date:
                     continue
                 if tools.float_is_zero(hours, precision_digits=2):
                     continue
                 line_vals.append((0, False, {
                     'account_id': self.account_id.id,
-                    'date': dt,
+                    'date': date,
                     'journal_id': line.employee_id.journal_id.id,
                     'name': '/',
                     'unit_amount': hours,
                 }))
 
-            # Create the timesheet only if there is at least one line.
-            if line_vals:
-                line.timesheet_id = sheet_obj.create({
-                    'date_from': self.date_from,
-                    'date_to': self.date_to,
-                    'employee_id': line.employee_id.id,
-                    'timesheet_ids': line_vals,
-                })
+            line.timesheet_id = sheet_obj.create({
+                'date_from': self.date_from,
+                'date_to': self.date_to,
+                'employee_id': line.employee_id.id,
+                'timesheet_ids': line_vals,
+            })
         self.state = 'done'
 
-        # Delete lines without timesheet.
+        # Delete lines without a timesheet.
         self.line_ids.filtered(lambda ln: not ln.timesheet_id).unlink()
 
         return self._get_wizard_action(
