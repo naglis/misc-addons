@@ -20,8 +20,8 @@
                             <field name="encoding" attrs="{'invisible': [('state', '!=', 'new')]}"/>
                             <field name="delimiter" attrs="{'invisible': [('state', '!=', 'new')]}"/>
                             <field name="ignore_totals" attrs="{'invisible': [('state', '!=', 'new')]}"/>
-                            <field name="date_from" attrs="{'invisible': [('state', 'not in', ('draft', 'done'))], 'readonly': [('state', '=', 'done')]}"/>
-                            <field name="date_to" attrs="{'invisible': [('state', 'not in', ('draft', 'done'))], 'readonly': [('state', '=', 'done')]}"/>
+                            <field name="date_from" attrs="{'invisible': [('state', 'not in', ('draft', 'done'))], 'readonly': [('state', '=', 'done')], 'required': [('state', '=', 'draft')]}"/>
+                            <field name="date_to" attrs="{'invisible': [('state', 'not in', ('draft', 'done'))], 'readonly': [('state', '=', 'done')], 'required': [('state', '=', 'draft')]}"/>
                         </group>
                     </group>
                     <group>
