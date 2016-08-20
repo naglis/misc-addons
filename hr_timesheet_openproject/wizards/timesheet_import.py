@@ -56,8 +56,8 @@ class OPTimesheet(models.TransientModel):
         string='Ignore Totals', default=True,
         help='Don\'t include the totals line from the CSV file',
     )
-    employee_map_ids = fields.One2many(
-        comodel_name='op.timesheet.employee.map', inverse_name='import_id')
+    line_ids = fields.One2many(
+        comodel_name='op.timesheet.line', inverse_name='import_id')
 
     @api.one
     @api.constrains('date_from', 'date_to')
@@ -129,7 +129,7 @@ class OPTimesheet(models.TransientModel):
 
         values = {
             'state': 'draft',
-            'employee_map_ids': line_vals,
+            'line_ids': line_vals,
         }
 
         # If date_from/date_to are not set, set them from min/max dates in the
@@ -149,7 +149,7 @@ class OPTimesheet(models.TransientModel):
         min_date, max_date = map(
             fields.Date.from_string, (self.date_from, self.date_to))
         time_entries = self._parse_csv_file()
-        for line in self.employee_map_ids:
+        for line in self.line_ids:
             if not line.employee_id:
                 continue
             line_vals = []
@@ -179,15 +179,15 @@ class OPTimesheet(models.TransientModel):
         self.state = 'done'
 
         # Delete lines without timesheet.
-        self.employee_map_ids.filtered(lambda ln: not ln.timesheet_id).unlink()
+        self.line_ids.filtered(lambda ln: not ln.timesheet_id).unlink()
 
         return self._get_wizard_action(
             _('Import Finished'),
             view_xml_id='hr_timesheet_openproject.import_wizard_finished')
 
 
-class OPTimesheetEmployeeMap(models.TransientModel):
-    _name = 'op.timesheet.employee.map'
+class OPTimesheetLine(models.TransientModel):
+    _name = 'op.timesheet.line'
 
     name = fields.Char(string='Employee Name', readonly=True)
     import_id = fields.Many2one(

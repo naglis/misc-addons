@@ -31,7 +31,7 @@
                     </group>
                     <group>
                         <group states="draft,done">
-                            <field name="employee_map_ids" nolabel="1">
+                            <field name="line_ids" nolabel="1">
                                 <tree string="Employee Mapping" editable="top" create="false">
                                     <field name="name"/>
                                     <field name="employee_id"/>
@@ -71,14 +71,14 @@
                 <field name="employee_id" position="attributes">
                     <attribute name="readonly">1</attribute>
                 </field>
-                <xpath expr="//field[@name='employee_map_ids']//field[@name='name']" position="replace"/>
+                <xpath expr="//field[@name='line_ids']//field[@name='name']" position="replace"/>
                 <field name="total_hours" position="after">
                     <field name="timesheet_id"/>
                 </field>
                 <field name="timesheet_id" position="attributes">
                     <attribute name="invisible">0</attribute>
                 </field>
-                <xpath expr="//field[@name='employee_map_ids']/tree" position="attributes">
+                <xpath expr="//field[@name='line_ids']/tree" position="attributes">
                     <attribute name="delete">false</attribute>
                 </xpath>
             </field>
