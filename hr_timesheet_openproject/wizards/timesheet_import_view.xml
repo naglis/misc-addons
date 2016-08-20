@@ -26,7 +26,7 @@
                     </group>
                     <group>
                         <group states="draft,done">
-                            <field name="employee_map_ids" nolabel="1">
+                            <field name="line_ids" nolabel="1">
                                 <tree string="Employee Mapping" editable="top" create="false">
                                     <field name="name"/>
                                     <field name="employee_id"/>

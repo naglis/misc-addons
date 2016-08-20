@@ -80,8 +80,8 @@ class op_timesheet(osv.TransientModel):
             string='Ignore Totals',
             help='Don\'t include the totals line from the CSV file',
         ),
-        'employee_map_ids': fields.one2many(
-            'op.timesheet.employee.map', 'import_id',
+        'line_ids': fields.one2many(
+            'op.timesheet.line', 'import_id',
         ),
     }
     _defaults = {
@@ -161,7 +161,7 @@ class op_timesheet(osv.TransientModel):
 
         values = {
             'state': 'draft',
-            'employee_map_ids': line_vals,
+            'line_ids': line_vals,
         }
 
         # If date_from/date_to are not set, set them from min/max dates in the
@@ -183,7 +183,7 @@ class op_timesheet(osv.TransientModel):
             date_from_string, (wizard.date_from, wizard.date_to))
         time_entries = self._parse_csv_file(cr, uid, id, context=None)
         sheet_obj = self.pool.get('hr_timesheet_sheet.sheet')
-        for line in wizard.employee_map_ids:
+        for line in wizard.line_ids:
             if not line.employee_id:
                 continue
             line_vals = []
@@ -217,8 +217,8 @@ class op_timesheet(osv.TransientModel):
             cr, uid, id, _('Import Finished'), context=context)
 
 
-class op_timesheet_employee_map(osv.TransientModel):
-    _name = 'op.timesheet.employee.map'
+class op_timesheet_line(osv.TransientModel):
+    _name = 'op.timesheet.line'
 
     _columns = {
         'name': fields.char(

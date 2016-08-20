@@ -93,7 +93,7 @@ class TestTimesheetImport(tests.common.TransactionCase):
     def test_upload_file_CSV1_creates_one_line_with_correct_data(self):
         wizard = self.create_wizard(CSV1)
         wizard.action_upload_file()
-        lines = wizard.employee_map_ids
+        lines = wizard.line_ids
         self.assertEqual(len(lines), 1, 'Incorrect number of lines created')
         line = lines[0]
         self.assertEqual(line.name, EMPLOYEE1_NAME)
@@ -106,7 +106,7 @@ class TestTimesheetImport(tests.common.TransactionCase):
         wizard = self.create_wizard(CSV1)
         wizard.action_upload_file()
         lines = [
-            ln for ln in wizard.employee_map_ids
+            ln for ln in wizard.line_ids
             if ln.employee_id.id == self.employee1_id
         ]
         self.assertEqual(len(lines), 1)
@@ -115,7 +115,7 @@ class TestTimesheetImport(tests.common.TransactionCase):
         wizard = self.create_wizard(CSV4)
         wizard.action_upload_file()
         wizard.action_import_file()
-        lines = [ln for ln in wizard.employee_map_ids if ln.timesheet_id]
+        lines = [ln for ln in wizard.line_ids if ln.timesheet_id]
         self.assertEqual(len(lines), 1, 'Incorrect number of lines created')
         line = lines[0]
         self.assertEqual(line.timesheet_id.employee_id.id, self.employee1_id)
@@ -133,7 +133,7 @@ class TestTimesheetImport(tests.common.TransactionCase):
             CSV4, date_from='2000-01-01', date_to='2000-01-02')
         wizard.action_upload_file()
         wizard.action_import_file()
-        lines = [ln for ln in wizard.employee_map_ids if ln.timesheet_id]
+        lines = [ln for ln in wizard.line_ids if ln.timesheet_id]
         self.assertEqual(len(lines), 1, 'Incorrect number of lines created')
         line = lines[0]
         time_entries = sorted(
