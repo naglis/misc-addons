@@ -177,6 +177,10 @@ class OPTimesheet(models.TransientModel):
                     'timesheet_ids': line_vals,
                 })
         self.state = 'done'
+
+        # Delete lines without timesheet.
+        self.employee_map_ids.filtered(lambda ln: not ln.timesheet_id).unlink()
+
         return self._get_wizard_action(
             _('Import Finished'),
             view_xml_id='hr_timesheet_openproject.import_wizard_finished')
