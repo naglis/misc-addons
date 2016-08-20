@@ -100,7 +100,7 @@ class TestTimesheetImport(tests.common.TransactionCase):
         wizard = self.create_wizard(CSV4)
         wizard.action_upload_file()
         wizard.action_import_file()
-        lines = wizard.line_ids.filtered(lambda l: l.timesheet_id)
+        lines = wizard.line_ids.filtered('timesheet_id')
         self.assertEqual(len(lines), 1, 'Incorrect number of lines created')
         line = lines[0]
         self.assertEqual(line.timesheet_id.employee_id, self.employee1)
@@ -117,7 +117,7 @@ class TestTimesheetImport(tests.common.TransactionCase):
             CSV4, date_from='2000-01-01', date_to='2000-01-02')
         wizard.action_upload_file()
         wizard.action_import_file()
-        lines = wizard.line_ids.filtered(lambda l: l.timesheet_id)
+        lines = wizard.line_ids.filtered('timesheet_id')
         self.assertEqual(len(lines), 1, 'Incorrect number of lines created')
         line = lines[0]
         time_entries = line.timesheet_id.timesheet_ids.sorted(lambda e: e.date)
