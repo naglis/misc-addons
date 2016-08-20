@@ -72,7 +72,6 @@ class OPTimesheet(models.TransientModel):
     def _get_wizard_action(
             self, name, view_xml_id='hr_timesheet_openproject.import_wizard'):
         self.ensure_one()
-
         view = self.env.ref(view_xml_id, raise_if_not_found=False)
         return {
             'name': name,
