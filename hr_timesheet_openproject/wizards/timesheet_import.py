@@ -212,7 +212,7 @@ class op_timesheet(osv.TransientModel):
                 }, context=ctx)
                 line.write({'timesheet_id': timesheet_id}, context=context)
 
-        wizard.state = 'done'
+        wizard.write({'state': 'done'})
         return self._get_wizard_action(
             cr, uid, id, _('Import Finished'), context=context)
 
