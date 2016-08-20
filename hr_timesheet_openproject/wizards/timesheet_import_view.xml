@@ -2,11 +2,11 @@
 <openerp>
     <data>
 
-        <record id="hr_timesheet_import_openproject_wizard" model="ir.ui.view">
-             <field name="name">OpenProject Timesheet CSV Import</field>
-             <field name="model">op.timesheet</field>
-             <field name="type">form</field>
-             <field name="arch" type="xml">
+        <record id="import_wizard" model="ir.ui.view">
+            <field name="name">OpenProject Timesheet CSV Import</field>
+            <field name="model">op.timesheet</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
                 <form string="OpenProject Timesheet CSV Import">
                     <field name="state" invisible="1"/>
                     <group>
@@ -36,7 +36,6 @@
                                     <field name="name"/>
                                     <field name="employee_id"/>
                                     <field name="total_hours" sum="Total" widget="float_time"/>
-                                    <field name="timesheet_id"/>
                                 </tree>
                             </field>
                         </group>
@@ -61,19 +60,40 @@
                         </group>
                     </footer>
                 </form>
-             </field>
-         </record>
+            </field>
+        </record>
+
+        <record id="import_wizard_finished" model="ir.ui.view">
+            <field name="model">op.timesheet</field>
+            <field name="mode">primary</field>
+            <field name="inherit_id" ref="hr_timesheet_openproject.import_wizard"/>
+            <field name="arch" type="xml">
+                <field name="employee_id" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                </field>
+                <xpath expr="//field[@name='employee_map_ids']//field[@name='name']" position="replace"/>
+                <field name="total_hours" position="after">
+                    <field name="timesheet_id"/>
+                </field>
+                <field name="timesheet_id" position="attributes">
+                    <attribute name="invisible">0</attribute>
+                </field>
+                <xpath expr="//field[@name='employee_map_ids']/tree" position="attributes">
+                    <attribute name="delete">false</attribute>
+                </xpath>
+            </field>
+        </record>
 
         <record id="action_hr_timesheet_import_openproject" model="ir.actions.act_window">
-             <field name="name">OpenProject Timesheet Import</field>
-             <field name="res_model">op.timesheet</field>
-             <field name="type">ir.actions.act_window</field>
-             <field name="view_type">form</field>
-             <field name="view_mode">tree,form</field>
-             <field name="view_id" ref="hr_timesheet_import_openproject_wizard"/>
-             <field name="context">{}</field>
-             <field name="target">new</field>
-       </record>
+            <field name="name">OpenProject Timesheet Import</field>
+            <field name="res_model">op.timesheet</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="import_wizard"/>
+            <field name="context">{}</field>
+            <field name="target">new</field>
+        </record>
 
         <menuitem
             name="OpenProject Timesheet Import"

@@ -69,13 +69,15 @@ class OPTimesheet(models.TransientModel):
             )
 
     @api.multi
-    def _get_wizard_action(self, name):
+    def _get_wizard_action(
+            self, name, view_xml_id='hr_timesheet_openproject.import_wizard'):
         self.ensure_one()
+
+        view = self.env.ref(view_xml_id, raise_if_not_found=False)
         return {
             'name': name,
             'context': self.env.context,
-            'view_type': 'form',
-            'view_mode': 'form',
+            'views': [(view.id if view else False, 'form')],
             'res_model': 'op.timesheet',
             'type': 'ir.actions.act_window',
             'target': 'new',
@@ -175,7 +177,9 @@ class OPTimesheet(models.TransientModel):
                     'timesheet_ids': line_vals,
                 })
         self.state = 'done'
-        return self._get_wizard_action(_('Import Finished'))
+        return self._get_wizard_action(
+            _('Import Finished'),
+            view_xml_id='hr_timesheet_openproject.import_wizard_finished')
 
 
 class OPTimesheetEmployeeMap(models.TransientModel):
