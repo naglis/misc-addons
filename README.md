@@ -4,3 +4,7 @@
 # Odoo-OpenProject
 
 OpenProject integration addons for Odoo.
+
+**No longer supported** - since the [release of Odoo
+v10.0](https://en.wikipedia.org/wiki/Odoo#Release_history), modules for OpenERP
+v7.0 are no longer supported.
