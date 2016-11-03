@@ -45,6 +45,9 @@ class TestTimesheetImport(tests.common.TransactionCase):
         })
         self.model = self.env['op.timesheet']
 
+    def assertLen(self, sequence, expected_length, msg=None):
+        self.assertEqual(len(sequence), expected_length, msg=msg)
+
     def create_wizard(self, csv_file, **overrides):
         values = {
             'account_id': self.account1.id,
@@ -63,7 +66,7 @@ class TestTimesheetImport(tests.common.TransactionCase):
     def test_parse_csv_file_CSV2_ignore_totals_removes_last_line(self):
         wizard = self.create_wizard(CSV2, ignore_totals=True)
         entries = wizard._parse_csv_file()
-        self.assertEqual(len(entries), 1, 'Incorrect number of lines returned')
+        self.assertLen(entries, 1, 'Incorrect number of lines returned')
         self.assertNotEqual(entries.keys()[0], 'Total')
 
     def test_date_to_earlier_than_date_from_raises_ValidationError(self):
@@ -81,7 +84,7 @@ class TestTimesheetImport(tests.common.TransactionCase):
         wizard = self.create_wizard(CSV1)
         wizard.action_upload_file()
         lines = wizard.line_ids
-        self.assertEqual(len(lines), 1, 'Incorrect number of lines created')
+        self.assertLen(lines, 1, 'Incorrect number of lines created')
         line = lines[0]
         self.assertEqual(line.name, EMPLOYEE1_NAME)
         self.assertAlmostEqual(
@@ -94,19 +97,19 @@ class TestTimesheetImport(tests.common.TransactionCase):
         wizard.action_upload_file()
         lines = wizard.line_ids.filtered(
             lambda m: m.employee_id == self.employee1)
-        self.assertEqual(len(lines), 1)
+        self.assertLen(lines, 1)
 
     def test_import_file_CSV4_timesheet_with_correct_data_is_created(self):
         wizard = self.create_wizard(CSV4)
         wizard.action_upload_file()
         wizard.action_import_file()
         lines = wizard.line_ids.filtered('timesheet_id')
-        self.assertEqual(len(lines), 1, 'Incorrect number of lines created')
+        self.assertLen(lines, 1, 'Incorrect number of lines created')
         line = lines[0]
         self.assertEqual(line.timesheet_id.employee_id, self.employee1)
         time_entries = line.timesheet_id.timesheet_ids.sorted(lambda e: e.date)
-        self.assertEqual(
-            len(time_entries), 2, 'Incorrect number of time entries created')
+        self.assertLen(
+            time_entries, 2, 'Incorrect number of time entries created')
         self.assertEqual(time_entries[0].date, '2000-01-01')
         self.assertEqual(time_entries[0].unit_amount, 1.2)
         self.assertEqual(time_entries[1].date, '2000-01-03')
@@ -118,10 +121,10 @@ class TestTimesheetImport(tests.common.TransactionCase):
         wizard.action_upload_file()
         wizard.action_import_file()
         lines = wizard.line_ids.filtered('timesheet_id')
-        self.assertEqual(len(lines), 1, 'Incorrect number of lines created')
+        self.assertLen(lines, 1, 'Incorrect number of lines created')
         line = lines[0]
         time_entries = line.timesheet_id.timesheet_ids.sorted(lambda e: e.date)
-        self.assertEqual(
-            len(time_entries), 1, 'Incorrect number of time entries created')
+        self.assertLen(
+            time_entries, 1, 'Incorrect number of time entries created')
         self.assertEqual(time_entries[0].date, '2000-01-01')
         self.assertEqual(time_entries[0].unit_amount, 1.2)
