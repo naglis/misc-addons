@@ -7,7 +7,7 @@
     'author': 'Naglis Jonaitis',
     'category': 'Human Resources',
     'website': 'https://github.com/naglis/',
-    'licence': 'AGPL-3',
+    'license': 'AGPL-3',
     'summary': 'OpenProject time entries CSV import.',
     'depends': [
         'hr_timesheet_sheet',
