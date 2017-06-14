@@ -1,6 +1,9 @@
-[![Build Status](https://travis-ci.org/naglis/odoo-openproject.svg?branch=8.0)](https://travis-ci.org/naglis/odoo-openproject)
-[![Coverage Status](https://coveralls.io/repos/github/naglis/odoo-openproject/badge.svg?branch=8.0)](https://coveralls.io/github/naglis/odoo-openproject?branch=8.0)
+[![Build Status](https://travis-ci.org/naglis/misc-addons.svg?branch=8.0)](https://travis-ci.org/naglis/misc-addons)
+[![Coverage Status](https://coveralls.io/repos/github/naglis/misc-addons/badge.svg?branch=8.0)](https://coveralls.io/github/naglis/misc-addons?branch=8.0)
 
-# Odoo-OpenProject
+# Miscellaneous Odoo addons
 
-OpenProject integration addons for Odoo.
+This repository contains various Odoo addons written by me.
+
+Please use at your own risk. Support is not guaranteed.
+
