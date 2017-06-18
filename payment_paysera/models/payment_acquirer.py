@@ -2,7 +2,7 @@
 
 import urlparse
 
-from openerp import api, fields, models, tools
+from odoo import api, fields, models, tools
 
 from .. import paysera
 from ..controllers.main import PayseraController

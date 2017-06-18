@@ -3,9 +3,9 @@
 import unittest
 import xml.etree.ElementTree as ET
 
-from openerp.addons.payment.models.payment_acquirer import ValidationError
-from openerp.addons.payment.tests.common import PaymentAcquirerCommon
-from openerp.tools import mute_logger
+from odoo.addons.payment.models.payment_acquirer import ValidationError
+from odoo.addons.payment.tests.common import PaymentAcquirerCommon
+from odoo.tools import mute_logger
 
 from .. import paysera
 
@@ -96,7 +96,7 @@ class PayseraCommon(PaymentAcquirerCommon):
             'Wrong form POST url',
         )
 
-    @mute_logger('openerp.addons.payment_paysera.models.payment_transaction',
+    @mute_logger('odoo.addons.payment_paysera.models.payment_transaction',
                  'ValidationError')
     def test_transaction_management(self):
         '''

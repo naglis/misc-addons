@@ -4,8 +4,8 @@ import base64
 import logging
 import urlparse
 
-from openerp import _, api, fields, models
-from openerp.addons.payment.models.payment_acquirer import ValidationError
+from odoo import _, api, fields, models
+from odoo.addons.payment.models.payment_acquirer import ValidationError
 
 from .. import paysera
 
