@@ -22,6 +22,11 @@ LANG_MAP = {
 class PaymentAcquirer(models.Model):
     _inherit = 'payment.acquirer'
 
+    provider = fields.Selection(
+        selection_add=[
+            ('paysera', 'Paysera'),
+        ],
+    )
     paysera_project_id = fields.Char(
         string='Project ID',
         size=11,
@@ -40,13 +45,7 @@ class PaymentAcquirer(models.Model):
     )
 
     @api.model
-    def _get_providers(self):
-        providers = super(PaymentAcquirer, self)._get_providers()
-        providers.append(['paysera', 'Paysera'])
-        return providers
-
-    @api.model
-    def _get_paysera_urls(self):
+    def _get_paysera_urls(self, environment):
         '''Returns Paysera API URLs.'''
         return {
             'paysera_standard_api_url': paysera.PAYSERA_API_URL,
