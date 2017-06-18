@@ -14,6 +14,6 @@
         'views/payment_acquirer.xml',
         'views/website_templates.xml',
     ],
-    'installable': True,
+    'installable': False,
     'application': False,
 }
