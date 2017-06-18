@@ -1,18 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<openerp>
-    <data noupdate="1">
+<odoo noupdate="1">
 
-        <record id="payment_acquirer_paysera" model="payment.acquirer">
-            <field name="name">Paysera</field>
-            <field name="provider">paysera</field>
-            <field name="company_id" ref="base.main_company"/>
-            <field name="view_template_id" ref="paysera_acquirer_button"/>
-            <field name="environment">test</field>
-            <field name="pre_msg"><![CDATA[
-<p>You will be redirected to the Paysera payment website after clicking on the Pay button.</p>]]></field>
-            <field name="paysera_project_id">REPLACE_ME</field>
-            <field name="paysera_sign_password">REPLACE_ME</field>
-        </record>
+<record id="payment_acquirer_paysera" model="payment.acquirer">
+    <field name="name">Paysera</field>
+    <field name="provider">paysera</field>
+    <field name="company_id" ref="base.main_company"/>
+    <field name="view_template_id" ref="paysera_acquirer_button"/>
+    <field name="environment">test</field>
+    <field name="pre_msg"><![CDATA[<p>You will be redirected to the Paysera payment website after clicking on the Pay button.</p>]]></field>
+    <field name="paysera_project_id">REPLACE_ME</field>
+    <field name="paysera_sign_password">REPLACE_ME</field>
+</record>
 
-    </data>
-</openerp>
+</odoo>
