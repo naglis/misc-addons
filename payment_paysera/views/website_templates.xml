@@ -2,7 +2,7 @@
 <odoo noupdate="1">
 
 <template id="paysera_acquirer_button" name="Paysera Acquirer Button">
-    <form t-if="acquirer.paysera_project_id" t-att-action="tx_url" method="post" target="_self">
+    <form t-if="acquirer.paysera_project_id and acquirer.paysera_sign_password" t-att-action="tx_url" method="post" target="_self">
         <input type="hidden" name="data" t-att-value="tx_values['data']"/>
         <input type="hidden" name="sign" t-att-value="tx_values['signature']"/>
         <button type="submit" width="100px" t-att-class="submit_class">
