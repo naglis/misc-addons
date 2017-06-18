@@ -14,7 +14,7 @@
 </template>
 
 <template id="payment_paysera_quality_sign_website_layout" inherit_id="website.layout" name="Paysera Quality Sign Website Layout">
-    <xpath expr="//body" position="inside">
+    <xpath expr="//div[@id='wrapwrap']" position="after">
         <t t-call="payment_paysera_quality_sign.paysera_quality_sign_scripts"/>
     </xpath>
 </template>
