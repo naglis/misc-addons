@@ -4,10 +4,11 @@ import base64
 import hashlib
 import urllib
 
+# pylint: disable=W7935
 from cryptography import exceptions, x509
 from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives.asymmetric.padding import PKCS1v15
 from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.asymmetric.padding import PKCS1v15
 
 PAYSERA_API_VERSION = '1.6'
 PAYSERA_API_URL = 'https://www.paysera.com/pay/'
@@ -75,6 +76,7 @@ PAYSERA_STATUS_PAYMENT_ACCEPTED = '2'
 # number or about personal code, if such request was made.
 # We do not store this information, so we ignore this type of request.
 PAYSERA_STATUS_ADDITIONAL_INFO = '3'
+
 
 def _maybe_encode(value, encoding='ascii'):
     if isinstance(value, unicode):

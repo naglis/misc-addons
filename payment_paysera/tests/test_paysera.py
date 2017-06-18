@@ -99,10 +99,8 @@ class PayseraCommon(PaymentAcquirerCommon):
     @mute_logger('openerp.addons.payment_paysera.models.payment_transaction',
                  'ValidationError')
     def test_transaction_management(self):
-        self.assertTestEnv()
-
         '''
-        FORM_VALUES = {
+        PAYSERA_TEST_DATA = {
             'lang': '',
             'reference': u'SO012',
             'p_city': 'Sin City',
@@ -127,6 +125,8 @@ class PayseraCommon(PaymentAcquirerCommon):
             'return_url': '/shop/payment/validate'
         }
         '''
+
+        self.assertTestEnv()
 
         # Should raise an error about non-existent order ID.
         with self.assertRaises(ValidationError):
