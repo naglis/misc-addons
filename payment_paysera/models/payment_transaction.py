@@ -55,8 +55,8 @@ class PaymentTransaction(models.Model):
             raise ValidationError(msg)
         return txs[0]
 
-    @api.model
-    def _paysera_form_get_invalid_parameters(self, tx, data):
+    @api.multi
+    def _paysera_form_get_invalid_parameters(self, data):
         '''Checks received parameters and returns a list of tuples.
 
         Tuple format: (parameter_name, received_value, expected_value).
@@ -64,6 +64,8 @@ class PaymentTransaction(models.Model):
         Errors will be raised for each invalid parameter.
         Transaction will not be validated if there is at least one
         invalid parameter.'''
+        self.ensure_one()
+
         invalid_parameters = []
 
         def check_keys_not_empty(dict_, keys, example='SOME_VALUE'):
@@ -81,7 +83,7 @@ class PaymentTransaction(models.Model):
 
         ss1_received = data.get('ss1')
         ss1_computed = paysera.md5_sign(
-            the_data, tx.acquirer_id.paysera_sign_password)
+            the_data, self.acquirer_id.paysera_sign_password)
         if not ss1_computed == ss1_received:
             invalid_parameters.append(('ss1', ss1_received, ss1_computed))
 
@@ -90,19 +92,20 @@ class PaymentTransaction(models.Model):
             invalid_parameters.append(('ss2', ss2_received, 'VALID_SS2'))
 
         # Check if `projectid`'s match.
-        if not params.get('projectid') == tx.acquirer_id.paysera_project_id:
+        if not params.get('projectid') == self.acquirer_id.paysera_project_id:
             invalid_parameters.append((
                 'projectid',
                 params.get('projectid'),
-                tx.acquirer_id.paysera_project_id
+                self.acquirer_id.paysera_project_id
             ))
         return invalid_parameters
 
-    @api.model
-    def _paysera_form_validate(self, tx, data):
+    @api.multi
+    def _paysera_form_validate(self, data):
+        self.ensure_one()
         # Transaction has already been completed or canceled.
         # We should not handle this request.
-        if tx.state in ('done', 'cancel'):
+        if self.state in ('done', 'cancel'):
             return False
 
         params = data['params']
@@ -110,19 +113,19 @@ class PaymentTransaction(models.Model):
 
         ret_val = True
         if status == paysera.PAYSERA_STATUS_NOT_EXECUTED:
-            tx.write({
+            self.write({
                 'state': 'cancel',
             })
         elif status == paysera.PAYSERA_STATUS_PAYMENT_SUCCESSFULL:
             _LOG.info(u'Order ID %s paid' % params.get('orderid'))
-            tx.write({
+            self.write({
                 'state': 'done',
                 'date_validate': fields.datetime.now(),
                 'state_message': params.get('paytext', ''),
                 'acquirer_reference': params.get('requestid'),
             })
         elif status == paysera.PAYSERA_STATUS_PAYMENT_ACCEPTED:
-            tx.write({
+            self.write({
                 'state': 'pending',
                 'state_message': params.get('paytext', ''),
                 'acquirer_reference': params.get('requestid'),
@@ -132,7 +135,7 @@ class PaymentTransaction(models.Model):
         else:
             error = _(u'Paysera: unknown payment status: %s') % status
             _LOG.error(error)
-            tx.write({
+            self.write({
                 'state': 'error',
                 'state_message': error,
             })

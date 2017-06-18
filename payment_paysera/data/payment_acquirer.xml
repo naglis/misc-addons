@@ -12,6 +12,14 @@
 <p>You will be redirected to the Paysera payment website after clicking on the Pay button.</p>]]></field>
     <field name="paysera_project_id">REPLACE_ME</field>
     <field name="paysera_sign_password">REPLACE_ME</field>
+    <field name="description" type="html">
+        <p>
+            A payment gateway to accept online payments via Paysera.
+        </p>
+        <ul>
+            <li><i class="fa fa-check"/>eCommerce</li>
+        </ul>
+    </field>
 </record>
 
 </odoo>

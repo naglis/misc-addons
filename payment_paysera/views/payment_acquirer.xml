@@ -6,7 +6,7 @@
     <field name="model">payment.acquirer</field>
     <field name="inherit_id" ref="payment.acquirer_form"/>
     <field name="arch" type="xml">
-        <xpath expr='//group[@name="acquirer_display"]' position="after">
+        <xpath expr='//group[@name="acquirer"]' position="after">
             <group name="paysera" string="Paysera" attrs="{'invisible': [('provider', '!=', 'paysera')]}">
                 <field name="paysera_project_id"/>
                 <field name="paysera_sign_password"/>

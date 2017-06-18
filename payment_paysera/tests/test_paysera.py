@@ -70,7 +70,7 @@ class PayseraCommon(PaymentAcquirerCommon):
 
         self.tx_values = {
             'reference': 'SO012',
-            'currency': self.currency_euro,
+            'currency': self.currency_euro.id,
             'amount': 320.00,
         }
         self.acquirer.write({
@@ -86,8 +86,7 @@ class PayseraCommon(PaymentAcquirerCommon):
         self.assertTestEnv()
 
         res = self.acquirer.render(
-            'SO012', 320.00, self.currency_euro_id, partner_id=None,
-            partner_values=self.buyer_values)[0]
+            'SO012', 320.00, self.currency_euro.id, values=self.buyer_values)
 
         root = ET.fromstring(res)
         self.assertEqual(
@@ -135,7 +134,7 @@ class PayseraCommon(PaymentAcquirerCommon):
         tx = self.tx_obj.create({
             'amount': 32000,
             'acquirer_id': self.acquirer.id,
-            'currency_id': self.currency_euro_id,
+            'currency_id': self.currency_euro.id,
             'reference': 'SO012',
             'partner_id': self.buyer_id,
         })
