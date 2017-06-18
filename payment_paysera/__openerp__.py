@@ -15,9 +15,9 @@
         ]
     },
     'data': [
-        'data/payment_acquirer.xml',
         'views/payment_acquirer.xml',
         'views/website_templates.xml',
+        'data/payment_acquirer.xml',
     ],
     'installable': True,
     'application': False,
