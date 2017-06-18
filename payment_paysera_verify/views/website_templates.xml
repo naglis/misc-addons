@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+<template id="paysera_verification_codes" name="Paysera Verification Codes">
+    <t t-if="website">
+        <t t-foreach="website._get_paysera_verification_codes()" t-as="verification_code">
+            <meta name="verify-paysera" t-att-content="verification_code"/>
+        </t>
+    </t>
+</template>
+
+<template id="payment_paysera_verify_website_layout" inherit_id="website.layout" name="Paysera Verfication Website Layout">
+    <xpath expr="//head" position="inside">
+        <t t-call="payment_paysera_verify.paysera_verification_codes"/>
+    </xpath>
+</template>
+
+    </data>
+</openerp>

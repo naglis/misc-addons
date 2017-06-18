@@ -1,0 +1,42 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* payment_paysera_quality_sign
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 8.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-06-18 10:51+0000\n"
+"PO-Revision-Date: 2017-06-18 10:51+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: payment_paysera_quality_sign
+#: help:payment.acquirer,paysera_show_quality_sign:0
+msgid "If checked, the Paysera Quality Sign will be displayed on your website"
+msgstr "Jei pažymėsite, Jūsų svetainėje bus atvaizduojamas „Paysera“ kokybės ženklas"
+
+#. module: payment_paysera_quality_sign
+#: model:ir.model,name:payment_paysera_quality_sign.model_payment_acquirer
+msgid "Payment Acquirer"
+msgstr "Apmokėjimo gaviklis"
+
+#. module: payment_paysera_quality_sign
+#: field:payment.acquirer,paysera_show_quality_sign:0
+msgid "Show Paysera Quality Sign"
+msgstr "Rodyti „Paysera“ kokybės ženklą"
+
+#. module: payment_paysera_quality_sign
+#: code:addons/payment_paysera_quality_sign/models/payment_acquirer.py:27
+#, python-format
+msgid "The Paysera Quality Sign can be displayed only for a single production acquirer, visible on the website!"
+msgstr "„Paysera“ kokybės ženklas gali būti atvaizduojamas tik viename, gamybinėje aplinkoje veikiančiame ir tinklapyje matomame mokėjimų gaviklyje"
+
+#. module: payment_paysera_quality_sign
+#: model:ir.model,name:payment_paysera_quality_sign.model_website
+msgid "Website"
+msgstr "Tinklapis"

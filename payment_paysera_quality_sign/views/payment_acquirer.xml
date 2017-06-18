@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+<record id="view_payment_acquirer_form_inherit" model="ir.ui.view">
+    <field name="model">payment.acquirer</field>
+    <field name="inherit_id" ref="payment_paysera.view_payment_acquirer_form"/>
+    <field name="arch" type="xml">
+
+        <group name="paysera" position="inside">
+            <field name="paysera_show_quality_sign" attrs="{'invisible': [('website_published', '=', False)]}"/>
+        </group>
+
+    </field>
+</record>
+
+    </data>
+</openerp>

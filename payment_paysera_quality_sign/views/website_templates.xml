@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+<template id="paysera_quality_sign_scripts" name="Paysera Quality Sign Scripts">
+    <t t-if="website">
+        <t t-foreach="website._get_paysera_project_ids()" t-as="project_id">
+            <script type="text/javascript" charset="utf-8">
+                var wtpQualitySign_projectId = "<t t-esc="project_id"/>",
+                    wtpQualitySign_language = "<t t-esc="lang[:2] if lang else 'en'"/>";
+            </script>
+            <script src="https://bank.paysera.com/new/js/project/wtpQualitySigns.js" type="text/javascript" charset="utf-8"></script>
+        </t>
+    </t>
+</template>
+
+<template id="payment_paysera_quality_sign_website_layout" inherit_id="website.layout" name="Paysera Quality Sign Website Layout">
+    <xpath expr="//body" position="inside">
+        <t t-call="payment_paysera_quality_sign.paysera_quality_sign_scripts"/>
+    </xpath>
+</template>
+
+    </data>
+</openerp>
