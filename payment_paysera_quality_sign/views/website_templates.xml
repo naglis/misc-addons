@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<openerp>
-    <data>
+<odoo>
 
 <template id="paysera_quality_sign_scripts" name="Paysera Quality Sign Scripts">
     <t t-if="website">
@@ -20,5 +19,4 @@
     </xpath>
 </template>
 
-    </data>
-</openerp>
+</odoo>

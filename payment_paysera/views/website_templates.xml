@@ -1,19 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<openerp>
-    <data noupdate="1">
+<odoo noupdate="1">
 
-        <template id="paysera_acquirer_button" name="Paysera Acquirer Button">
-            <form t-if="acquirer.paysera_project_id" t-att-action="tx_url" method="post" target="_self">
-                <input type="hidden" name="data" t-att-value="tx_values['data']"/>
-                <input type="hidden" name="sign" t-att-value="tx_values['signature']"/>
-                <button type="submit" width="100px" t-att-class="submit_class">
-                    <img t-if="not submit_txt" src="/payment_paysera/static/src/img/paysera_icon.png"/>
-                    <t t-if="submit_txt">
-                        <span t-esc="submit_txt"/> <span class="fa fa-long-arrow-right"/>
-                    </t>
-                </button>
-            </form>
-        </template>
+<template id="paysera_acquirer_button" name="Paysera Acquirer Button">
+    <form t-if="acquirer.paysera_project_id and acquirer.paysera_sign_password" t-att-action="tx_url" method="post" target="_self">
+        <input type="hidden" name="data" t-att-value="data"/>
+        <input type="hidden" name="sign" t-att-value="signature"/>
+        <button type="submit" width="100px" t-att-class="submit_class">
+            <img t-if="not submit_txt" src="/payment_paysera/static/src/img/paysera_icon.png"/>
+            <t t-if="submit_txt">
+                <span t-esc="submit_txt"/> <span class="fa fa-long-arrow-right"/>
+            </t>
+        </button>
+    </form>
+</template>
 
-    </data>
-</openerp>
+</odoo>

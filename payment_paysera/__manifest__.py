@@ -4,7 +4,7 @@
     'category': 'Hidden',
     'license': 'AGPL-3',
     'summary': 'Support for Paysera payments',
-    'version': '8.0.2.0.0',
+    'version': '10.0.2.0.0',
     'author': 'Naglis Jonaitis',
     'depends': [
         'payment',
@@ -19,6 +19,6 @@
         'views/website_templates.xml',
         'data/payment_acquirer.xml',
     ],
-    'installable': False,
+    'installable': True,
     'application': False,
 }

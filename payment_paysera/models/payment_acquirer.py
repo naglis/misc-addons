@@ -2,7 +2,7 @@
 
 import urlparse
 
-from openerp import api, fields, models, tools
+from odoo import api, fields, models, tools
 
 from .. import paysera
 from ..controllers.main import PayseraController
@@ -22,6 +22,11 @@ LANG_MAP = {
 class PaymentAcquirer(models.Model):
     _inherit = 'payment.acquirer'
 
+    provider = fields.Selection(
+        selection_add=[
+            ('paysera', 'Paysera'),
+        ],
+    )
     paysera_project_id = fields.Char(
         string='Project ID',
         size=11,
@@ -40,12 +45,6 @@ class PaymentAcquirer(models.Model):
     )
 
     @api.model
-    def _get_providers(self):
-        providers = super(PaymentAcquirer, self)._get_providers()
-        providers.append(['paysera', 'Paysera'])
-        return providers
-
-    @api.model
     def _get_paysera_urls(self):
         '''Returns Paysera API URLs.'''
         return {
@@ -53,7 +52,7 @@ class PaymentAcquirer(models.Model):
         }
 
     @api.multi
-    def paysera_form_generate_values(self, partner, tx):
+    def paysera_form_generate_values(self, values):
         '''Generates the values used to render the form button template.'''
         self.ensure_one()
         base_url = self.env['ir.config_parameter'].get_param('web.base.url')
@@ -61,36 +60,39 @@ class PaymentAcquirer(models.Model):
         def full_url(path):
             return urlparse.urljoin(base_url, path)
 
-        lang = partner['lang'] or ''
+        lang = values['billing_partner_lang'] or ''
         if '_' in lang:
             lang = LANG_MAP.get(lang.split('_')[0], '')
 
+        country_code = (
+            values['billing_partner_country'].code
+            if values['billing_partner_country'] else ''
+        )
         paysera_params = dict(
             projectid=self.paysera_project_id,
-            orderid=tx['reference'],
+            orderid=values['reference'],
             lang=lang,
-            amount='%d' % int(tools.float_round(tx['amount'], 2) * 100),
-            currency=tx['currency'] and tx['currency'].name or '',
+            amount='%d' % int(tools.float_round(values['amount'], 2) * 100),
+            currency=values['currency'] and values['currency'].name or '',
             accepturl=full_url(PayseraController._accept_url),
             cancelurl=full_url(PayseraController._cancel_url),
             callbackurl=full_url(PayseraController._callback_url),
-            country=partner['country'] and partner['country'].code or '',
-            p_firstname=partner['first_name'],
-            p_lastname=partner['last_name'],
-            p_email=partner['email'],
-            p_street=partner['address'],
-            p_city=partner['city'],
-            p_zip=partner['zip'],
-            p_countrycode=partner['country'] and partner['country'].code or '',
+            country=country_code,
+            p_firstname=values['billing_partner_first_name'],
+            p_lastname=values['billing_partner_last_name'],
+            p_email=values['billing_partner_email'],
+            p_street=values['billing_partner_address'],
+            p_city=values['billing_partner_city'],
+            p_zip=values['billing_partner_zip'],
+            p_countrycode=country_code,
             test='1' if self.environment == 'test' else '0',
             version=paysera.PAYSERA_API_VERSION,
         )
-        paysera_tx = dict(tx)
-        paysera_tx.update(paysera.get_form_values(
+        values.update(paysera.get_form_values(
             paysera_params,
             self.paysera_sign_password,
         ))
-        return partner, paysera_tx
+        return values
 
     @api.multi
     def paysera_get_form_action_url(self):

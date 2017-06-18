@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from openerp import _, api, exceptions, fields, models
+from odoo import _, api, exceptions, fields, models
 
 
 class PaymentAcquirer(models.Model):
