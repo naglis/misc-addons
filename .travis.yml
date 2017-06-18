@@ -37,3 +37,6 @@ script:
 
 after_success:
 - travis_after_tests_success
+
+notifications:
+  email: false
