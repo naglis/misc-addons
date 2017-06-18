@@ -10,7 +10,7 @@
 </template>
 
 <template id="payment_paysera_verify_website_layout" inherit_id="website.layout" name="Paysera Verfication Website Layout">
-    <xpath expr="//head" position="inside">
+    <xpath expr="//t[@t-set='head_website']" position="inside">
         <t t-call="payment_paysera_verify.paysera_verification_codes"/>
     </xpath>
 </template>

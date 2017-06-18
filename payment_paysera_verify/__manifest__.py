@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Paysera Verification',
-    'version': '8.0.1.0.0',
+    'version': '10.0.1.0.0',
     'author': 'Naglis Jonaitis',
     'category': 'Invoicing & Payments',
     'license': 'AGPL-3',
@@ -14,6 +14,6 @@
         'views/payment_acquirer.xml',
         'views/website_templates.xml',
     ],
-    'installable': False,
+    'installable': True,
     'application': False,
 }
