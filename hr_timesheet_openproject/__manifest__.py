@@ -15,6 +15,6 @@
     'data': [
         'wizards/timesheet_import_view.xml',
     ],
-    'installable': False,
+    'installable': True,
     'application': False,
 }

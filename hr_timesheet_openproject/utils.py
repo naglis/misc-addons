@@ -1,80 +1,69 @@
 # -*- coding: utf-8 -*-
-import codecs
-import collections
 import csv
 import datetime
-import itertools
+
+DEFAULT_DATE_FORMAT = '%Y-%m-%d'
+TIME_ENTRY_KEYS = (
+    'date',
+    'user',
+    'activity',
+    'project',
+    'wp',
+    'type',
+    'subject',
+    'hours',
+    'comment',
+)
 
 
 class InvalidTimeEntryException(ValueError):
     pass
 
 
-class UTF8Recoder:
-    '''
-    Iterator that reads an encoded stream and reencodes the input to UTF-8
-    '''
-    def __init__(self, f, encoding):
-        self.reader = codecs.getreader(encoding)(f)
-
-    def __iter__(self):
-        return self
-
-    def next(self):
-        return self.reader.next().encode('utf-8')
+def unicode_csv_reader(fobj, encoding='utf-8', dialect=csv.excel,
+                       **kwargs):
+    csv_reader = csv.reader(fobj, dialect=dialect, **kwargs)
+    for row in csv_reader:
+        yield [unicode(cell, encoding) for cell in row]
 
 
-class UnicodeOrderedDictReader:
-    '''
-    A CSV reader which will iterate over lines in the CSV file "f",
-    which is encoded in the given encoding.
+class MinMax(object):
+    """Helper object for keeping track of min/max values."""
 
-    Rows are returned in an collections.OrderedDict, which means that column
-    order is preserved.
-    '''
+    def __init__(self, min_val=None, max_val=None):
+        self.min, self.max = min_val, max_val
 
-    def __init__(self, f, dialect=csv.excel, encoding='utf-8', **kwds):
-        f = UTF8Recoder(f, encoding)
-        self.reader = csv.reader(f, dialect=dialect, **kwds)
-        self.header = self.reader.next()
-
-    def next(self):
-        return collections.OrderedDict(
-            itertools.izip(
-                self.header, [s.decode('utf-8') for s in self.reader.next()]
-            )
-        )
-
-    def __iter__(self):
-        return self
+    def add(self, value):
+        if self.min is None or value < self.min:
+            self.min = value
+        if self.max is None or value > self.max:
+            self.max = value
 
 
-def parse_op_timesheet_csv(fobj, member_col=0, date_fmt='%Y-%m-%d',
+def transform_time_entry(entry, date_fmt=DEFAULT_DATE_FORMAT):
+    entry.update({
+        'date': datetime.datetime.strptime(entry['date'], date_fmt).date(),
+        'hours': float(entry.get('hours') or 0),
+        'wp': int(entry.get('wp') or 0),
+    })
+    return entry
+
+
+def parse_op_timesheet_csv(fobj, skip_first=True, date_fmt=DEFAULT_DATE_FORMAT,
                            delimiter=',', encoding='utf-8'):
-    reader = UnicodeOrderedDictReader(
+    reader = unicode_csv_reader(
         fobj, encoding=encoding, delimiter=delimiter)
-    entries = collections.OrderedDict()
-
+    entries, first = [], True
     for idx, row in enumerate(reader, start=1):
-        member = row.pop(row.keys()[member_col])
-        entries[member] = collections.OrderedDict()
-        for date_str, cell in row.iteritems():
-            try:
-                dt = datetime.datetime.strptime(date_str, date_fmt).date()
-            except ValueError:
-                pass
-            else:
-                if cell:
-                    try:
-                        hours = float(cell)
-                    except ValueError:
-                        raise InvalidTimeEntryException(
-                            'Invalid time entry value: "%s" on line: %d' %
-                            (cell, idx)
-                        )
-                else:
-                    hours = 0.0
-
-                entries[member][dt] = hours
-
+        if skip_first and first:
+            first = False
+            continue
+        try:
+            entries.append(transform_time_entry(
+                dict(zip(TIME_ENTRY_KEYS, row[:len(TIME_ENTRY_KEYS)])),
+                date_fmt=date_fmt,
+            ))
+        except (ValueError, TypeError):
+            raise InvalidTimeEntryException(
+                'Invalid time entry on line: %d' % idx)
     return entries

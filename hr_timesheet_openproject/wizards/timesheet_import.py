@@ -6,8 +6,9 @@ import base64
 import contextlib
 import io
 
-from openerp import _, api, exceptions, fields, models, tools
-from openerp.addons.hr_timesheet_openproject import utils
+from odoo import _, api, exceptions, fields, models
+
+from .. import utils
 
 ENCODINGS = [
     ('utf-8', 'UTF-8'),
@@ -23,50 +24,86 @@ DELIMITERS = [
 ]
 
 
-class OPTimesheet(models.TransientModel):
-    _name = 'op.timesheet'
+class OPImportRelated(models.AbstractModel):
+    _name = 'op.import.related'
 
-    state = fields.Selection(
-        selection=[('new', 'New'), ('draft', 'Draft'), ('done', 'Done')],
-        string='State', readonly=True, default='new', required=True,
-    )
-    company_id = fields.Many2one(
-        comodel_name='res.company', required=True, string='Company',
-        default=lambda self: self.env.user.company_id,
-    )
-    account_id = fields.Many2one(
-        comodel_name='account.analytic.account', string='Account',
+    import_id = fields.Many2one(
+        comodel_name='op.import',
+        ondelete='cascade',
+        string='OpenProject CSV Import Wizard',
         required=True,
     )
+
+
+class OPImport(models.TransientModel):
+    _name = 'op.import'
+
+    source = fields.Selection(
+        selection=[
+            ('from_file', 'From File'),
+        ],
+        default='from_file',
+        required=True,
+    )
+    state = fields.Selection(
+        selection=[
+            ('new', 'New'),
+            ('map_data', 'Map Data'),
+        ],
+        default='new',
+        required=True,
+        readonly=True,
+    )
     date_from = fields.Date(
-        string='Date From', help='Timesheet period beginning date')
+        string='Date From',
+        help='Timesheet period beginning date',
+    )
     date_to = fields.Date(
-        string='Date To', help='Timesheet period end date')
+        string='Date To',
+        help='Timesheet period end date',
+    )
     csv_file = fields.Binary(
-        string='CSV File', required=True,
+        string='CSV File',
         help='The CSV file which was exported from OpenProject',
     )
     encoding = fields.Selection(
-        selection=ENCODINGS, required=True, default='utf-8')
+        selection=ENCODINGS,
+        required=True,
+        default='utf-8',
+    )
     delimiter = fields.Selection(
-        selection=DELIMITERS, required=True, default=',',
+        selection=DELIMITERS,
+        required=True,
+        default=',',
         help='The delimiter which separates column data in the CSV file',
     )
-    ignore_totals = fields.Boolean(
-        string='Ignore Totals', default=True,
-        help='Don\'t include the totals line from the CSV file',
+    skip_first = fields.Boolean(
+        string='Skip First Line',
+        help='First line of the file is the header and should be ignored.',
+        default=True,
     )
-    line_ids = fields.One2many(
-        comodel_name='op.timesheet.line', inverse_name='import_id')
+    time_entry_ids = fields.One2many(
+        comodel_name='op.time.entry',
+        inverse_name='import_id',
+    )
+    op_employee_ids = fields.One2many(
+        comodel_name='op.employee.map',
+        inverse_name='import_id',
+        string='OpenProject Employee Mapping',
+    )
+    op_project_ids = fields.One2many(
+        comodel_name='op.project.map',
+        inverse_name='import_id',
+        string='OpenProject Project Mapping',
+    )
 
-    @api.one
+    @api.multi
     @api.constrains('date_from', 'date_to')
     def _check_period(self):
-        if (all((self.date_from, self.date_to)) and
-                self.date_to < self.date_from):
-            raise exceptions.ValidationError(
-                _('Period end date can\'t be earlier than the start date!')
-            )
+        for rec in self:
+            if rec.date_from and rec.date_to and rec.date_to < rec.date_from:
+                raise exceptions.ValidationError(
+                    _('Period start date can\'t be later than the end date!'))
 
     @api.multi
     def _get_wizard_action(
@@ -77,7 +114,7 @@ class OPTimesheet(models.TransientModel):
             'name': name,
             'context': self.env.context,
             'views': [(view.id if view else False, 'form')],
-            'res_model': 'op.timesheet',
+            'res_model': 'op.import',
             'type': 'ir.actions.act_window',
             'target': 'new',
             'res_id': self.id,
@@ -86,113 +123,191 @@ class OPTimesheet(models.TransientModel):
     @api.multi
     def _parse_csv_file(self):
         self.ensure_one()
-        with contextlib.closing(
-                io.BytesIO(base64.b64decode(self.csv_file))) as fobj:
-            time_entries = utils.parse_op_timesheet_csv(
-                fobj, encoding=self.encoding,
+        csv_file = base64.b64decode(self.csv_file)
+        with contextlib.closing(io.BytesIO(csv_file)) as fobj:
+            return utils.parse_op_timesheet_csv(
+                fobj,
+                skip_first=self.skip_first,
+                encoding=self.encoding,
                 delimiter=self.delimiter.encode('utf-8'),
             )
-
-        if self.ignore_totals:
-            time_entries.pop(time_entries.keys()[-1])
-
-        empty_csv = (
-            len(time_entries) == 0 or len(time_entries.values()[0]) == 0
-        )
-        if empty_csv:
-            raise exceptions.ValidationError(
-                _('There are no time entries in the CSV file!'
-                  'Or maybe incorrect delimiter was specified?')
-            )
-        return time_entries
 
     @api.multi
     def action_upload_file(self):
         self.ensure_one()
+        project_map_obj = self.env['op.project.map']
+        employee_map_obj = self.env['op.employee.map']
+        dates = utils.MinMax()
         time_entries = self._parse_csv_file()
-        entries = time_entries.values()[0]
-        min_date, max_date = min(entries), max(entries)
-        line_vals = []
-        for name, entries in time_entries.iteritems():
-            employee_matches = self.env['hr.employee'].search([
-                ('name', 'ilike', name),
-                ('company_id', '=', self.company_id.id),
-            ], limit=1)
-            employee_id = employee_matches[0].id if employee_matches else False
 
-            line_vals.append((0, False, {
-                'name': name,
-                'employee_id': employee_id,
-                'total_hours': sum(entries.itervalues())
+        available_projects, available_users = {}, {}
+        for p in self.env['project.project'].search([]):
+            available_projects[p.name.lower()] = p.id
+        for u in self.env['hr.employee'].search([]):
+            available_users[u.name.lower()] = u.id
+
+        time_entry_vals = []
+        op_employee_map, op_project_map = {}, {}
+        for entry in time_entries:
+            dates.add(entry['date'])
+            employee_name = entry['user']
+            project_name = entry['project']
+
+            if employee_name not in op_employee_map:
+                op_employee_map[employee_name] = employee_map_obj.create({
+                    'import_id': self.id,
+                    'op_employee_name': employee_name,
+                    'employee_id': available_users.get(
+                        employee_name.lower(), False),
+                }).id
+
+            if project_name not in op_project_map:
+                op_project_map[project_name] = project_map_obj.create({
+                    'import_id': self.id,
+                    'op_project_name': project_name,
+                    'project_id': available_projects.get(
+                        project_name.lower(), False),
+                }).id
+
+            time_entry_vals.append((0, 0, {
+                'date': entry['date'],
+                'op_employee_map_id': op_employee_map[employee_name],
+                'op_project_map_id': op_project_map[project_name],
+                'work_package': entry['wp'],
+                'hours': entry['hours'],
+                'comment': entry['comment'] or u'/',
             }))
 
-        values = {
-            'state': 'draft',
-            'line_ids': line_vals,
-        }
+        if not time_entry_vals:
+            raise exceptions.ValidationError(
+                _('There are no time entries in the CSV file! '
+                  'Or maybe incorrect delimiter was specified?'))
 
-        # If date_from/date_to are not set, set them from min/max dates in the
-        # CSV files.
-        if not self.date_from:
-            values['date_from'] = min_date
-        if not self.date_to:
-            values['date_to'] = max_date
+        self.write({
+            'state': 'map_data',
+            'time_entry_ids': time_entry_vals,
+            'date_from': self.date_from or dates.min,
+            'date_to': self.date_to or dates.max,
+        })
 
-        self.write(values)
-        return self._get_wizard_action(_('Map Employees'))
+        return self._get_wizard_action(_('Map Data'))
 
     @api.multi
     def action_import_file(self):
         self.ensure_one()
 
-        min_date, max_date = map(
-            fields.Date.from_string, (self.date_from, self.date_to))
-        time_entries = self._parse_csv_file()
-        for line in self.line_ids.filtered('employee_id'):
+        timesheet_ids = []
+        for employee_map in self.op_employee_ids.filtered('employee_id'):
             line_vals = []
             sheet_obj = self.env['hr_timesheet_sheet.sheet'].with_context(
-                user_id=line.employee_id.user_id.id)
-            for date, hours in time_entries[line.name].iteritems():
-                if not min_date <= date <= max_date:
-                    continue
-                if tools.float_is_zero(hours, precision_digits=2):
-                    continue
-                line_vals.append((0, False, {
-                    'account_id': self.account_id.id,
-                    'date': date,
-                    'journal_id': line.employee_id.journal_id.id,
-                    'name': '/',
-                    'unit_amount': hours,
-                }))
+                user_id=employee_map.employee_id.user_id.id)
+            for time_entry in employee_map.time_entry_ids:
+                line_vals.append(
+                    (0, 0, time_entry._prepare_analytic_line_values()))
 
-            line.timesheet_id = sheet_obj.create({
+            timesheet_ids.append(sheet_obj.create({
                 'date_from': self.date_from,
                 'date_to': self.date_to,
-                'employee_id': line.employee_id.id,
+                'employee_id': employee_map.employee_id.id,
                 'timesheet_ids': line_vals,
-            })
-        self.state = 'done'
+            }).id)
 
-        # Delete lines without a timesheet.
-        self.line_ids.filtered(lambda ln: not ln.timesheet_id).unlink()
+        return {
+            'name': _('Created timesheets'),
+            'context': self.env.context,
+            'view_mode': 'tree,form',
+            'res_model': 'hr_timesheet_sheet.sheet',
+            'type': 'ir.actions.act_window',
+            'res_ids': timesheet_ids,
+        }
 
-        return self._get_wizard_action(
-            _('Import Finished'),
-            view_xml_id='hr_timesheet_openproject.import_wizard_finished')
 
+class OPTimeEntry(models.TransientModel):
+    _name = 'op.time.entry'
+    _inherit = 'op.import.related'
 
-class OPTimesheetLine(models.TransientModel):
-    _name = 'op.timesheet.line'
-
-    name = fields.Char(string='Employee Name', readonly=True)
-    import_id = fields.Many2one(
-        comodel_name='op.timesheet', ondelete='cascade')
-    employee_id = fields.Many2one(
-        comodel_name='hr.employee', string='Employee')
-    total_hours = fields.Float(
-        string='Hours', readonly=True, digits=(16, 2),
-        help='Hours worked in the period of the timesheet')
-    timesheet_id = fields.Many2one(
-        comodel_name='hr_timesheet_sheet.sheet', string='Timesheet',
+    date = fields.Date(
+        help='Date when the work took place.',
+        required=True,
+    )
+    op_employee_map_id = fields.Many2one(
+        comodel_name='op.employee.map',
+        string='Employee',
+        ondelete='cascade',
+        required=True,
         readonly=True,
+    )
+    op_project_map_id = fields.Many2one(
+        comodel_name='op.project.map',
+        string='Project',
+        ondelete='cascade',
+        required=True,
+        readonly=True,
+    )
+    work_package = fields.Integer(
+        string='Work Package',
+        default=0,
+        help='Work package number',
+    )
+    hours = fields.Float(
+        readonly=True,
+        digits=(16, 2),
+        help='Time spent.',
+    )
+    comment = fields.Char(
+        default='/',
+        required=True,
+        help='A short description on where the time was spent on.',
+    )
+    project_id = fields.Many2one(
+        related='op_project_map_id.project_id',
+        string='Project',
+        readonly=True,
+    )
+
+    @api.multi
+    def _prepare_analytic_line_values(self):
+        self.ensure_one()
+        return {
+            'date': self.date,
+            'name': self.comment,
+            'unit_amount': self.hours,
+            'project_id': self.project_id.id,
+        }
+
+
+class OPEmployeeMap(models.TransientModel):
+    _name = 'op.employee.map'
+    _inherit = 'op.import.related'
+    _order = 'op_employee_name'
+
+    op_employee_name = fields.Char(
+        'OpenProject Employee Name',
+        readonly=True,
+        required=True,
+    )
+    employee_id = fields.Many2one(
+        comodel_name='hr.employee',
+        string='Employee',
+    )
+    time_entry_ids = fields.One2many(
+        comodel_name='op.time.entry',
+        inverse_name='op_employee_map_id',
+        string='Time Entries',
+    )
+
+
+class OPProjectMap(models.TransientModel):
+    _name = 'op.project.map'
+    _inherit = 'op.import.related'
+    _order = 'op_project_name'
+
+    op_project_name = fields.Char(
+        'OpenProject Project Name',
+        readonly=True,
+        required=True,
+    )
+    project_id = fields.Many2one(
+        comodel_name='project.project',
+        string='Project',
     )
