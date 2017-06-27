@@ -15,7 +15,7 @@ class PaymentAcquirer(models.Model):
     @api.multi
     @api.constrains('provider', 'paysera_show_quality_sign',
                     'website_published', 'environment')
-    def _check_(self):
+    def _check_paysera_show_quality_sign(self):
         count = self.search_count([
             ('environment', '=', 'prod'),
             ('paysera_show_quality_sign', '=', True),
