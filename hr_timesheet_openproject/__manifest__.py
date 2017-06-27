@@ -8,7 +8,7 @@
     'category': 'Human Resources',
     'website': 'https://github.com/naglis/',
     'license': 'AGPL-3',
-    'summary': 'OpenProject time entries CSV import.',
+    'summary': 'Import timesheets from OpenProject',
     'depends': [
         'hr_timesheet_sheet',
     ],
