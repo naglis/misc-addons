@@ -12,7 +12,7 @@
                         <group>
                             <field name="state" invisible="1"/>
                             <field name="source" invisible="1"/>
-                            <field name="csv_file" attrs="{'invisible': [('source', '!=', 'from_file')], 'required': [('state', '=', 'new'), ('source', '=', 'from_file')]}"/>
+                            <field name="csv_file" attrs="{'invisible': [('source', '!=', 'from_file')], 'required': [('state', '=', 'new'), ('source', '=', 'from_file')], 'readonly': [('state', '!=', 'new')]}"/>
                         </group>
                         <group string="Timesheet period">
                             <field name="date_from" attrs="{'required': [('state', '=', 'map_data')]}"/>

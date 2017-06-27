@@ -39,9 +39,9 @@ ENTRY3.update({
     'date': DATE3,
 })
 CSV1 = build_csv([ENTRY1])
-CSV2 = build_csv([ENTRY1, ENTRY2])
-CSV3 = build_csv([])
-CSV4 = build_csv([ENTRY1, ENTRY3])
+CSV12 = build_csv([ENTRY1, ENTRY2])
+CSV13 = build_csv([ENTRY1, ENTRY3])
+CSV123 = build_csv([ENTRY1, ENTRY2, ENTRY3])
 
 
 class TestTimesheetImport(tests.common.TransactionCase):
@@ -78,7 +78,7 @@ class TestTimesheetImport(tests.common.TransactionCase):
         return self.model.create(values)
 
     def test_parse_csv_file_empty_CSV3_raises_ValidationError(self):
-        wizard = self.create_wizard(CSV3)
+        wizard = self.create_wizard(build_csv([]))
         with self.assertRaises(exceptions.ValidationError):
             wizard.action_upload_file()
 
@@ -87,13 +87,13 @@ class TestTimesheetImport(tests.common.TransactionCase):
         with self.assertRaises(exceptions.ValidationError):
             wizard.date_to = '2000-01-01'
 
-    def test_upload_file_CSV1_correct_date_from_date_to_values_are_set(self):
-        wizard = self.create_wizard(CSV2)
+    def test_upload_file_correct_date_from_date_to_values_are_set(self):
+        wizard = self.create_wizard(CSV12)
         wizard.action_upload_file()
         self.assertEqual(wizard.date_from, DATE1)
         self.assertEqual(wizard.date_to, DATE2)
 
-    def test_upload_file_CSV1_creates_one_line_with_correct_data(self):
+    def test_upload_file_one_entry_creates_one_line_with_correct_data(self):
         wizard = self.create_wizard(CSV1)
         wizard.action_upload_file()
         lines = wizard.time_entry_ids
@@ -108,15 +108,15 @@ class TestTimesheetImport(tests.common.TransactionCase):
         )
         self.assertEqual(line.comment, COMMENT1)
 
-    def test_upload_file_CSV1_employee_with_exact_name_is_found(self):
+    def test_upload_file_employee_with_exact_name_is_found(self):
         wizard = self.create_wizard(CSV1)
         wizard.action_upload_file()
         lines = wizard.time_entry_ids.filtered(
             lambda e: e.op_employee_map_id.employee_id == self.employee1)
         self.assertLen(lines, 1)
 
-    def test_import_file_CSV4_timesheet_with_correct_data_is_created(self):
-        wizard = self.create_wizard(CSV4)
+    def test_import_file_timesheet_with_correct_data_is_created(self):
+        wizard = self.create_wizard(CSV13)
         wizard.action_upload_file()
         action = wizard.action_import_file()
         sheets = self.env['hr_timesheet_sheet.sheet'].browse(
@@ -127,7 +127,18 @@ class TestTimesheetImport(tests.common.TransactionCase):
         time_entries = sheet.timesheet_ids.sorted(lambda e: e.date)
         self.assertLen(
             time_entries, 2, 'Incorrect number of time entries created')
-        self.assertEqual(time_entries[0].date, DATE1)
-        self.assertEqual(time_entries[0].unit_amount, HOURS1)
-        self.assertEqual(time_entries[1].date, DATE3)
-        self.assertEqual(time_entries[1].unit_amount, HOURS3)
+        entry_1, entry_2 = time_entries
+        self.assertEqual(entry_1.date, DATE1)
+        self.assertEqual(entry_1.unit_amount, HOURS1)
+        self.assertEqual(entry_2.date, DATE3)
+        self.assertEqual(entry_2.unit_amount, HOURS3)
+
+    def test_import_file_time_entries_are_filtered_on_period(self):
+        wizard = self.create_wizard(CSV123, date_from=DATE2, date_to=DATE3)
+        wizard.action_upload_file()
+        action = wizard.action_import_file()
+        sheets = self.env['hr_timesheet_sheet.sheet'].browse(
+            action.get('res_ids', []))
+        self.assertLen(sheets, 1, 'Incorrect number of timesheets created')
+        self.assertEqual(
+            sorted(sheets.mapped('timesheet_ids.date')), [DATE3])

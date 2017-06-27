@@ -23,6 +23,25 @@ DELIMITERS = [
     ('\t', 'Tab'),
 ]
 
+date_from_string = fields.Date.from_string
+
+
+def make_time_entry_period_filter(date_from=None, date_to=None):
+
+    if date_from:
+        date_from = date_from_string(date_from)
+    if date_to:
+        date_to = date_from_string(date_to)
+
+    def filter_func(time_entry):
+        if date_from and date_from_string(time_entry.date) < date_from:
+            return False
+        if date_to and date_from_string(time_entry.date) > date_to:
+            return False
+        return True
+
+    return filter_func
+
 
 class OPImportRelated(models.AbstractModel):
     _name = 'op.import.related'
@@ -101,7 +120,11 @@ class OPImport(models.TransientModel):
     @api.constrains('date_from', 'date_to')
     def _check_period(self):
         for rec in self:
-            if rec.date_from and rec.date_to and rec.date_to < rec.date_from:
+            if not (rec.date_from and rec.date_to):
+                continue
+            date_from, date_to = map(
+                date_from_string, (rec.date_from, rec.date_to))
+            if date_from > date_to:
                 raise exceptions.ValidationError(
                     _('Period start date can\'t be later than the end date!'))
 
@@ -195,13 +218,17 @@ class OPImport(models.TransientModel):
     @api.multi
     def action_import_file(self):
         self.ensure_one()
-
+        period_filter = make_time_entry_period_filter(
+            date_from=self.date_from,
+            date_to=self.date_to,
+        )
         timesheet_ids = []
         for employee_map in self.op_employee_ids.filtered('employee_id'):
             line_vals = []
             sheet_obj = self.env['hr_timesheet_sheet.sheet'].with_context(
                 user_id=employee_map.employee_id.user_id.id)
-            for time_entry in employee_map.time_entry_ids:
+            for time_entry in employee_map.time_entry_ids.filtered(
+                    period_filter):
                 line_vals.append(
                     (0, 0, time_entry._prepare_analytic_line_values()))
 
