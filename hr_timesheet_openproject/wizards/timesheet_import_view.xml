@@ -1,109 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<openerp>
-    <data>
+<odoo>
 
-        <record id="import_wizard" model="ir.ui.view">
-            <field name="name">OpenProject Timesheet CSV Import</field>
-            <field name="model">op.timesheet</field>
-            <field name="type">form</field>
-            <field name="arch" type="xml">
-                <form string="OpenProject Timesheet CSV Import">
+<record id="import_wizard" model="ir.ui.view">
+    <field name="name">OpenProject Timesheet CSV Import</field>
+    <field name="model">op.import</field>
+    <field name="type">form</field>
+    <field name="arch" type="xml">
+        <form string="OpenProject Timesheet CSV Import">
+            <group>
+                <group>
                     <field name="state" invisible="1"/>
+                    <field name="source" invisible="1"/>
+                    <field name="csv_file" attrs="{'invisible': [('source', '!=', 'from_file')], 'required': [('state', '=', 'new'), ('source', '=', 'from_file')], 'readonly': [('state', '!=', 'new')]}"/>
+                </group>
+                <group string="Timesheet period">
+                    <field name="date_from" attrs="{'required': [('state', '=', 'map_data')]}"/>
+                    <field name="date_to" attrs="{'required': [('state', '=', 'map_data')]}"/>
+                </group>
+            </group>
+            <notebook>
+                <page states="new" string="Advanced">
                     <group>
-                        <label states="new" colspan="4" nolabel="1" string="This wizard will help you to import OpenProject timesheets to Odoo using CSV files."/>
-                        <label states="done" colspan="4" nolabel="1" string="The import has finished."/>
-                    </group>
-                    <group>
-                        <group>
-                            <field name="company_id" attrs="{'readonly': [('state', '!=', 'new')]}"/>
-                            <field name="account_id" attrs="{'readonly':
-                                [('state', '!=', 'new')]}"
-                                domain="[('company_id', '=', company_id), ('type', 'in', ('normal', 'contract'))]"/>
-                        </group>
-                        <group>
-                            <field name="csv_file" attrs="{'invisible': [('state', '!=', 'new')]}"/>
-                            <field name="encoding" attrs="{'invisible': [('state', '!=', 'new')]}"/>
-                            <field name="delimiter" attrs="{'invisible': [('state', '!=', 'new')]}"/>
-                            <field name="ignore_totals" attrs="{'invisible': [('state', '!=', 'new')]}"/>
-                            <field name="date_from" attrs="{'invisible': [('state', 'not in', ('draft', 'done'))], 'readonly': [('state', '=', 'done')], 'required': [('state', '=', 'draft')]}"/>
-                            <field name="date_to" attrs="{'invisible': [('state', 'not in', ('draft', 'done'))], 'readonly': [('state', '=', 'done')], 'required': [('state', '=', 'draft')]}"/>
+                        <group states="new" string="CSV file">
+                            <field name="skip_first"/>
+                            <field name="encoding"/>
+                            <field name="delimiter"/>
                         </group>
                     </group>
-                    <group>
-                        <group states="draft,done">
-                            <field name="line_ids" nolabel="1">
-                                <tree string="Employee Mapping" editable="top" create="false">
-                                    <field name="name"/>
-                                    <field name="employee_id"/>
-                                    <field name="total_hours" sum="Total" widget="float_time"/>
-                                </tree>
-                            </field>
-                        </group>
-                    </group>
-                    <footer>
-                        <group states="new">
-                            <button name="action_upload_file" string="Upload
-                                CSV" type="object" default_focus="1" class="oe_highlight"/>
-                            or
-                            <button string="Close" class="oe_link" special="cancel"/>
-                        </group>
-                        <group states="draft">
-                            <button name="action_import_file" string="Import"
-                                default_focus="1" type="object"
-                                class="oe_highlight"/>
-                            or
-                            <button string="Close" class="oe_link"
-                                special="cancel"/>
-                        </group>
-                        <group states="done">
-                            <button string="Close" class="oe_highlight" special="cancel"/>
-                        </group>
-                    </footer>
-                </form>
-            </field>
-        </record>
+                </page>
+                <page states="map_data" string="Employees">
+                    <field name="op_employee_ids" nolabel="1">
+                        <tree editable="top" create="false">
+                            <field name="op_employee_name"/>
+                            <field name="employee_id"/>
+                        </tree>
+                    </field>
+                </page>
+                <page states="map_data" string="Projects">
+                    <field name="op_project_ids" nolabel="1">
+                        <tree editable="top" create="false">
+                            <field name="op_project_name"/>
+                            <field name="project_id" required="1" domain="[('allow_timesheets', '=', True)]"/>
+                        </tree>
+                    </field>
+                </page>
+            </notebook>
+            <footer>
+                <button states="new" name="action_upload_file" string="Upload CSV" type="object" default_focus="1" class="oe_highlight"/>
+                <button states="map_data" name="action_import_file" string="Import" default_focus="1" type="object" class="oe_highlight"/>
+                    or
+                <button string="Close" class="oe_link" special="cancel"/>
+            </footer>
+        </form>
+    </field>
+</record>
 
-        <record id="import_wizard_finished" model="ir.ui.view">
-            <field name="model">op.timesheet</field>
-            <field name="mode">primary</field>
-            <field name="inherit_id" ref="hr_timesheet_openproject.import_wizard"/>
-            <field name="arch" type="xml">
-                <field name="employee_id" position="attributes">
-                    <attribute name="readonly">1</attribute>
-                </field>
-                <xpath expr="//field[@name='line_ids']//field[@name='name']" position="replace"/>
-                <xpath expr="//field[@name='line_ids']//field[@name='total_hours']" position="replace"/>
-                <field name="employee_id" position="after">
-                    <field name="timesheet_id"/>
-                </field>
-                <field name="timesheet_id" position="attributes">
-                    <attribute name="invisible">0</attribute>
-                </field>
-                <xpath expr="//field[@name='line_ids']/tree" position="attributes">
-                    <attribute name="delete">false</attribute>
-                </xpath>
-            </field>
-        </record>
+<record id="action_hr_timesheet_import_openproject" model="ir.actions.act_window">
+    <field name="name">OpenProject Timesheet Import</field>
+    <field name="res_model">op.import</field>
+    <field name="type">ir.actions.act_window</field>
+    <field name="view_type">form</field>
+    <field name="view_mode">tree,form</field>
+    <field name="view_id" ref="import_wizard"/>
+    <field name="context">{}</field>
+    <field name="target">new</field>
+</record>
 
-        <record id="action_hr_timesheet_import_openproject" model="ir.actions.act_window">
-            <field name="name">OpenProject Timesheet Import</field>
-            <field name="res_model">op.timesheet</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
-            <field name="view_id" ref="import_wizard"/>
-            <field name="context">{}</field>
-            <field name="target">new</field>
-        </record>
+<menuitem
+    name="OpenProject Timesheet Import"
+    action="action_hr_timesheet_import_openproject"
+    id="menu_hr_timesheet_import_openproject"
+    parent="hr_timesheet_sheet.menu_hr_to_approve"
+    groups="hr_timesheet.group_hr_timesheet_user"
+    sequence="110"
+    />
 
-        <menuitem
-            name="OpenProject Timesheet Import"
-            action="action_hr_timesheet_import_openproject"
-            id="menu_hr_timesheet_import_openproject"
-            parent="hr_attendance.menu_hr_time_tracking"
-            groups="base.group_hr_manager"
-            sequence="110"
-            />
-
-    </data>
-</openerp>
+</odoo>

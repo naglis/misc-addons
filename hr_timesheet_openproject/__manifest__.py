@@ -1,20 +1,20 @@
 # -*- coding: utf-8 -*-
-# This file is part of Odoo. The COPYRIGHT file at the top level of
-# this module contains the full copyright notices and license terms.
+# Copyright 2017 Naglis Jonaitis
+# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 {
     'name': 'OpenProject Timesheet Import',
-    'version': '8.0.0.2.0',
+    'version': '10.0.0.2.0',
     'author': 'Naglis Jonaitis',
     'category': 'Human Resources',
     'website': 'https://github.com/naglis/',
-    'licence': 'AGPL-3',
-    'summary': 'OpenProject time entries CSV import.',
+    'license': 'AGPL-3',
+    'summary': 'Import timesheets from OpenProject',
     'depends': [
         'hr_timesheet_sheet',
     ],
     'data': [
         'wizards/timesheet_import_view.xml',
     ],
-    'installable': False,
+    'installable': True,
     'application': False,
 }
