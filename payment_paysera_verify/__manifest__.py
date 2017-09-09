@@ -3,7 +3,7 @@
     'name': 'Paysera Verification',
     'version': '10.0.1.0.0',
     'author': 'Naglis Jonaitis',
-    'category': 'Invoicing & Payments',
+    'category': 'Extra Tools',
     'license': 'AGPL-3',
     'summary': 'Verify ownership of your site with Paysera.',
     'depends': [

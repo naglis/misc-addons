@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Paysera Payment Acquirer',
-    'category': 'Hidden',
+    'category': 'eCommerce',
     'license': 'AGPL-3',
     'summary': 'Support for Paysera payments',
     'version': '10.0.2.0.0',

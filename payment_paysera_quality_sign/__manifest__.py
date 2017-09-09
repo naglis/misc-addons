@@ -3,7 +3,7 @@
     'name': 'Paysera Quality Sign',
     'version': '10.0.1.0.0',
     'author': 'Naglis Jonaitis',
-    'category': 'Invoicing & Payments',
+    'category': 'Extra Tools',
     'license': 'AGPL-3',
     'summary': 'Display Paysera Quality Sign on your website',
     'depends': [
