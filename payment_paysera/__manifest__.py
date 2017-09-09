@@ -19,6 +19,9 @@
         'views/website_templates.xml',
         'data/payment_acquirer.xml',
     ],
+    'images': [
+        'static/description/main_screenshot.jpg',
+    ],
     'installable': True,
     'application': False,
 }
