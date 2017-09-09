@@ -1,6 +1,6 @@
-===============
-payment_paysera
-===============
+========================
+Paysera Payment Acquirer
+========================
 
 A Paysera_ payment acquirer implementation for Odoo.
 
