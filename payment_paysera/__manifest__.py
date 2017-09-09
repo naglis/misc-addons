@@ -12,7 +12,7 @@
     'external_dependencies': {
         'python': [
             'cryptography',
-        ]
+        ],
     },
     'data': [
         'views/payment_acquirer.xml',

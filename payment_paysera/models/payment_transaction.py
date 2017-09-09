@@ -43,7 +43,7 @@ class PaymentTransaction(models.Model):
             raise ValidationError(msg)
 
         txs = self.env['payment.transaction'].search([
-            ('reference', '=', reference)
+            ('reference', '=', reference),
         ])
         if not txs or len(txs) > 1:
             msg = u'Paysera: received data for reference ID: %s' % reference
@@ -96,7 +96,7 @@ class PaymentTransaction(models.Model):
             invalid_parameters.append((
                 'projectid',
                 params.get('projectid'),
-                self.acquirer_id.paysera_project_id
+                self.acquirer_id.paysera_project_id,
             ))
         return invalid_parameters
 
