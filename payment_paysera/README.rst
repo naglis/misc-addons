@@ -2,7 +2,7 @@
 payment_paysera
 ===============
 
-A Paysera payment acquirer implementation for Odoo.
+A Paysera_ payment acquirer implementation for Odoo.
 
 Requirements
 ~~~~~~~~~~~~
@@ -31,4 +31,5 @@ v1.0.1
 - Initial working version.
 - Private/public key signature verification.
 
+.. _Paysera: https://www.paysera.com
 .. _cryptography: https://pypi.python.org/pypi/cryptography
