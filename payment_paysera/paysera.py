@@ -106,7 +106,7 @@ def verify_rsa_signature(signature, data):
     :param data: data of which the signature is verified
     :rtype: bool
     '''
-    signature = base64.b64decode(_maybe_encode(signature), altchars='-_')
+    signature = base64.urlsafe_b64decode(_maybe_encode(signature))
     valid = True
     try:
         PAYSERA_PUBLIC_KEY.verify(
@@ -125,7 +125,7 @@ def get_form_values(value_dict, sign_password):
     encoded_params = _encode_dict_vals(value_dict)
 
     # Concatenate the parameters into a single line and b64encode it.
-    data = base64.b64encode(urllib.urlencode(encoded_params), altchars='-_')
+    data = base64.urlsafe_b64encode(urllib.urlencode(encoded_params))
     signature = md5_sign(data, sign_password)
     return {
         'data': data,
