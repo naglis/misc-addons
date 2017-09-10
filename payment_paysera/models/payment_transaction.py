@@ -20,7 +20,7 @@ def decode_form_data(encoded_data):
     :type encoded_data: str
     :rtype: dict
     '''
-    decoded = base64.b64decode(encoded_data.encode('ascii'), altchars='-_')
+    decoded = base64.urlsafe_b64decode(encoded_data.encode('ascii'))
     parsed = urlparse.parse_qsl(decoded, keep_blank_values=True)
     return {k: v.decode('utf-8') for k, v in parsed}
 
