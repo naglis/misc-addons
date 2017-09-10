@@ -4,7 +4,7 @@
     'category': 'eCommerce',
     'license': 'AGPL-3',
     'summary': 'Support for Paysera payments',
-    'version': '10.0.2.0.0',
+    'version': '10.0.2.0.1',
     'author': 'Naglis Jonaitis',
     'depends': [
         'payment',
