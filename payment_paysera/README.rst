@@ -12,6 +12,11 @@ Requirements
 Changelog
 ~~~~~~~~~
 
+v2.0.2 (2017-09-16)
+-------------------
+- Small refactorings
+- Lithuanian translation update
+
 v2.0.1 (2017-09-10)
 -------------------
 - Small refactorings
