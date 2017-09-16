@@ -9,7 +9,7 @@
         <xpath expr='//group[@name="acquirer"]' position="after">
             <group name="paysera" string="Paysera" attrs="{'invisible': [('provider', '!=', 'paysera')]}">
                 <field name="paysera_project_id"/>
-                <field name="paysera_sign_password"/>
+                <field name="paysera_sign_password" password="True"/>
             </group>
         </xpath>
     </field>
