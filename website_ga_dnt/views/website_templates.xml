@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<template id="layout" inherit_id="website.layout">
+    <script id="tracking_code" position="attributes">
+        <attribute name="t-if">website and website.google_analytics_key and not editable and not request.httprequest.headers.get('DNT', '').strip() == '1'</attribute>
+    </script>
+</template>
+
+</odoo>
