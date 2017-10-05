@@ -15,6 +15,6 @@
     'data': [
         'views/website_templates.xml',
     ],
-    'installable': True,
+    'installable': False,
     'application': False,
 }

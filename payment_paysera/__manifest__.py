@@ -22,6 +22,6 @@
     'images': [
         'static/description/main_screenshot.jpg',
     ],
-    'installable': True,
+    'installable': False,
     'application': False,
 }
