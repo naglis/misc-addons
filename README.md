@@ -8,3 +8,7 @@ This repository contains various Odoo addons written by me.
 
 Please use at your own risk. Support is not guaranteed.
 
+**No longer supported** - since the [release of Odoo
+v11.0](https://www.odoo.com/page/odoo-11-release-notes), modules for Odoo v8.0
+are no longer supported.
+
