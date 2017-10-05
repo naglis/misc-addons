@@ -38,9 +38,9 @@ class PaymentAcquirer(models.Model):
         string='Sign password',
         size=255,
         required_if_provider='paysera',
-        help='Project password, which can be found by logging in to '
-             'Paysera.com system, selecting “Service management” and choosing '
-             '“General settings” on a specific project.',
+        help=u'Project password, which can be found by logging in to '
+             u'Paysera.com system, selecting “Service management” and '
+             u'choosing “General settings” on a specific project.',
         groups='base.group_user',
     )
 
