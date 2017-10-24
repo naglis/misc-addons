@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<record id="openproject_users_action_from_backend" model="ir.actions.act_window">
+    <field name="name">OpenProject Users</field>
+    <field name="res_model">openproject.res.users</field>
+    <field name="src_model">openproject.backend</field>
+    <field name="view_mode">tree,form</field>
+    <field name="context">{
+        'default_backend_id': active_id,
+    }</field>
+    <field name="domain">[('backend_id', '=', active_id)]</field>
+</record>
+
+<record id="openproject_projects_action_from_backend" model="ir.actions.act_window">
+    <field name="name">OpenProject Projects</field>
+    <field name="res_model">openproject.project.project</field>
+    <field name="src_model">openproject.backend</field>
+    <field name="view_mode">tree,form</field>
+    <field name="context">{
+        'default_backend_id': active_id,
+    }</field>
+    <field name="domain">[('backend_id', '=', active_id)]</field>
+</record>
+
+<record id="openproject_tasks_action_from_backend" model="ir.actions.act_window">
+    <field name="name">OpenProject Work Packages</field>
+    <field name="res_model">openproject.project.task</field>
+    <field name="src_model">openproject.backend</field>
+    <field name="view_mode">tree,form</field>
+    <field name="context">{
+        'default_backend_id': active_id,
+    }</field>
+    <field name="domain">[('backend_id', '=', active_id)]</field>
+</record>
+
+<record id="openproject_time_entries_action_from_backend" model="ir.actions.act_window">
+    <field name="name">OpenProject Time Entries</field>
+    <field name="res_model">openproject.account.analytic.line</field>
+    <field name="src_model">openproject.backend</field>
+    <field name="view_mode">tree,form</field>
+    <field name="context">{
+        'default_backend_id': active_id,
+    }</field>
+    <field name="domain">[('backend_id', '=', active_id)]</field>
+</record>
+
+<record id="view_openproject_backend_form" model="ir.ui.view">
+    <field name="name">openproject.backend.form</field>
+    <field name="model">openproject.backend</field>
+    <field name="arch" type="xml">
+        <form string="OpenProject Backend">
+            <sheet>
+                <div class="oe_button_box" name="button_box">
+                    <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                        <field name="active" widget="boolean_button" options="{'terminology': 'archive'}"/>
+                    </button>
+                    <button name="toggle_debug" type="object" class="oe_stat_button" icon="fa-terminal" groups="base.group_no_one">
+                        <field name="debug" widget="boolean_button" options="{'terminology': {
+                            'string_true': 'Debug Mode',
+                            'hover_true': 'Switch to quiet mode',
+                            'string_false': 'Quiet Mode',
+                            'hover_false': 'Switch to debugging mode'
+                        }}"/>
+                    </button>
+                    <button name="%(openproject_users_action_from_backend)d"
+                        type="action"
+                        class="oe_stat_button"
+                        icon="fa-users">
+                        <field string="Users" name="user_count" widget="statinfo"/>
+                    </button>
+                    <button name="%(openproject_projects_action_from_backend)d"
+                        type="action"
+                        class="oe_stat_button"
+                        icon="fa-folder">
+                        <field string="Projects" name="project_count" widget="statinfo"/>
+                    </button>
+                    <button name="%(openproject_tasks_action_from_backend)d"
+                        type="action"
+                        class="oe_stat_button"
+                        icon="fa-tasks">
+                        <field string="Work Packages" name="task_count" widget="statinfo"/>
+                    </button>
+                    <button name="%(openproject_time_entries_action_from_backend)d"
+                        type="action"
+                        class="oe_stat_button"
+                        icon="fa-clock-o">
+                        <field string="Time Entries" name="time_entry_count" widget="statinfo"/>
+                    </button>
+                </div>
+
+                <label for="name" class="oe_edit_only"/>
+                <h1>
+                    <field name="name" class="oe_inline"/>
+                </h1>
+
+                <group>
+                    <group name="general">
+                        <field name="company_id"/>
+                        <field name="version"/>
+                        <field name="instance_url" widget="url"/>
+                    </group>
+                    <group name="advanced" groups="base.group_no_one">
+                        <field name="api_key" password="True"/>
+                        <field name="timeout"/>
+                        <field name="page_size"/>
+                    </group>
+                </group>
+
+            </sheet>
+        </form>
+    </field>
+</record>
+
+<record id="view_openproject_backend_tree" model="ir.ui.view">
+    <field name="name">openproject.backend.tree</field>
+    <field name="model">openproject.backend</field>
+    <field name="arch" type="xml">
+        <tree>
+            <field name="name"/>
+            <field name="active"/>
+            <field name="instance_url"/>
+        </tree>
+    </field>
+</record>
+
+<record id="action_openproject_backends" model="ir.actions.act_window">
+    <field name="name">Backends</field>
+    <field name="res_model">openproject.backend</field>
+    <field name="view_mode">tree,form</field>
+    <field name="help" type="html">
+        <p class="oe_view_nocontent_create">
+            Click here to add a new OpenProject backend.
+        </p>
+    </field>
+</record>
+
+<menuitem id="menu_openproject"
+    name="OpenProject"
+    parent="connector.menu_connector_root"
+/>
+<menuitem id="menu_backends"
+    name="Backends"
+    action="action_openproject_backends"
+    parent="menu_openproject"
+/>
+
+</odoo>

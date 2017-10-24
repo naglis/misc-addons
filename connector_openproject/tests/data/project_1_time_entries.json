@@ -1,0 +1,62 @@
+
+{
+  "_type": "Collection",
+  "total": 39,
+  "count": 1,
+  "pageSize": 1,
+  "offset": 1,
+  "_embedded": {
+    "elements": [
+        {
+            "_type": "TimeEntry",
+            "id": 1,
+            "comment": "Some text explaing why the time entry was created",
+            "spentOn": "2015-03-20",
+            "hours": "PT3H14M",
+            "createdAt": "2015-03-20T12:56:56Z",
+            "updatedAt": "2015-03-20T12:56:56Z",
+            "customField12": 5,
+            "_embedded": {
+            },
+            "_links": {
+                "self": {
+                    "href": "/api/v3/time_entries/1"
+                },
+                "project": {
+                    "href": "/api/v3/projects/6",
+                    "title": "A project"
+                },
+                "workPackage": {
+                    "href": "/api/v3/work_packages/1528",
+                    "title": "Develop API"
+                },
+                "user": {
+                    "href": "/api/v3/users/1",
+                    "title": "John Sheppard"
+                },
+                "activity": {
+                    "href": "/api/v3/time_entries/activities/18",
+                    "title": "Some time entry activity"
+                },
+                "customField4": {
+                    "href": "/api/v3/users/5",
+                    "title": "Some other user"
+                }
+            }
+        }
+    ]
+  },
+  "_links": {
+    "self": {
+      "href": "/api/v3/time_entries?offset=1&pageSize=1"
+    },
+    "jumpTo": {
+      "href": "/api/v3/time_entries?offset=%7Boffset%7D&pageSize=1",
+      "templated": true
+    },
+    "changeSize": {
+      "href": "/api/v3/time_entries?offset=1&pageSize=%7Bsize%7D",
+      "templated": true
+    }
+  }
+}

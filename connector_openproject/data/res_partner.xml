@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<record id="res_partner_category_1" model="res.partner.category">
+    <field name="name">OpenProject User</field>
+    <field name="color" eval="6"/>
+</record>
+
+</odoo>
