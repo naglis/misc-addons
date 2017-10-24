@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<record id="user_map_wizard" model="ir.ui.view">
+    <field name="name">OpenProject Initial User Mapping</field>
+    <field name="model">op.user.map</field>
+    <field name="type">form</field>
+    <field name="arch" type="xml">
+        <form string="">
+
+            <field name="state" invisible="1"/>
+            <group states="new" name="help">
+                <p class="oe_gray">
+                    Use this wizard to map existing Odoo users with OpenProject
+                    users prior to running OpenProject synchronization.
+
+                    Please note that this operation requires an OpenProject
+                    instance's administrator's API key in order to get all
+                    the available OpenProject users.
+                </p>
+            </group>
+            <group states="map" name="map">
+                <field name="map_line_ids" nolabel="1">
+                    <tree editable="top" delete="0" create="0">
+                        <field name="openproject_id"/>
+                        <field name="name"/>
+                        <field name="user_id" options="{'no_create': True}"/>
+                    </tree>
+                </field>
+            </group>
+            <footer>
+                <button states="new" name="action_get_users" string="Next" type="object" default_focus="1" class="oe_highlight"/>
+                <button states="map" name="action_create_bindings" string="Finish" default_focus="1" type="object" class="oe_highlight"/>
+                    or
+                <button string="Close" class="oe_link" special="cancel"/>
+            </footer>
+        </form>
+    </field>
+</record>
+
+<act_window name="Initial User Mapping"
+    res_model="op.user.map"
+    src_model="openproject.backend"
+    view_mode="form"
+    target="new"
+    id="action_user_map_wizard"/>
+
+</odoo>
