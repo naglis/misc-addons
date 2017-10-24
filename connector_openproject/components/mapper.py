@@ -110,13 +110,14 @@ class BaseOpenProjectMapper(AbstractComponent):
             'backend_id': self.backend_record.id,
         }
 
-    def _map_op_link(self, record, link, raise_missing=True, raise_null=True):
+    def _map_op_link(self, record, link, raise_missing=True, raise_null=True,
+                     unwrap=True):
         links = record.get('_links', {})
         external_id = parse_openproject_link_relation(
             links.get(link.key, {}), link.endpoint)
         binder = self.component(usage='binder', model_name=link.model)
         if external_id:
-            binding = binder.to_internal(external_id, unwrap=True)
+            binding = binder.to_internal(external_id, unwrap=unwrap)
             if not binding and raise_missing:
                 raise ValueError(
                     'Missing binding for OpenProject link "%s" with ID: %s' % (
@@ -126,7 +127,7 @@ class BaseOpenProjectMapper(AbstractComponent):
         elif raise_null:
             raise ValueError('Missing OpenProject link "%s" ID' % link.key)
         else:
-            return self.env[link.model]
+            return binder.model.odoo_id if unwrap else binder.model
 
 
 class OpenProjectAgeMapper(AbstractComponent):
@@ -232,12 +233,19 @@ class OpenProjectTaskMapper(Component):
     ]
     direct = [
         ('subject', 'name'),
-        (openproject_text('description'), 'description'),
         (openproject_duration('estimatedTime'), 'planned_hours'),
         (openproject_date('startDate'), 'date_start'),
         (openproject_date('dueDate'), 'date_deadline'),
         # TODO(naglis): type -> tag_ids, priority?
     ]
+
+    @mapping
+    def description(self, record):
+        project = self._map_op_link(record, OP_PROJECT_LINK, unwrap=False)
+        return {
+            'description': openproject_text('description')(
+                self, record, 'description'),
+        } if project.sync_wp_description else {}
 
     @mapping
     def links(self, record):

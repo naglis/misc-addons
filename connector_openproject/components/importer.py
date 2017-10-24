@@ -47,7 +47,7 @@ class OpenProjectImporter(Component):
     _usage = 'record.importer'
 
     def _get_extra_context(self):
-        """Returns extra context to be used on create()/write()."""
+        '''Returns extra context to be used on create()/write().'''
         return {}
 
     def import_dependencies(self, record):

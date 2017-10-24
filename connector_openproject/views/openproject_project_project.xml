@@ -10,6 +10,7 @@
             <field name="openproject_id"/>
             <field name="name" string="Name"/>
             <field name="sync_activities"/>
+            <field name="sync_wp_description"/>
             <field name="op_create_date"/>
             <field name="op_write_date"/>
             <field name="last_work_package_update"/>
