@@ -53,6 +53,6 @@ class OpenProjectProjectProject(models.Model):
     )
     sync_wp_description = fields.Boolean(
         string='Sync Work Package Description',
-        default=True,
         help='In unchecked, work package description will not be stored.',
+        default=False,
     )
