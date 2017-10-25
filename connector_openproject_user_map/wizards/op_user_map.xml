@@ -24,7 +24,7 @@
                     <tree editable="top" delete="0" create="0">
                         <field name="openproject_id"/>
                         <field name="name"/>
-                        <field name="user_id" options="{'no_create': True}"/>
+                        <field name="user_id" options="{'no_create': True}" context="{'active_test': False}"/>
                     </tree>
                 </field>
             </group>
