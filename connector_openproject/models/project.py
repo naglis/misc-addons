@@ -4,6 +4,13 @@
 
 from odoo import fields, models
 
+from ..const import (
+    ACTIVITY_SYNC_NONE,
+    ACTIVITY_SYNC_COMMENTS,
+    ACTIVITY_SYNC_UPDATES,
+    ACTIVITY_SYNC_ALL,
+)
+
 
 class OpenProjectProjectProject(models.Model):
     _name = 'openproject.project.project'
@@ -33,15 +40,16 @@ class OpenProjectProjectProject(models.Model):
         help='Date and time of the last time project\'s time entries were '
              'synced with OpenProject',
     )
-    # TODO(naglis): Allow to select to sync only comments or updates.
     sync_activities = fields.Selection(
         string='Sync Activities',
         selection=[
-            ('all', 'Comments and Updates'),
-            ('none', 'Nothing'),
+            (ACTIVITY_SYNC_NONE, 'Nothing'),
+            (ACTIVITY_SYNC_COMMENTS, 'Only Comments'),
+            (ACTIVITY_SYNC_UPDATES, 'Only Status Updates'),
+            (ACTIVITY_SYNC_ALL, 'Comments and Status Updates'),
         ],
         required=True,
-        default='all',
+        default='none',
     )
     sync_wp_description = fields.Boolean(
         string='Sync Work Package Description',

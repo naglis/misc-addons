@@ -11,6 +11,10 @@ import string
 from odoo import fields
 
 from .const import (
+    ACTIVITY_SYNC_NONE,
+    ACTIVITY_SYNC_COMMENTS,
+    ACTIVITY_SYNC_UPDATES,
+    ACTIVITY_SYNC_ALL,
     DEFAULT_PRIORITY,
     IMPORT_DELTA_BUFFER,
     PRIORITY_ACTIVITY,
@@ -89,3 +93,14 @@ def op_filter(name, operator, *values):
             'values': values,
         },
     }
+
+
+def should_skip_activity(activity_type, enabled_for):
+    if enabled_for == ACTIVITY_SYNC_NONE:
+        return True
+    elif enabled_for == ACTIVITY_SYNC_ALL:
+        return False
+    elif enabled_for == ACTIVITY_SYNC_COMMENTS:
+        return not activity_type == 'Activity::Comment'
+    else:
+        return not activity_type == 'Activity'

@@ -16,8 +16,13 @@ from odoo.addons.connector.exception import (
     NetworkRetryableError,
 )
 
-from ..utils import job_func, parse_openproject_link_relation
+from ..utils import (
+    job_func,
+    parse_openproject_link_relation,
+    should_skip_activity,
+)
 from ..const import (
+    ACTIVITY_SYNC_NONE,
     OP_ASSIGNEE_LINK,
     OP_PROJECT_LINK,
     OP_STATUS_LINK,
@@ -71,6 +76,15 @@ class OpenProjectImporter(Component):
     def _after_import(self, binding, record, for_create=False):
         pass
 
+    def _should_skip(self, record):
+        '''
+        Return a non-empty string if the record should not be imported.
+
+        This string is used as the return value for the job
+        (reason for skipping import).
+        '''
+        return False
+
     def _link_to_internal(self, record, link):
         links = record.get('_links', {})
         external_id = parse_openproject_link_relation(
@@ -112,13 +126,6 @@ class OpenProjectImporter(Component):
         else:
             record, external_id = data, data['id']
 
-        lock_name = 'import({}, {}, {}, {})'.format(
-            self.backend_record._name,
-            self.backend_record.id,
-            self.work.model_name,
-            external_id,
-        )
-
         binding = self.binder.to_internal(external_id)
         exists = bool(binding)
 
@@ -128,9 +135,20 @@ class OpenProjectImporter(Component):
                 self.work.model_name, external_id)
             return _('Record is already up-to-date.')
 
+        lock_name = 'import({}, {}, {}, {})'.format(
+            self.backend_record._name,
+            self.backend_record.id,
+            self.work.model_name,
+            external_id,
+        )
         self.advisory_lock_or_retry(lock_name)
 
         self.import_dependencies(record)
+
+        skip_reason = self._should_skip(record)
+        if skip_reason:
+            return skip_reason
+
         values = self.mapper.map_record(record).values(for_create=not exists)
         context = self._get_extra_context()
         if exists:
@@ -252,7 +270,7 @@ class OpenProjectTaskImporter(Component):
 
     def _after_import(self, binding, record, for_create=False):
         project_id_, project = self._link_to_internal(record, OP_PROJECT_LINK)
-        if project.sync_activities == 'all':
+        if not project.sync_activities == ACTIVITY_SYNC_NONE:
             # Import work package activities in bulk (don't split into separate
             # jobs).
             self.component(
@@ -276,6 +294,13 @@ class OpenProjectMailMessageImporter(Component):
     _name = 'openproject.mail.message.importer'
     _inherit = 'base.openproject.importer'
     _apply_on = 'openproject.mail.message'
+
+    def _should_skip(self, record):
+        project_id_, project = self._link_to_internal(record, OP_PROJECT_LINK)
+        enabled_for = project.sync_activities
+        activity_type = record['_type']
+        if should_skip_activity(activity_type, enabled_for):
+            return _(u'Skipping sync for activity type: %s' % activity_type)
 
     def import_dependencies(self, record):
         self._import_link_dependency(record, OP_WORK_PACKAGE_LINK)
