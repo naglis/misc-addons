@@ -8,6 +8,7 @@
         <tree>
             <field name="openproject_id" string="WP ID"/>
             <field name="name" string="Subject"/>
+            <field name="project_id"/>
             <field name="op_create_date"/>
             <field name="op_write_date"/>
         </tree>
