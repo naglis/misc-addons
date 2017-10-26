@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<record id="view_openproject_project_project_tree" model="ir.ui.view">
+    <field name="name">openproject.project.project.tree</field>
+    <field name="model">openproject.project.project</field>
+    <field name="arch" type="xml">
+        <tree editable="top">
+            <field name="op_sync"/>
+            <field name="openproject_id"/>
+            <field name="name" string="Name"/>
+            <field name="sync_activities"/>
+            <field name="sync_wp_description"/>
+            <field name="op_create_date"/>
+            <field name="op_write_date"/>
+            <field name="last_work_package_update"/>
+            <field name="last_time_entry_update"/>
+        </tree>
+    </field>
+</record>
+
+</odoo>

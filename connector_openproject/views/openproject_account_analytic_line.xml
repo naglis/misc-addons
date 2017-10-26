@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<record id="view_openproject_account_analytic_line_tree" model="ir.ui.view">
+    <field name="name">openproject.account.analytic.line.tree</field>
+    <field name="model">openproject.account.analytic.line</field>
+    <field name="arch" type="xml">
+        <tree editable="top">
+            <field name="date"/>
+            <field name="user_id"/>
+            <field name="project_id"/>
+            <field name="task_id"/>
+            <field name="name"/>
+            <field name="unit_amount" widget="float_time"/>
+        </tree>
+    </field>
+</record>
+
+</odoo>
