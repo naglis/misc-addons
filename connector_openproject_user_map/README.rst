@@ -37,4 +37,4 @@ Credits
 Contributors
 ------------
 
-* Author: Naglis Jonaitis <naglis@versada.eu>
+* Author: Naglis Jonaitis <naglis@mailbox.org>
