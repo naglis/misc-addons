@@ -9,5 +9,6 @@ from . import (
     mail_message,
     project,
     project_task,
+    queue_job,
     res_users,
 )
