@@ -32,7 +32,7 @@
         'views/openproject_project_project.xml',
     ],
     'images': [
-        'static/description/main_screenshot.jpg',
+        'static/description/main_screenshot.png',
     ],
     'installable': True,
     'application': True,
