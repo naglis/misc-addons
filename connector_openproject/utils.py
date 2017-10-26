@@ -13,7 +13,6 @@ from odoo import fields
 from .const import (
     ACTIVITY_SYNC_NONE,
     ACTIVITY_SYNC_COMMENTS,
-    ACTIVITY_SYNC_UPDATES,
     ACTIVITY_SYNC_ALL,
     DEFAULT_PRIORITY,
     IMPORT_DELTA_BUFFER,
