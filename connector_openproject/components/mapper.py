@@ -278,7 +278,10 @@ class OpenProjectAccountAnalyticLineMapper(Component):
     ]
     _apply_on = 'openproject.account.analytic.line'
     direct = [
-        (openproject_date('spentOn'), 'date'),
+        (
+            openproject_date('spentOn', raise_err=True, allow_none=False),
+            'date',
+        ),
         (openproject_duration('hours'), 'unit_amount'),
     ]
 
