@@ -86,11 +86,6 @@ Images
 
 * Module icon by `OpenProject Foundation`_.
 
-Contributors
-------------
-
-* Author: Naglis Jonaitis <naglis@mailbox.eu>
-
 .. _OpenProject: https://www.openproject.org/
 .. _Odoo Connector: https://github.com/oca/connector
 .. _OpenProject Foundation: https://www.openproject.org/contact-us/

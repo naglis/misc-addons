@@ -13,11 +13,3 @@ Usage
 =====
 
 TODO: fill
-
-Credits
-=======
-
-Contributors
-------------
-
-* Author: Naglis Jonaitis <naglis@mailbox.org>
