@@ -3,7 +3,7 @@
 # License AGPL-3 or later (https://www.gnu.org/licenses/agpl).
 {
     'name': 'Google Analytics DNT',
-    'version': '10.0.1.0.0',
+    'version': '10.0.1.0.1',
     'author': 'Naglis Jonaitis',
     'category': 'Extra Tools',
     'website': 'https://github.com/naglis',
@@ -14,6 +14,9 @@
     ],
     'data': [
         'views/website_templates.xml',
+    ],
+    'images': [
+        'static/description/main_screenshot.png',
     ],
     'installable': True,
     'application': False,
