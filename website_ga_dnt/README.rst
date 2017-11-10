@@ -14,11 +14,3 @@ Configuration
 =============
 
 No additional configuration is required.
-
-Credits
-=======
-
-Contributors
-------------
-
-* Author: Naglis Jonaitis <naglis@mailbox.org>
