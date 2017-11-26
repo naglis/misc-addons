@@ -3,6 +3,7 @@
 # License AGPL-3 or later (https://www.gnu.org/licenses/agpl).
 
 from . import (
+    test_activity_import,
     test_image_import,
     test_project_import,
     test_time_entry_import,
