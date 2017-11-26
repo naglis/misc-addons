@@ -49,7 +49,7 @@ class OpenProjectProjectProject(models.Model):
             (ACTIVITY_SYNC_ALL, 'Comments and Status Updates'),
         ],
         required=True,
-        default='none',
+        default=ACTIVITY_SYNC_NONE,
     )
     sync_wp_description = fields.Boolean(
         string='Sync Work Package Description',
