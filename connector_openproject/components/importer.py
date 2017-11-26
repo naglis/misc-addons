@@ -296,7 +296,10 @@ class OpenProjectMailMessageImporter(Component):
     _apply_on = 'openproject.mail.message'
 
     def _should_skip(self, record):
-        project_id_, project = self._link_to_internal(record, OP_PROJECT_LINK)
+        wp_id_, wp = self._link_to_internal(record, OP_WORK_PACKAGE_LINK)
+        project = self.env['openproject.project.project'].search([
+            ('odoo_id', '=', wp.project_id.id),
+        ])
         enabled_for = project.sync_activities
         activity_type = record['_type']
         if should_skip_activity(activity_type, enabled_for):
