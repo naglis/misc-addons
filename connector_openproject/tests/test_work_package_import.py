@@ -45,3 +45,20 @@ class TestWorkPackageImport(OpenProjectBackendTestCase):
         self.assertEqual(user.email, 'shep@mail.com')
         self.assertEqual(user.op_create_date, '2014-05-21 08:51:20')
         self.assertEqual(user.op_write_date, '2014-05-21 08:51:20')
+
+
+class TestOpenProjectImageImporter(OpenProjectBackendTestCase):
+
+    def setUp(self):
+        super(TestOpenProjectImageImporter, self).setUp()
+        self.binding = self.env['openproject.res.users'].create({
+            'backend_id': self.backend.id,
+            'odoo_id': self.env.user.id,
+            'image': False,
+        })
+
+    def test_image_import(self):
+        with get_openproject_mocker():
+            self.binding.import_avatar(
+                self.backend, 'https://gravatar/avatar', self.binding.id)
+        self.assertTrue(self.binding.image)
