@@ -16,11 +16,6 @@ from odoo.addons.connector.exception import (
     NetworkRetryableError,
 )
 
-from ..utils import (
-    job_func,
-    parse_openproject_link_relation,
-    should_skip_activity,
-)
 from ..const import (
     ACTIVITY_SYNC_NONE,
     OP_ASSIGNEE_LINK,
@@ -29,6 +24,11 @@ from ..const import (
     OP_USER_LINK,
     OP_WORK_PACKAGE_LINK,
     USER_AGENT,
+)
+from ..utils import (
+    job_func,
+    parse_openproject_link_relation,
+    should_skip_activity,
 )
 
 _logger = logging.getLogger(__name__)
