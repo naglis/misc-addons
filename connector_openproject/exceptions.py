@@ -9,6 +9,6 @@ class OpenProjectAPIError(Exception):
 
 class OpenProjectAPIPermissionError(OpenProjectAPIError):
     """
-    Exception which is raise in case of insufficient permissions for the
+    Exception which is raised in case of insufficient permissions for the
     OpenProject sync user.
     """
