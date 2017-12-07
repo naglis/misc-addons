@@ -60,10 +60,10 @@ class OpenProjectImporter(Component):
 
     @staticmethod
     def is_uptodate(record, binding):
-        """
+        '''
         Check if a record needs to be updated based on 'updatedAt' field
         from OpenProject and 'sync_date'.
-        """
+        '''
         last_update = record.get('updatedAt')
         if not (last_update and binding and binding.sync_date):
             return False

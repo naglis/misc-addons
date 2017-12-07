@@ -4,11 +4,11 @@
 
 
 class OpenProjectAPIError(Exception):
-    """Base exception for errors received from the OpenProject API."""
+    '''Base exception for errors received from the OpenProject API.'''
 
 
 class OpenProjectAPIPermissionError(OpenProjectAPIError):
-    """
+    '''
     Exception which is raised in case of insufficient permissions for the
     OpenProject sync user.
-    """
+    '''
