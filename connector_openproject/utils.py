@@ -57,9 +57,11 @@ def slugify(s, replacement='_'):
     return ''.join(r).strip(replacement).lower()
 
 
-def job_func(rec, func_name, delay=True, **kwargs):
+def job_func(rec, func_name, delay=True, priority=None, **kwargs):
+    if priority is None:
+        priority = PRIORITY_MAP.get(rec._name, DEFAULT_PRIORITY)
     job_options = {
-        'priority': PRIORITY_MAP.get(rec._name, DEFAULT_PRIORITY),
+        'priority': priority,
     }
     job_options.update(kwargs)
     if delay:
