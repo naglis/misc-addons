@@ -10,7 +10,7 @@ from odoo.modules import get_resource_path
 from odoo.addons.component.tests import common
 
 
-def _make_test_data_filename_getter(module_name):
+def make_test_data_filename_getter(module_name):
 
     def getter(filename):
         return get_resource_path(module_name, 'tests', 'data', filename)
@@ -18,7 +18,7 @@ def _make_test_data_filename_getter(module_name):
     return getter
 
 
-test_file = _make_test_data_filename_getter('connector_openproject')
+test_file = make_test_data_filename_getter('connector_openproject')
 
 
 def json_test_file(filename):
