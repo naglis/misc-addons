@@ -21,8 +21,8 @@ def make_test_data_filename_getter(module_name):
 test_file = make_test_data_filename_getter('connector_openproject')
 
 
-def json_test_file(filename):
-    with open(test_file(filename)) as f:
+def json_test_file(filename, path_getter=test_file):
+    with open(path_getter(filename)) as f:
         return json.load(f)
 
 
