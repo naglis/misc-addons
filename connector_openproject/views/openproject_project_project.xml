@@ -19,4 +19,17 @@
     </field>
 </record>
 
+<record id="view_openproject_project_project_search" model="ir.ui.view">
+    <field name="name">openproject.project.project.search</field>
+    <field name="model">openproject.project.project</field>
+    <field name="arch" type="xml">
+        <search string="OpenProject Projects">
+            <field name="openproject_id" string="Project ID"/>
+            <field name="name" string="Name"/>
+            <separator/>
+            <filter string="Sync Enabled" name="sync_enabled" domain="[('op_sync', '=', True)]"/>
+        </search>
+    </field>
+</record>
+
 </odoo>
