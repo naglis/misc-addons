@@ -16,4 +16,30 @@
     </field>
 </record>
 
+<record id="view_openproject_account_analytic_line_search" model="ir.ui.view">
+    <field name="name">openproject.account.analytic.line.search</field>
+    <field name="model">openproject.account.analytic.line</field>
+    <field name="arch" type="xml">
+        <search string="OpenProject Work Packages">
+            <field name="date"/>
+            <field name="user_id"/>
+            <field name="project_id"/>
+            <field name="task_id"/>
+            <separator/>
+            <filter string="Today" name="today" domain="[('date', '&gt;=', time.strftime('%%Y-%%m-%%d'))]"/>
+            <filter string="This Month" name="this_month" domain="[('date', '&gt;=', time.strftime('%%Y-%%m-01'))]"/>
+            <filter string="This Year" name="this_year" domain="[('date', '&gt;=', time.strftime('%%Y-01-01'))]"/>
+            <separator/>
+            <group expand="0" string="Group By">
+                <filter string="User" name="group_user"
+                    context="{'group_by': 'user_id'}"/>
+                <filter string="Project" name="group_project"
+                    context="{'group_by': 'project_id'}"/>
+                <filter string="Task" context="{'group_by': 'task_id'}"/>
+                <filter string="Month" context="{'group_by': 'date'}"/>
+            </group>
+        </search>
+    </field>
+</record>
+
 </odoo>
