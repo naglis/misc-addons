@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2018 Naglis Jonaitis
+     License LGPL-3 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+
+<template id="assets_backend" name="web_ir_actions_act_window_qr_code assets" inherit_id="web.assets_backend">
+    <xpath expr="." position="inside">
+        <script type="text/javascript" src="/web_ir_actions_act_window_qr_code/static/src/js/actions.js"></script>
+    </xpath>
+</template>
+
+</odoo>
