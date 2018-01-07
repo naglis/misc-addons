@@ -22,7 +22,7 @@ odoo.define('web.web_ir_actions_act_window_qr_code', function(require) {
                         flags: action.flags,
                     }),
                     size: action.size || 'medium',
-                    title: action.title || _t('QR Code'),
+                    title: action.name || _t('QR Code'),
                     buttons: [
                         {
                             text: _t('Close'),
