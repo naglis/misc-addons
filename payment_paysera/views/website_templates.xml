@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2018 Naglis Jonaitis
+     License AGPL-3 or later (https://www.gnu.org/licenses/agpl). -->
 <odoo noupdate="1">
 
 <template id="paysera_acquirer_button" name="Paysera Acquirer Button">
