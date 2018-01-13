@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2018 Naglis Jonaitis
+     License LGPL-3 or later (https://www.gnu.org/licenses/lgpl). -->
+<templates xml:space="preserve">
+
+<t t-name="BSOD">
+    <div class="o_bsod_container">
+        <div class="o_bsod_error">
+            <div class="o_bsod_error_header">
+                <span><t t-esc="widget.error.message"/></span>
+            </div>
+            <div class="o_bsod_error_content">
+                <p>An error has occurred. To continue:</p>
+                <p>Press Enter to return to Odoo, or</p>
+                <p>Press Escape to restart Odoo. If you do this, you will lose any unsaved information in the currently open window.</p>
+                <p>Error: <span t-esc="widget.error.code"/> : <span t-esc="widget.error.message"/></p>
+            </div>
+        </div>
+    </div>
+</t>
+
+</templates>
