@@ -16,10 +16,11 @@
     'data': [
         'views/assets.xml',
     ],
-    'images': [
-    ],
     'qweb': [
         'static/src/xml/crash_manager.xml',
+    ],
+    'images': [
+        'static/description/main_screenshot.gif',
     ],
     'installable': True,
     'application': False,
