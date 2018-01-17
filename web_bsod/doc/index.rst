@@ -12,7 +12,7 @@ Usage
 
 #. Add this module to your module's dependencies (*depends* key in module's
    manifest).
-#. Return the *BSOD* exception in your Python code:
+#. Raise the *BSOD* exception in your Python code:
 
     .. code-block:: python
 
