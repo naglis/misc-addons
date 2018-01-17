@@ -1,0 +1,47 @@
+/* Copyright 2018 Naglis Jonaitis
+ * License LGPL-3 or later (https://www.gnu.org/licenses/lgpl). */
+
+/* Styling based on tholman/bsod.js: https://git.io/vNByO which is licensed
+ * under the MIT license. */
+@the_blue: #0000AA;
+
+.o_bsod_container {
+    font-family: 'Lucida Console', 'Lucida Sans Typewriter', monaco, 'Bitstream Vera Sans Mono', monospace;
+    background: @the_blue;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    color: #ffffff;
+    z-index: 1000;
+}
+
+.o_bsod_error {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    font-size: 14px;
+    max-width: 420px;
+    transform: translateX(-50%) translateY(-50%);
+    mozTransform: translateX(-50%) translateY(-50%);
+    webkitTransform: translateX(-50%) translateY(-50%);
+}
+
+.o_bsod_error_header {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.o_bsod_error_header span {
+    background: #AAAAAA;
+    color: @the_blue;
+    margin: auto;
+}
+
+.o_bsod_error_content pre {
+    background: @the_blue;
+    color: #ffffff;
+    border-style: none;
+}
+

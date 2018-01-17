@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2018 Naglis Jonaitis
+     License LGPL-3 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+
+<template id="assets_backend" name="BSOD backend assets" inherit_id="web.assets_backend">
+    <xpath expr="." position="inside">
+        <link rel="stylesheet" href="/web_bsod/static/src/less/bsod.less"/>
+        <script type="text/javascript" src="/web_bsod/static/src/js/bsod.js"></script>
+        <script type="text/javascript" src="/web_bsod/static/src/js/exception_handler.js"></script>
+    </xpath>
+</template>
+
+</odoo>
