@@ -4,7 +4,7 @@
 
 import base64
 import hashlib
-import urllib
+import urllib.parse
 
 # pylint: disable=W7935
 from cryptography import exceptions, x509
@@ -17,7 +17,7 @@ PAYSERA_API_URL = 'https://www.paysera.com/pay/'
 
 # Paysera's Public Key certificate.
 # Refer to: https://www.webtopay.com/download/public.key
-PAYSERA_CERT_PEM = '''
+PAYSERA_CERT_PEM = b'''
 -----BEGIN CERTIFICATE-----
 MIIECTCCA3KgAwIBAgIBADANBgkqhkiG9w0BAQUFADCBujELMAkGA1UEBhMCTFQx
 EDAOBgNVBAgTB1ZpbG5pdXMxEDAOBgNVBAcTB1ZpbG5pdXMxHjAcBgNVBAoTFVVB
@@ -83,7 +83,7 @@ def _get_paysera_public_key():
 
 
 def _maybe_encode(value, encoding='ascii'):
-    if isinstance(value, unicode):
+    if isinstance(value, str):
         return value.encode(encoding)
     return value
 
@@ -96,10 +96,9 @@ def _encode_dict_vals(old_dict):
     }
 
 
-def md5_sign(data, sign_password):
+def md5_sign(data: bytes, sign_password: bytes) -> bytes:
     '''Returns the MD5 hash of (data + paysera_sign_password).'''
-    value = ''.join(map(_maybe_encode, (data, sign_password)))
-    return hashlib.md5(value).hexdigest()
+    return hashlib.md5(data + sign_password).hexdigest()
 
 
 def verify_rsa_signature(signature, data):
@@ -124,14 +123,12 @@ def verify_rsa_signature(signature, data):
     return valid
 
 
-def get_form_values(value_dict, sign_password):
-    # urlencode needs bytes
-    encoded_params = _encode_dict_vals(value_dict)
-
+def get_form_values(value_dict, sign_password: bytes):
     # Concatenate the parameters into a single line and b64encode it.
-    data = base64.urlsafe_b64encode(urllib.urlencode(encoded_params))
-    signature = md5_sign(data, sign_password)
+    encoded_params = urllib.parse.urlencode(value_dict).encode('ascii')
+    data = base64.urlsafe_b64encode(encoded_params)
+
     return {
         'data': data,
-        'signature': signature,
+        'signature': md5_sign(data, sign_password),
     }

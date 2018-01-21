@@ -4,7 +4,7 @@
 
 import base64
 import logging
-import urlparse
+import urllib.parse
 
 from odoo import _, api, fields, models
 from odoo.addons.payment.models.payment_acquirer import ValidationError
@@ -14,17 +14,15 @@ from .. import paysera
 _LOG = logging.getLogger(__name__)
 
 
-def decode_form_data(encoded_data):
+def decode_form_data(encoded_data) -> dict:
     '''
     Decodes base64 encoded string, parses it and returns a dict of parameters
 
     :param encoded_data: base64 encoded URL parameters list
-    :type encoded_data: str
-    :rtype: dict
     '''
-    decoded = base64.urlsafe_b64decode(encoded_data.encode('ascii'))
-    parsed = urlparse.parse_qsl(decoded, keep_blank_values=True)
-    return {k: v.decode('utf-8') for k, v in parsed}
+    decoded = base64.urlsafe_b64decode(encoded_data).decode('ascii')
+    parsed = urllib.parse.parse_qsl(decoded, keep_blank_values=True)
+    return dict(parsed)
 
 
 class PaymentTransaction(models.Model):
@@ -40,7 +38,7 @@ class PaymentTransaction(models.Model):
 
         reference = data['params'].get('orderid')
         if not reference:
-            msg = u'Paysera: missing order ID in received data'
+            msg = 'Paysera: missing order ID in received data'
             _LOG.error(msg)
             raise ValidationError(msg)
 
@@ -48,11 +46,11 @@ class PaymentTransaction(models.Model):
             ('reference', '=', reference),
         ])
         if not txs or len(txs) > 1:
-            msg = u'Paysera: received data for reference ID: %s' % reference
+            msg = 'Paysera: received data for reference ID: %s' % reference
             if not txs:
-                msg += u'; no order found'
+                msg += '; no order found'
             else:
-                msg += u'; multiple orders found'
+                msg += '; multiple orders found'
             _LOG.error(msg)
             raise ValidationError(msg)
         return txs[0]
@@ -85,7 +83,7 @@ class PaymentTransaction(models.Model):
 
         ss1_received = data.get('ss1')
         ss1_computed = paysera.md5_sign(
-            the_data, self.acquirer_id.paysera_sign_password)
+            the_data, bytes(self.acquirer_id.paysera_sign_password, 'ascii'))
         if not ss1_computed == ss1_received:
             invalid_parameters.append(('ss1', ss1_received, ss1_computed))
 
@@ -119,7 +117,7 @@ class PaymentTransaction(models.Model):
                 'state': 'cancel',
             })
         elif status == paysera.PAYSERA_STATUS_PAYMENT_SUCCESSFULL:
-            _LOG.info(u'Order ID %s paid' % params.get('orderid'))
+            _LOG.info('Order ID %s paid' % params.get('orderid'))
             self.write({
                 'state': 'done',
                 'date_validate': fields.datetime.now(),
@@ -135,7 +133,7 @@ class PaymentTransaction(models.Model):
         elif status == paysera.PAYSERA_STATUS_ADDITIONAL_INFO:
             pass
         else:
-            error = _(u'Paysera: unknown payment status: %s') % status
+            error = _('Paysera: unknown payment status: %s') % status
             _LOG.error(error)
             self.write({
                 'state': 'error',

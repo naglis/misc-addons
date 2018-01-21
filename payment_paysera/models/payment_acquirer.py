@@ -2,7 +2,7 @@
 # Copyright 2018 Naglis Jonaitis
 # License AGPL-3 or later (https://www.gnu.org/licenses/agpl).
 
-import urlparse
+import urllib.parse
 
 from odoo import api, fields, models, tools
 
@@ -40,9 +40,9 @@ class PaymentAcquirer(models.Model):
         string='Sign password',
         size=255,
         required_if_provider='paysera',
-        help=u'Project password, which can be found by logging in to '
-             u'Paysera.com system, selecting “Service management” and '
-             u'choosing “General settings” on a specific project.',
+        help='Project password, which can be found by logging in to '
+             'Paysera.com system, selecting “Service management” and '
+             'choosing “General settings” on a specific project.',
         groups='base.group_user',
     )
 
@@ -60,7 +60,7 @@ class PaymentAcquirer(models.Model):
         base_url = self.env['ir.config_parameter'].get_param('web.base.url')
 
         def full_url(path):
-            return urlparse.urljoin(base_url, path)
+            return urllib.parse.urljoin(base_url, path)
 
         lang = values['billing_partner_lang'] or ''
         if '_' in lang:
@@ -92,7 +92,7 @@ class PaymentAcquirer(models.Model):
         )
         values.update(paysera.get_form_values(
             paysera_params,
-            self.paysera_sign_password,
+            bytes(self.paysera_sign_password, 'ascii'),
         ))
         return values
 

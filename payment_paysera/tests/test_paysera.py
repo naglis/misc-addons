@@ -12,25 +12,25 @@ from odoo.tools import mute_logger
 from .. import paysera
 
 PAYSERA_PROJECT_ID = '53203'
-PAYSERA_SIGN_PASSWORD = '7324e13b502b18674c59bb2015818e78'
+PAYSERA_SIGN_PASSWORD = b'7324e13b502b18674c59bb2015818e78'
 PAYSERA_TEST_DATA = (
-    u'bGFuZz0mcmVmZXJlbmNlPVNPMDEyJnBfY2l0eT1TaW4rQ2l0eSZwcm9qZWN0aWQ9NTMyMDMm'
-    u'Y3VycmVuY3lfaWQ9MSZjdXJyZW5jeT1FVVImcF9lbWFpbD1ub3JiZXJ0LmJ1eWVyJTQwZXhh'
-    u'bXBsZS5jb20mcF9zdHJlZXQ9SHVnZStTdHJlZXQrMiUyRjU0MyZwYXJ0bmVyPXJlcy5wYXJ0'
-    u'bmVyJTI4MyUyQyUyOSZwX2NvdW50cnljb2RlPUJFJm9yZGVyaWQ9U08wMTImY291bnRyeT1C'
-    u'RSZwX2ZpcnN0bmFtZT1CdXllciZwX3ppcD0xMDAwJmFtb3VudD0zMjAwMCZ2ZXJzaW9uPTEu'
-    u'NiZwX2xhc3RuYW1lPU5vcmJlcnQmdGVzdD0xJnJldHVybl91cmw9JTJGc2hvcCUyRnBheW1l'
-    u'bnQlMkZ2YWxpZGF0ZSZwYXltZW50PWRpcmVjdGViYmUmcGF5dGV4dD1VJUM1JUJFc2FreW1h'
-    u'cytuciUzQStTTzAxMitodHRwJTNBJTJGJTJGbG9jYWxob3N0K3Byb2pla3RlLislMjhQYXJk'
-    u'YXYlQzQlOTdqYXMlM0ErTmFnbGlzK0pvbmFpdGlzJTI5JnN0YXR1cz0xJnJlcXVlc3RpZD02'
-    u'MzA1NzE5NCZwYXlhbW91bnQ9MzIwMDAmcGF5Y3VycmVuY3k9RVVSJm5hbWU9VUFCJnN1cmVu'
-    u'YW1lPU1vayVDNCU5N2ppbWFpLmx0'
+    b'bGFuZz0mcmVmZXJlbmNlPVNPMDEyJnBfY2l0eT1TaW4rQ2l0eSZwcm9qZWN0aWQ9NTMyMDMm'
+    b'Y3VycmVuY3lfaWQ9MSZjdXJyZW5jeT1FVVImcF9lbWFpbD1ub3JiZXJ0LmJ1eWVyJTQwZXhh'
+    b'bXBsZS5jb20mcF9zdHJlZXQ9SHVnZStTdHJlZXQrMiUyRjU0MyZwYXJ0bmVyPXJlcy5wYXJ0'
+    b'bmVyJTI4MyUyQyUyOSZwX2NvdW50cnljb2RlPUJFJm9yZGVyaWQ9U08wMTImY291bnRyeT1C'
+    b'RSZwX2ZpcnN0bmFtZT1CdXllciZwX3ppcD0xMDAwJmFtb3VudD0zMjAwMCZ2ZXJzaW9uPTEu'
+    b'NiZwX2xhc3RuYW1lPU5vcmJlcnQmdGVzdD0xJnJldHVybl91cmw9JTJGc2hvcCUyRnBheW1l'
+    b'bnQlMkZ2YWxpZGF0ZSZwYXltZW50PWRpcmVjdGViYmUmcGF5dGV4dD1VJUM1JUJFc2FreW1h'
+    b'cytuciUzQStTTzAxMitodHRwJTNBJTJGJTJGbG9jYWxob3N0K3Byb2pla3RlLislMjhQYXJk'
+    b'YXYlQzQlOTdqYXMlM0ErTmFnbGlzK0pvbmFpdGlzJTI5JnN0YXR1cz0xJnJlcXVlc3RpZD02'
+    b'MzA1NzE5NCZwYXlhbW91bnQ9MzIwMDAmcGF5Y3VycmVuY3k9RVVSJm5hbWU9VUFCJnN1cmVu'
+    b'YW1lPU1vayVDNCU5N2ppbWFpLmx0'
 )
-PAYSERA_TEST_SS1 = u'e899774b6649616cc841113512111120'
+PAYSERA_TEST_SS1 = 'e899774b6649616cc841113512111120'
 PAYSERA_TEST_SS2 = (
-    u'uRdNt8ugz2JhxiEeS8BNUBrujDwsfMwgY7iugUcFbqQVg-M2VfICrGt3kVyEP9IDx4ywxa-w'
-    u'w85UPFlUlutZnslodkb7cmdNidw9CBJxKdp0NK7ESlRWiSAnVqT8LdgZP42IU2M3OyIs1nM9'
-    u'TMG3GevU04FbCBTCg_NM2EGUolc='
+    'uRdNt8ugz2JhxiEeS8BNUBrujDwsfMwgY7iugUcFbqQVg-M2VfICrGt3kVyEP9IDx4ywxa-w'
+    'w85UPFlUlutZnslodkb7cmdNidw9CBJxKdp0NK7ESlRWiSAnVqT8LdgZP42IU2M3OyIs1nM9'
+    'TMG3GevU04FbCBTCg_NM2EGUolc='
 )
 PAYSERA_TEST_POST_DATA = {
     'data': PAYSERA_TEST_DATA,
@@ -43,7 +43,7 @@ class PayseraUtils(unittest.TestCase):
 
     def test_get_form_values(self):
         test_data = {
-            u'ačiū': u'prašom',
+            'ačiū': 'prašom',
         }
         form_values = paysera.get_form_values(test_data, PAYSERA_SIGN_PASSWORD)
         self.assertEqual(
@@ -103,16 +103,16 @@ class PayseraCommon(PaymentAcquirerCommon):
         '''
         PAYSERA_TEST_DATA = {
             'lang': '',
-            'reference': u'SO012',
+            'reference': 'SO012',
             'p_city': 'Sin City',
             'projectid': '53203',
             'currency_id': 1,
-            'currency': u'EUR',
+            'currency': 'EUR',
             'p_email': 'norbert.buyer@example.com',
             'p_street': 'Huge Street 2/543',
             'cancelurl': 'http://localhost:8069/payment/paysera/cancel',
             'partner': res.partner(3,),
-            'p_countrycode': u'BE',
+            'p_countrycode': 'BE',
             'callbackurl': 'http://localhost:8069/payment/paysera/callback',
             'orderid': 'SO012',
             'country': 'BE',

@@ -37,4 +37,4 @@ class PayseraController(http.Controller):
     def paysera_payment_callback(self, **post_data):
         request.env['payment.transaction'].sudo().form_feedback(
             post_data, 'paysera')
-        return 'OK'
+        return b'OK'
