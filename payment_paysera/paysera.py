@@ -57,12 +57,6 @@ GFYXlI9ODyfBPa02o44sQdqmdhCQCqvS5/5vhflJ9A==
 -----END CERTIFICATE REQUEST-----
 '''
 
-PAYSERA_CERT = x509.load_pem_x509_certificate(
-    PAYSERA_CERT_PEM,
-    default_backend(),
-)
-PAYSERA_PUBLIC_KEY = PAYSERA_CERT.public_key()
-
 # Payment has not been executed.
 # According to Paysera, this status means that the order can be dismissed.
 PAYSERA_STATUS_NOT_EXECUTED = '0'
@@ -78,6 +72,14 @@ PAYSERA_STATUS_PAYMENT_ACCEPTED = '2'
 # number or about personal code, if such request was made.
 # We do not store this information, so we ignore this type of request.
 PAYSERA_STATUS_ADDITIONAL_INFO = '3'
+
+
+def _get_paysera_public_key():
+    paysera_cert = x509.load_pem_x509_certificate(
+        PAYSERA_CERT_PEM,
+        default_backend(),
+    )
+    return paysera_cert.public_key()
 
 
 def _maybe_encode(value, encoding='ascii'):
@@ -111,7 +113,7 @@ def verify_rsa_signature(signature, data):
     signature = base64.urlsafe_b64decode(_maybe_encode(signature))
     valid = True
     try:
-        PAYSERA_PUBLIC_KEY.verify(
+        _get_paysera_public_key().verify(
             signature,
             _maybe_encode(data),
             PKCS1v15(),
