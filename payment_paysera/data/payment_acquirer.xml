@@ -19,7 +19,8 @@
             A payment gateway to accept online payments via Paysera.
         </p>
         <ul>
-            <li><i class="fa fa-check"/>eCommerce</li>
+            <li><i class="fa fa-check"/>Online Payment</li>
+            <li><i class="fa fa-check"/>Payment Status Tracking</li>
         </ul>
     </field>
 </record>
