@@ -3,7 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 {
     'name': 'OpenProject Timesheet Import',
-    'version': '10.0.0.2.0',
+    'version': '10.0.0.2.1',
     'author': 'Naglis Jonaitis',
     'category': 'Human Resources',
     'website': 'https://github.com/naglis/',
