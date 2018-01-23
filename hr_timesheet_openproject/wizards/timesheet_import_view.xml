@@ -23,6 +23,7 @@
                     <group>
                         <group states="new" string="CSV file">
                             <field name="skip_first"/>
+                            <field name="date_format"/>
                             <field name="encoding"/>
                             <field name="delimiter"/>
                         </group>

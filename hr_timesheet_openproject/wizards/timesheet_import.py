@@ -22,6 +22,17 @@ DELIMITERS = [
     ('|', 'Pipe (|)'),
     ('\t', 'Tab'),
 ]
+DATE_FORMATS = [
+    ('%Y-%m-%d', '2006-01-02'),
+    ('%d/%m/%Y', '02/01/2006'),
+    ('%d.%m.%Y', '02.01.2006'),
+    ('%d-%m-%Y', '02-01-2006'),
+    ('%m/%d/%Y', '01/02/2006'),
+    ('%d %b %Y', '02 Jan 2006'),
+    ('%d %B %Y', '02 January 2006'),
+    ('%b %d, %Y', 'Jan 02, 2006'),
+    ('%B %d, %Y', 'January 02, 2006'),
+]
 
 date_from_string = fields.Date.from_string
 
@@ -101,6 +112,13 @@ class OPImport(models.TransientModel):
         help='First line of the file is the header and should be ignored.',
         default=True,
     )
+    date_format = fields.Selection(
+        string='Date Format',
+        required=True,
+        selection=DATE_FORMATS,
+        help='Date format used in the CSV file. '
+             'This depends on your OpenProject settings.',
+    )
     time_entry_ids = fields.One2many(
         comodel_name='op.time.entry',
         inverse_name='import_id',
@@ -152,6 +170,7 @@ class OPImport(models.TransientModel):
                 fobj,
                 skip_first=self.skip_first,
                 encoding=self.encoding,
+                date_fmt=self.date_format,
                 delimiter=self.delimiter.encode('utf-8'),
             )
 
