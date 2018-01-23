@@ -6,6 +6,7 @@ import base64
 
 from odoo import exceptions, tests
 
+from ..utils import DEFAULT_DATE_FORMAT
 from .common import build_csv
 
 EMPLOYEE1_NAME = u'Jim Halpert'
@@ -72,6 +73,7 @@ class TestTimesheetImport(tests.common.TransactionCase):
     def create_wizard(self, csv_file, **overrides):
         values = {
             'csv_file': base64.b64encode(csv_file),
+            'date_format': DEFAULT_DATE_FORMAT,
         }
         if overrides:
             values.update(overrides)
