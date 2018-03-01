@@ -186,6 +186,7 @@ class OpenProjectProjectProjectAdapter(Component):
     _external_url_fmt = _single_endpoint
 
 
+
 class OpenProjectProjectTaskTypeAdapter(Component):
     _name = 'openproject.project.task.type.adapter'
     _inherit = 'base.openproject.adapter'

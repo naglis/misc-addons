@@ -4,7 +4,11 @@
 
 from odoo import api, fields, models
 
-from ..const import DEFAULT_PAGE_SIZE, DEFAULT_TIMEOUT
+from ..const import (
+    DEFAULT_PAGE_SIZE,
+    DEFAULT_TIMEOUT,
+    PRIORITY_PROJECT_STATUS,
+)
 from ..utils import job_func, last_update, op_filter
 
 
@@ -40,6 +44,12 @@ class OpenProjectBackend(models.Model):
         string='OpenProject URL',
         help='URL to the OpenProject instance',
         required=True,
+    )
+    sync_project_status = fields.Boolean(
+        string='Synchronize Project Status',
+        help='If enabled, archived/unarchived projects on the OpenProject '
+             'instance will be marked as inactive/active in Odoo.',
+        default=True,
     )
 
     api_key = fields.Char(
@@ -119,10 +129,13 @@ class OpenProjectBackend(models.Model):
     @api.multi
     def import_projects(self, delay=True):
         for rec in self:
-            job_func(
-                rec.env['openproject.project.project'],
-                'import_batch',
-                delay=delay)(rec, delay=delay, chunked=not delay)
+            model = rec.env['openproject.project.project']
+            job_func(model, 'import_batch', delay=delay)(
+                rec, delay=delay, chunked=not delay)
+            if rec.sync_project_status:
+                job_func(
+                    model, 'sync_project_status', delay=delay,
+                    priority=PRIORITY_PROJECT_STATUS)(rec)
         return True
 
     @api.multi

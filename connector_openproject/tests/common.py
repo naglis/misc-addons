@@ -26,7 +26,7 @@ def json_test_file(filename, path_getter=test_file):
         return json.load(f)
 
 
-def get_openproject_mocker():
+def get_openproject_mocker(projects_response_file='projects.json'):
     mocker = requests_mock.Mocker()
 
     mocker.get('http://op/api/v3/users/1', json=json_test_file('users_1.json'))
@@ -34,7 +34,9 @@ def get_openproject_mocker():
         'Content-Type': 'image/png',
     }, body=open(test_file('image.png')))
     mocker.get(
-        'http://op/api/v3/projects', json=json_test_file('projects.json'))
+        'http://op/api/v3/projects',
+        json=json_test_file(projects_response_file),
+    )
     mocker.get(
         'http://op/api/v3/statuses/1', json=json_test_file('statuses_1.json'))
     mocker.get(

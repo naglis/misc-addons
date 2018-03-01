@@ -99,6 +99,7 @@
                         <field name="company_id"/>
                         <field name="version"/>
                         <field name="instance_url" widget="url"/>
+                        <field name="sync_project_status"/>
                     </group>
                     <group name="advanced" groups="base.group_no_one">
                         <field name="api_key" password="True"/>
