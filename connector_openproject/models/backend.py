@@ -12,6 +12,10 @@ from ..const import (
 from ..utils import job_func, last_update, op_filter
 
 
+def project_is_syncable(project):
+    return project.op_sync and project.active
+
+
 class OpenProjectBackend(models.Model):
     _name = 'openproject.backend'
     _description = 'OpenProject Backend'
@@ -141,7 +145,7 @@ class OpenProjectBackend(models.Model):
     @api.multi
     def import_project_work_packages(self, delay=True):
         for rec in self:
-            for project in rec.op_project_ids.filtered('op_sync'):
+            for project in rec.op_project_ids.filtered(project_is_syncable):
                 filters = [
                     op_filter('project', '=', project.openproject_id),
                 ]
@@ -161,7 +165,7 @@ class OpenProjectBackend(models.Model):
     @api.multi
     def import_project_time_entries(self, delay=True):
         for rec in self:
-            for project in rec.op_project_ids.filtered('op_sync'):
+            for project in rec.op_project_ids.filtered(project_is_syncable):
                 filters = [
                     op_filter('project', '=', project.openproject_id),
                 ]
