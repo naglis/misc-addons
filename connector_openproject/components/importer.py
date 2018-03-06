@@ -4,7 +4,9 @@
 
 import base64
 import cStringIO
+import functools
 import logging
+import operator
 
 import PIL
 import requests
@@ -190,7 +192,6 @@ class DelayedBatchImporter(Component):
     _name = 'openproject.delayed.batch.importer'
     _inherit = 'openproject.batch.importer'
     _apply_on = [
-        'openproject.project.project',
         'openproject.project.task',
         'openproject.account.analytic.line',
     ]
@@ -200,6 +201,51 @@ class DelayedBatchImporter(Component):
             self.model,
             'import_record',
             **(job_options or {}))(self.backend_record, record)
+
+
+class DelayedOpenProjectProjectProjectBatchImporter(Component):
+    _name = 'openproject.delayed.project.project.batch.importer'
+    _inherit = 'openproject.delayed.batch.importer'
+    _apply_on = 'openproject.project.project'
+
+    def run(self, filters=None, offset=None, bootstrap=True, job_options=None):
+        records = self.get_records(filters=filters or [], offset=offset)
+        if self.backend_record.sync_project_status:
+            self._mark_archived(records)
+        for record in records:
+            self._import_record(record, job_options=job_options)
+
+        # Other jobs, which depend on project import, are started only after
+        # archived projects are inactivated, otherwise delayed jobs can fail
+        # due to API call on an archived project.
+        if bootstrap:
+            self._bootstrap()
+
+    def _bootstrap(self):
+        self.backend_record.import_project_work_packages()
+        self.backend_record.import_project_time_entries()
+
+    def _mark_archived(self, records):
+        op_active_projects = functools.reduce(
+            operator.ior,
+            [self.binder.to_internal(r['id']) for r in records],
+            self.model.browse(),
+        )
+        odoo_active_projects = self.backend_record.op_project_ids.filtered(
+            lambda p: p.active)
+
+        to_archive = odoo_active_projects - op_active_projects
+        to_unarchive = op_active_projects - odoo_active_projects
+
+        to_archive.write({
+            'active': False,
+        })
+        to_unarchive.write({
+            'active': True,
+        })
+
+        # Re-apply active test.
+        self.backend_record.invalidate_cache(fnames=['op_project_ids'])
 
 
 class DelayedOpenProjectMailMessageBatchImporter(Component):

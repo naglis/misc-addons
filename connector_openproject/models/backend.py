@@ -7,7 +7,6 @@ from odoo import api, fields, models
 from ..const import (
     DEFAULT_PAGE_SIZE,
     DEFAULT_TIMEOUT,
-    PRIORITY_PROJECT_STATUS,
 )
 from ..utils import job_func, last_update, op_filter
 
@@ -136,10 +135,6 @@ class OpenProjectBackend(models.Model):
             model = rec.env['openproject.project.project']
             job_func(model, 'import_batch', delay=delay)(
                 rec, delay=delay, chunked=not delay)
-            if rec.sync_project_status:
-                job_func(
-                    model, 'sync_project_status', delay=delay,
-                    priority=PRIORITY_PROJECT_STATUS)(rec)
         return True
 
     @api.multi
@@ -181,6 +176,6 @@ class OpenProjectBackend(models.Model):
     @api.model
     def _cron_sync(self, domain=None):
         backends = self.search(domain or [])
+        # Work package and time entry import jobs are bootstraped by the
+        # project import job.
         backends.import_projects()
-        backends.import_project_work_packages()
-        backends.import_project_time_entries()
