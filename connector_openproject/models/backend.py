@@ -8,11 +8,12 @@ from ..const import (
     DEFAULT_PAGE_SIZE,
     DEFAULT_TIMEOUT,
 )
-from ..utils import job_func, last_update, op_filter
-
-
-def project_is_syncable(project):
-    return project.op_sync and project.active
+from ..utils import (
+    job_func,
+    last_update,
+    op_filter,
+    project_is_syncable,
+)
 
 
 class OpenProjectBackend(models.Model):

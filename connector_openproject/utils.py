@@ -105,3 +105,7 @@ def should_skip_activity(activity_type, enabled_for):
         return not activity_type == 'Activity::Comment'
     else:
         return not activity_type == 'Activity'
+
+
+def project_is_syncable(project):
+    return project.op_sync and project.active
