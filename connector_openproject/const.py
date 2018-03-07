@@ -29,12 +29,11 @@ USER_AGENT = '{r.product_name} {r.series}'.format(r=release)
 (
     PRIORITY_USER,
     PRIORITY_PROJECT,
-    PRIORITY_PROJECT_STATUS,
     PRIORITY_STATUS,
     PRIORITY_WORK_PACKAGE,
     PRIORITY_ACTIVITY,
     PRIORITY_TIME_ENTRY,
-) = range(1, 8)
+) = (p * 50 for p in range(1, 7))
 DEFAULT_PRIORITY = 100
 
 DEFAULT_PAGE_SIZE = 100
