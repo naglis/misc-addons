@@ -174,6 +174,11 @@ class OpenProjectBackend(models.Model):
                         delay=delay)(
                             rec, filters=filters, delay=delay, chunked=True)
 
+    @api.multi
+    def action_run_import(self):
+        self.ensure_one()
+        self._cron_sync(domain=[('id', '=', self.id)])
+
     @api.model
     def _cron_sync(self, domain=None):
         backends = self.search(domain or [])
