@@ -63,7 +63,8 @@ Usage
 #. Login to your Odoo instance with a user with *Connector Manager* access
    rights.
 #. In debug mode go to *Settings -> Technical  -> Automation -> Scheduled
-   Actions*, select *OpenProject Sync*) and click the *Run Manually* button.
+   Actions*, select *OpenProject Sync*) and click the *Run Manually* button or
+   click the *Run Import* button on the OpenProject backend record.
 #. On the OpenProject backend record, click on the *Projects* button at the
    top - the projects from your OpenProject instance will appear here after
    synchronization finishes.
