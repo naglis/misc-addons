@@ -29,19 +29,6 @@ def unicode_csv_reader(fobj, encoding='utf-8', dialect=csv.excel,
         yield [unicode(cell, encoding) for cell in row]
 
 
-class MinMax(object):
-    """Helper object for keeping track of min/max values."""
-
-    def __init__(self, min_val=None, max_val=None):
-        self.min, self.max = min_val, max_val
-
-    def add(self, value):
-        if self.min is None or value < self.min:
-            self.min = value
-        if self.max is None or value > self.max:
-            self.max = value
-
-
 def transform_time_entry(entry, date_fmt=DEFAULT_DATE_FORMAT):
     entry.update({
         'date': datetime.datetime.strptime(entry['date'], date_fmt).date(),

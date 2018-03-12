@@ -84,17 +84,6 @@ class TestTimesheetImport(tests.common.TransactionCase):
         with self.assertRaises(exceptions.ValidationError):
             wizard.action_upload_file()
 
-    def test_date_to_earlier_than_date_from_raises_ValidationError(self):
-        wizard = self.create_wizard(CSV1, date_from='2000-01-02')
-        with self.assertRaises(exceptions.ValidationError):
-            wizard.date_to = '2000-01-01'
-
-    def test_upload_file_correct_date_from_date_to_values_are_set(self):
-        wizard = self.create_wizard(CSV12)
-        wizard.action_upload_file()
-        self.assertEqual(wizard.date_from, DATE1)
-        self.assertEqual(wizard.date_to, DATE2)
-
     def test_upload_file_one_entry_creates_one_line_with_correct_data(self):
         wizard = self.create_wizard(CSV1)
         wizard.action_upload_file()
@@ -118,29 +107,13 @@ class TestTimesheetImport(tests.common.TransactionCase):
         self.assertLen(lines, 1)
 
     def test_import_file_timesheet_with_correct_data_is_created(self):
-        wizard = self.create_wizard(CSV13)
+        wizard = self.create_wizard(CSV1)
         wizard.action_upload_file()
         action = wizard.action_import_file()
-        sheets = self.env['hr_timesheet_sheet.sheet'].browse(
-            action.get('res_ids', []))
-        self.assertLen(sheets, 1, 'Incorrect number of timesheets created')
-        sheet = sheets[0]
-        self.assertEqual(sheet.employee_id, self.employee1)
-        time_entries = sheet.timesheet_ids.sorted(lambda e: e.date)
-        self.assertLen(
-            time_entries, 2, 'Incorrect number of time entries created')
-        entry_1, entry_2 = time_entries
-        self.assertEqual(entry_1.date, DATE1)
-        self.assertEqual(entry_1.unit_amount, HOURS1)
-        self.assertEqual(entry_2.date, DATE3)
-        self.assertEqual(entry_2.unit_amount, HOURS3)
-
-    def test_import_file_time_entries_are_filtered_on_period(self):
-        wizard = self.create_wizard(CSV123, date_from=DATE2, date_to=DATE3)
-        wizard.action_upload_file()
-        action = wizard.action_import_file()
-        sheets = self.env['hr_timesheet_sheet.sheet'].browse(
-            action.get('res_ids', []))
-        self.assertLen(sheets, 1, 'Incorrect number of timesheets created')
-        self.assertEqual(
-            sorted(sheets.mapped('timesheet_ids.date')), [DATE3])
+        lines = self.env['account.analytic.line'].browse(
+            action.get('domain')[0][2])
+        self.assertLen(lines, 1, 'Incorrect number of time entries created')
+        line = lines[0]
+        self.assertEqual(line.user_id, self.user1)
+        self.assertEqual(line.date, DATE1)
+        self.assertEqual(line.unit_amount, HOURS1)

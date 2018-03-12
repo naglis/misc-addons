@@ -37,23 +37,6 @@ DATE_FORMATS = [
 date_from_string = fields.Date.from_string
 
 
-def make_time_entry_period_filter(date_from=None, date_to=None):
-
-    if date_from:
-        date_from = date_from_string(date_from)
-    if date_to:
-        date_to = date_from_string(date_to)
-
-    def filter_func(time_entry):
-        if date_from and date_from_string(time_entry.date) < date_from:
-            return False
-        if date_to and date_from_string(time_entry.date) > date_to:
-            return False
-        return True
-
-    return filter_func
-
-
 class OPImportRelated(models.AbstractModel):
     _name = 'op.import.related'
 
@@ -83,14 +66,6 @@ class OPImport(models.TransientModel):
         default='new',
         required=True,
         readonly=True,
-    )
-    date_from = fields.Date(
-        string='Date From',
-        help='Timesheet period beginning date',
-    )
-    date_to = fields.Date(
-        string='Date To',
-        help='Timesheet period end date',
     )
     csv_file = fields.Binary(
         string='CSV File',
@@ -135,33 +110,6 @@ class OPImport(models.TransientModel):
     )
 
     @api.multi
-    @api.constrains('date_from', 'date_to')
-    def _check_period(self):
-        for rec in self:
-            if not (rec.date_from and rec.date_to):
-                continue
-            date_from, date_to = map(
-                date_from_string, (rec.date_from, rec.date_to))
-            if date_from > date_to:
-                raise exceptions.ValidationError(
-                    _('Period start date can\'t be later than the end date!'))
-
-    @api.multi
-    def _get_wizard_action(
-            self, name, view_xml_id='hr_timesheet_openproject.import_wizard'):
-        self.ensure_one()
-        view = self.env.ref(view_xml_id, raise_if_not_found=False)
-        return {
-            'name': name,
-            'context': self.env.context,
-            'views': [(view.id if view else False, 'form')],
-            'res_model': 'op.import',
-            'type': 'ir.actions.act_window',
-            'target': 'new',
-            'res_id': self.id,
-        }
-
-    @api.multi
     def _parse_csv_file(self):
         self.ensure_one()
         csv_file = base64.b64decode(self.csv_file)
@@ -179,7 +127,6 @@ class OPImport(models.TransientModel):
         self.ensure_one()
         project_map_obj = self.env['op.project.map']
         employee_map_obj = self.env['op.employee.map']
-        dates = utils.MinMax()
         time_entries = self._parse_csv_file()
 
         available_projects, available_users = {}, {}
@@ -191,7 +138,6 @@ class OPImport(models.TransientModel):
         time_entry_vals = []
         op_employee_map, op_project_map = {}, {}
         for entry in time_entries:
-            dates.add(entry['date'])
             employee_name = entry['user']
             project_name = entry['project']
 
@@ -228,43 +174,32 @@ class OPImport(models.TransientModel):
         self.write({
             'state': 'map_data',
             'time_entry_ids': time_entry_vals,
-            'date_from': self.date_from or dates.min,
-            'date_to': self.date_to or dates.max,
         })
 
-        return self._get_wizard_action(_('Map Data'))
+        action = self.get_formview_action()
+        action.update(
+            name=_('Map Data'),
+            target='new',
+        )
+        return action
 
     @api.multi
     def action_import_file(self):
         self.ensure_one()
-        period_filter = make_time_entry_period_filter(
-            date_from=self.date_from,
-            date_to=self.date_to,
-        )
-        timesheet_ids = []
+        res_ids = []
         for employee_map in self.op_employee_ids.filtered('employee_id'):
-            line_vals = []
-            sheet_obj = self.env['hr_timesheet_sheet.sheet'].with_context(
-                user_id=employee_map.employee_id.user_id.id)
-            for time_entry in employee_map.time_entry_ids.filtered(
-                    period_filter):
-                line_vals.append(
-                    (0, 0, time_entry._prepare_analytic_line_values()))
-
-            timesheet_ids.append(sheet_obj.create({
-                'date_from': self.date_from,
-                'date_to': self.date_to,
-                'employee_id': employee_map.employee_id.id,
-                'timesheet_ids': line_vals,
-            }).id)
-
+            aal_obj = self.env['account.analytic.line']
+            for time_entry in employee_map.time_entry_ids:
+                res_ids.append(aal_obj.create(
+                    time_entry._prepare_analytic_line_values(),
+                ).id)
         return {
-            'name': _('Created timesheets'),
-            'context': self.env.context,
-            'view_mode': 'tree,form',
-            'res_model': 'hr_timesheet_sheet.sheet',
             'type': 'ir.actions.act_window',
-            'res_ids': timesheet_ids,
+            'name': _('Created time entries'),
+            'res_model': aal_obj._name,
+            'view_mode': 'tree,form',
+            'domain': [('id', 'in', res_ids)],
+            'context': self.env.context,
         }
 
 
@@ -319,6 +254,7 @@ class OPTimeEntry(models.TransientModel):
             'name': self.comment,
             'unit_amount': self.hours,
             'project_id': self.project_id.id,
+            'user_id': self.op_employee_map_id.employee_id.user_id.id,
         }
 
 
