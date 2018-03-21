@@ -1,7 +1,7 @@
 # Copyright 2018 Naglis Jonaitis
 # License LGPL-3 or later (https://www.gnu.org/licenses/lgpl).
 {
-    'name': 'Defuse Document Indexing',
+    'name': 'Defuse Document Index',
     'version': '11.0.1.0.0',
     'author': 'Naglis Jonaitis',
     'category': 'Security',
