@@ -6,7 +6,7 @@
     'version': '10.0.1.0.3',
     'author': 'Naglis Jonaitis',
     'category': 'eCommerce',
-    'website': 'https://naglis.me/addon/payment_mistertango/',
+    'website': 'https://naglis.me/',
     'license': 'AGPL-3',
     'summary': 'Collect payments via Mistertango.com',
     'description': '''
