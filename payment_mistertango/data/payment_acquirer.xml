@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2018 Naglis Jonaitis
+     License AGPL-3 or later (https://www.gnu.org/licenses/agpl). -->
+<odoo noupdate="1">
+
+<record id="acquirer_1" model="payment.acquirer">
+    <field name="name">Mistertango</field>
+    <field name="image" type="base64" file="payment_mistertango/static/src/img/mistertango_icon.png"/>
+    <field name="provider">mistertango</field>
+    <field name="company_id" ref="base.main_company"/>
+    <field name="view_template_id" ref="mistertango_acquirer_button"/>
+    <field name="environment">test</field>
+    <field name="pre_msg"><![CDATA[
+        <p>Mistertango payment pop-up window will show up after clicking on the <i>Pay Now</i> button.</p>]]></field>
+    <field name="mistertango_username">dummy</field>
+    <field name="mistertango_secret_key">dummy</field>
+    <field name="description" type="html">
+        <p>
+            A payment gateway to accept online payments via Mistertango.
+        </p>
+        <ul>
+            <li><i class="fa fa-check"/>eCommerce</li>
+        </ul>
+    </field>
+</record>
+
+</odoo>

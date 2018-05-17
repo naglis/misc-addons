@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2018 Naglis Jonaitis
+     License AGPL-3 or later (https://www.gnu.org/licenses/agpl). -->
+<odoo>
+
+<data>
+<template id="assets_frontend" inherit_id="website.assets_frontend" name="Website Frontend Assets">
+    <xpath expr="." position="inside">
+        <script type="text/javascript" src="/payment_mistertango/static/src/js/payment_mistertango.js"></script>
+    </xpath>
+</template>
+</data>
+
+<data noupdate="1">
+<template id="mistertango_acquirer_button" name="Mistertango Acquirer Button">
+    <script type="text/javascript" src="https://payment.mistertango.com/resources/scripts/mt.collect.js?v=01"></script>
+    <t t-if="acquirer.mistertango_username and acquirer.mistertango_secret_key">
+        <button width="100px" t-attf-class="mistertango-submit {{ submit_class }}" t-att="button_attributes">
+            <img t-if="not submit_txt" src="/payment_mistertango/static/src/img/mistertango_icon.png"/>
+            <t t-if="submit_txt">
+                <span t-esc="submit_txt"/> <span class="fa fa-long-arrow-right"/>
+            </t>
+        </button>
+    </t>
+</template>
+</data>
+
+</odoo>
