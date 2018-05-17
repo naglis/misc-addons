@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2018 Naglis Jonaitis
+     License AGPL-3 or later (https://www.gnu.org/licenses/agpl). -->
+<odoo>
+
+<record id="transaction_1" model="payment.transaction">
+    <field name="acquirer_id" ref="acquirer_1"/>
+    <field name="reference">FOO001</field>
+    <field name="amount">3.14</field>
+    <field name="currency_id" ref="base.EUR"/>
+    <field name="partner_id" ref="base.res_partner_12"/>
+</record>
+
+<record id="transaction_2" model="payment.transaction">
+    <field name="acquirer_id" ref="acquirer_1"/>
+    <field name="reference">FOO002</field>
+    <field name="amount">2.71</field>
+    <field name="currency_id" ref="base.EUR"/>
+    <field name="partner_id" ref="base.res_partner_12"/>
+    <field name="mistertango_callback_uuid">MTTX1</field>
+</record>
+
+</odoo>

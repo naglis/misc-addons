@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2018 Naglis Jonaitis
+     License AGPL-3 or later (https://www.gnu.org/licenses/agpl). -->
+<odoo>
+
+<record id="view_payment_acquirer_form" model="ir.ui.view">
+    <field name="name">Mistertango Payment Acquirer Form</field>
+    <field name="model">payment.acquirer</field>
+    <field name="inherit_id" ref="payment.acquirer_form"/>
+    <field name="arch" type="xml">
+
+        <xpath expr='//group[@name="acquirer"]' position="after">
+            <group name="mistertango_credentials" attrs="{'invisible': [('provider', '!=', 'mistertango')]}">
+                <field name="mistertango_username"/>
+                <field name="mistertango_secret_key" password="True"/>
+                <a colspan="2" href="https://mistertango.freshdesk.com/support/solutions/articles/16000071120-how-to-enable-payment-collection-service-" rel="noopener noreferrer" target="_blank">How to enable Mistertango payment collection?</a>
+            </group>
+        </xpath>
+
+        <xpath expr='//group[@name="acquirer_config"]' position="after">
+            <group name="mistertango_config" string="Mistertango Configuration" attrs="{'invisible': [('provider', '!=', 'mistertango')]}">
+                <field name="mistertango_payment_type"/>
+                <field name="mistertango_default_lang"/>
+                <field name="mistertango_market"/>
+            </group>
+        </xpath>
+
+    </field>
+</record>
+
+</odoo>
