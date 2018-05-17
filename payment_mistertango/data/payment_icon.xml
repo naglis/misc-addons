@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2018 Naglis Jonaitis
+     License AGPL-3 or later (https://www.gnu.org/licenses/agpl). -->
+<odoo>
+
+<record id="payment_icon_mistertango" model="payment.icon">
+    <field name="name">Mistertango</field>
+    <field name="image" type="base64" file="payment_mistertango/static/src/img/mistertango.png"/>
+</record>
+<record id="payment_icon_citadele" model="payment.icon">
+    <field name="name">Citadele</field>
+    <field name="image" type="base64" file="payment_mistertango/static/src/img/citadele.png"/>
+</record>
+<record id="payment_icon_danske" model="payment.icon">
+    <field name="name">Danske</field>
+    <field name="image" type="base64" file="payment_mistertango/static/src/img/danske.png"/>
+</record>
+<record id="payment_icon_dnb" model="payment.icon">
+    <field name="name">DNB</field>
+    <field name="image" type="base64" file="payment_mistertango/static/src/img/dnb.png"/>
+</record>
+<record id="payment_icon_mb" model="payment.icon">
+    <field name="name">Medicinos bankas</field>
+    <field name="image" type="base64" file="payment_mistertango/static/src/img/mb.png"/>
+</record>
+<record id="payment_icon_nordea" model="payment.icon">
+    <field name="name">Nordea</field>
+    <field name="image" type="base64" file="payment_mistertango/static/src/img/nordea.png"/>
+</record>
+<record id="payment_icon_seb" model="payment.icon">
+    <field name="name">SEB</field>
+    <field name="image" type="base64" file="payment_mistertango/static/src/img/seb.png"/>
+</record>
+<record id="payment_icon_swedbank" model="payment.icon">
+    <field name="name">Swedbank</field>
+    <field name="image" type="base64" file="payment_mistertango/static/src/img/swedbank.png"/>
+</record>
+<record id="payment_icon_sb" model="payment.icon">
+    <field name="name">Šiaulių bankas</field>
+    <field name="image" type="base64" file="payment_mistertango/static/src/img/sb.png"/>
+</record>
+<record id="payment_icon_bitcoin" model="payment.icon">
+    <field name="name">Bitcoin</field>
+    <field name="image" type="base64" file="payment_mistertango/static/src/img/bitcoin.png"/>
+</record>
+
+</odoo>

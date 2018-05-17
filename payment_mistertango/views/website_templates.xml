@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2018 Naglis Jonaitis
+     License AGPL-3 or later (https://www.gnu.org/licenses/agpl). -->
+<odoo>
+
+<data>
+<template id="assets_frontend" inherit_id="website.assets_frontend" name="Website Frontend Assets">
+    <xpath expr="." position="inside">
+        <script type="text/javascript" src="/payment_mistertango/static/src/js/payment_mistertango.js"></script>
+    </xpath>
+</template>
+</data>
+
+<data noupdate="1">
+<template id="mistertango_form" name="Mistertango Form">
+    <input type="hidden" name="mistertango_data" t-att="button_attributes"/>
+</template>
+</data>
+
+</odoo>

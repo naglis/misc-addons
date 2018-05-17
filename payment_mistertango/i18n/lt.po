@@ -1,0 +1,345 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* payment_mistertango
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 11.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-01-31 00:00+0000\n"
+"PO-Revision-Date: 2018-01-31 00:00+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: payment_mistertango
+#: model:payment.acquirer,cancel_msg:payment_mistertango.acquirer_1
+msgid "<span><i>Cancel,</i> Your payment has been cancelled.</span>"
+msgstr "<span><i>Atšaukti,</i> Jūsų mokėjimas buvo atšauktas.</span>"
+
+#. module: payment_mistertango
+#: model:payment.acquirer,done_msg:payment_mistertango.acquirer_1
+msgid "<span><i>Done,</i> Your online payment has been successfully processed. Thank you for your order.</span>"
+msgstr "<span><i>Įvykdytas,</i> Jūsų mokėjimas sėkmingai apdorotas. Dėkojame už jūsų užsakymą.</span>"
+
+#. module: payment_mistertango
+#: model:payment.acquirer,error_msg:payment_mistertango.acquirer_1
+msgid "<span><i>Error,</i> Please be aware that an error occurred during the transaction. The order has been confirmed but will not be paid. Do not hesitate to contact us if you have any questions on the status of your order.</span>"
+msgstr "<span><i>Klaida,</i> Transakcijos metu įvyko klaida. Užsakymas buvo patvirtintas, tačiau nebuvo apmokėtas. Prašome nedvejoti susisiekti su mumis, jei turite klausimų dėl užsakymo būsenos.</span>"
+
+#. module: payment_mistertango
+#: model:payment.acquirer,pending_msg:payment_mistertango.acquirer_1
+msgid "<span><i>Pending,</i> Your online payment has been successfully processed. But your order is not validated yet.</span>"
+msgstr "<span><i>Laukiama patvirtinimo,</i> Jūsų mokėjimas sėkmingai apdorotas, tačiau užsakymas dar nėra patvirtintas.</span>"
+
+#. module: payment_mistertango
+#. openerp-web
+#: code:addons/payment_mistertango/static/src/js/payment_mistertango.js:68
+#, python-format
+msgid "An error occurred during your payment via Mistertango. Please try again."
+msgstr "Apmokėjimo „Mistertango“ metu įvyko klaida. Prašome bandyti dar kartą."
+
+#. module: payment_mistertango
+#: selection:payment.acquirer,mistertango_payment_type:0
+msgid "Bank Link"
+msgstr "Internetinė bankininkystė"
+
+#. module: payment_mistertango
+#: selection:payment.acquirer,mistertango_payment_type:0
+msgid "Bank Transfer"
+msgstr "Išankstinė sąskaita"
+
+#. module: payment_mistertango
+#: selection:payment.acquirer,mistertango_payment_type:0
+msgid "Bitcoin"
+msgstr "„Bitcoin“"
+
+#. module: payment_mistertango
+#: selection:payment.acquirer,mistertango_market:0
+msgid "Bulgaria"
+msgstr "Bulgarija"
+
+#. module: payment_mistertango
+#: selection:payment.acquirer,mistertango_default_lang:0
+msgid "Bulgarian"
+msgstr "Bulgarų"
+
+#. module: payment_mistertango
+#: model:ir.model.fields,field_description:payment_mistertango.field_payment_transaction_mistertango_callback_uuid
+msgid "Callback UUID"
+msgstr "Atsako UUID"
+
+#. module: payment_mistertango
+#: selection:payment.acquirer,mistertango_payment_type:0
+msgid "Credit Card"
+msgstr "Kreditinė kortelė"
+
+#. module: payment_mistertango
+#: selection:payment.acquirer,mistertango_default_lang:0
+msgid "Czech"
+msgstr "Čekų"
+
+#. module: payment_mistertango
+#: selection:payment.acquirer,mistertango_market:0
+msgid "Czech Republic"
+msgstr "Čekijos Respublika"
+
+#. module: payment_mistertango
+#: model:ir.model.fields,field_description:payment_mistertango.field_payment_acquirer_mistertango_default_lang
+msgid "Default Language"
+msgstr "Numatytoji kalba"
+
+#. module: payment_mistertango
+#: selection:payment.acquirer,mistertango_default_lang:0
+msgid "Dutch"
+msgstr "Olandų"
+
+#. module: payment_mistertango
+#: selection:payment.acquirer,mistertango_default_lang:0
+msgid "English"
+msgstr "Anglų"
+
+#. module: payment_mistertango
+#: selection:payment.acquirer,mistertango_market:0
+msgid "Estonia"
+msgstr "Estija"
+
+#. module: payment_mistertango
+#: selection:payment.acquirer,mistertango_default_lang:0
+msgid "Estonian"
+msgstr "Estų"
+
+#. module: payment_mistertango
+#: selection:payment.acquirer,mistertango_market:0
+msgid "Finland"
+msgstr "Suomija"
+
+#. module: payment_mistertango
+#: selection:payment.acquirer,mistertango_default_lang:0
+msgid "Finnish"
+msgstr "Suomių"
+
+#. module: payment_mistertango
+#: selection:payment.acquirer,mistertango_market:0
+msgid "France"
+msgstr "Prancūzija"
+
+#. module: payment_mistertango
+#: selection:payment.acquirer,mistertango_default_lang:0
+msgid "French"
+msgstr "Prancūzų"
+
+#. module: payment_mistertango
+#: selection:payment.acquirer,mistertango_default_lang:0
+msgid "German"
+msgstr "Vokiečių"
+
+#. module: payment_mistertango
+#: selection:payment.acquirer,mistertango_market:0
+msgid "Germany"
+msgstr "Vokietija"
+
+#. module: payment_mistertango
+#: model:ir.ui.view,arch_db:payment_mistertango.view_payment_acquirer_form
+msgid "How to enable Mistertango payment collection?"
+msgstr "Kaip įgalinti Mistertango įmokų surinkimą?"
+
+#. module: payment_mistertango
+#: selection:payment.acquirer,mistertango_default_lang:0
+msgid "Hungarian"
+msgstr "Vengrų"
+
+#. module: payment_mistertango
+#: selection:payment.acquirer,mistertango_market:0
+msgid "Hungary"
+msgstr "Vengrija"
+
+#. module: payment_mistertango
+#: model:ir.model.fields,help:payment_mistertango.field_payment_acquirer_mistertango_payment_type
+msgid "If set, only this payment type will be available during payment. If not set, the user will be able to choose the payment type."
+msgstr "Pasirinkus mokėjimo būdą, tik šis mokėjimo būdas bus galimas apmokėjimo metu. Jei joks būdas nepasirinktas, klientas galės pasirinkti mokėjimo būdą pats."
+
+#. module: payment_mistertango
+#: model:ir.model.fields,help:payment_mistertango.field_payment_acquirer_mistertango_default_lang
+msgid "If set, this language will be used by Mistertango by default. Otherwise the language will be decided based on customer data."
+msgstr "Pasirinkus kalbą, ši kalba bus pagal nutylėjimą naudojama „Mistertango“ mokėjimo lange. Jei reikšmė nenustatyta, kalba bus nustatyta pagal kliento duomenis."
+
+#. module: payment_mistertango
+#: model:ir.model.fields,help:payment_mistertango.field_payment_transaction_mistertango_payment_type
+msgid "Indicates which method was used to complete the payment."
+msgstr "Parodo, koks mokėjimo būdas buvo naudojamas apmokėjimo metu."
+
+#. module: payment_mistertango
+#: selection:payment.acquirer,mistertango_default_lang:0
+msgid "Italian"
+msgstr "Italų"
+
+#. module: payment_mistertango
+#: selection:payment.acquirer,mistertango_market:0
+msgid "Italy"
+msgstr "Italija"
+
+#. module: payment_mistertango
+#: selection:payment.acquirer,mistertango_market:0
+msgid "Latvia"
+msgstr "Latvija"
+
+#. module: payment_mistertango
+#: selection:payment.acquirer,mistertango_default_lang:0
+msgid "Latvian"
+msgstr "Latvių"
+
+#. module: payment_mistertango
+#: selection:payment.acquirer,mistertango_market:0
+msgid "Lithuania"
+msgstr "Lietuva"
+
+#. module: payment_mistertango
+#: selection:payment.acquirer,mistertango_default_lang:0
+msgid "Lithuanian"
+msgstr "Lietuvių"
+
+#. module: payment_mistertango
+#: model:ir.model.fields,field_description:payment_mistertango.field_payment_acquirer_mistertango_market
+msgid "Market"
+msgstr "Rinka"
+
+#. module: payment_mistertango
+#: model:payment.acquirer,name:payment_mistertango.acquirer_1
+msgid "Mistertango"
+msgstr "Mistertango"
+
+#. module: payment_mistertango
+#: model:ir.ui.view,arch_db:payment_mistertango.view_payment_acquirer_form
+msgid "Mistertango Configuration"
+msgstr "„Mistertango“ nustatymai"
+
+#. module: payment_mistertango
+#: model:payment.acquirer,pre_msg:payment_mistertango.acquirer_1
+msgid "Mistertango payment pop-up window will show up after clicking on the <i>Pay Now</i> button."
+msgstr "Paspaudus mygtuką <i>Mokėti dabar</i> atsivers „Mistertango“ apmokėjimo langas."
+
+#. module: payment_mistertango
+#: code:addons/payment_mistertango/models/payment_acquirer.py:77
+#, python-format
+msgid "Mistertango supports only these currencies: %s."
+msgstr "„Mistertango“ palaiko tik šias valiutas: %s."
+
+#. module: payment_mistertango
+#: selection:payment.acquirer,mistertango_market:0
+msgid "Netherlands"
+msgstr "Nyderlandai"
+
+#. module: payment_mistertango
+#: selection:payment.transaction,mistertango_payment_type:0
+msgid "Paid via Mistertango wallet"
+msgstr "Apmokėta naudojantis „Mistertango“ pinigine"
+
+#. module: payment_mistertango
+#: selection:payment.transaction,mistertango_payment_type:0
+msgid "Paid via bank transfer (wired payment)"
+msgstr "Apmokėta banko pavedimu"
+
+#. module: payment_mistertango
+#: selection:payment.transaction,mistertango_payment_type:0
+msgid "Paid via fast payment"
+msgstr "Apmokėta internetine bankininkyste"
+
+#. module: payment_mistertango
+#: selection:payment.transaction,mistertango_payment_type:0
+msgid "Paid with Bitcoin e-currency"
+msgstr "Apmokėta „Bitcoin“ kriptovaliuta"
+
+#. module: payment_mistertango
+#: selection:payment.transaction,mistertango_payment_type:0
+msgid "Paid with credit card"
+msgstr "Apmokėta kreditine kortele"
+
+#. module: payment_mistertango
+#. openerp-web
+#: code:addons/payment_mistertango/static/src/js/payment_mistertango.js:63
+#, python-format
+msgid "Paid!"
+msgstr "Apmokėta!"
+
+#. module: payment_mistertango
+#: model:ir.model,name:payment_mistertango.model_payment_acquirer
+msgid "Payment Acquirer"
+msgstr "Pirkėjas"
+
+#. module: payment_mistertango
+#: model:ir.model,name:payment_mistertango.model_payment_transaction
+msgid "Payment Transaction"
+msgstr "Mokėjimo transakcija"
+
+#. module: payment_mistertango
+#: model:ir.model.fields,field_description:payment_mistertango.field_payment_acquirer_mistertango_payment_type
+#: model:ir.model.fields,field_description:payment_mistertango.field_payment_transaction_mistertango_payment_type
+msgid "Payment Type"
+msgstr "Mokėjimo būdas"
+
+#. module: payment_mistertango
+#: selection:payment.acquirer,mistertango_market:0
+msgid "Romania"
+msgstr "Rumunija"
+
+#. module: payment_mistertango
+#: selection:payment.acquirer,mistertango_default_lang:0
+msgid "Romanian"
+msgstr "Rumunų"
+
+#. module: payment_mistertango
+#: selection:payment.acquirer,mistertango_default_lang:0
+msgid "Russian"
+msgstr "Rusų"
+
+#. module: payment_mistertango
+#: model:ir.model.fields,field_description:payment_mistertango.field_payment_acquirer_mistertango_secret_key
+msgid "Secret Key"
+msgstr "Slaptasis raktas"
+
+#. module: payment_mistertango
+#: selection:payment.acquirer,mistertango_default_lang:0
+msgid "Slovak"
+msgstr "Slovakų"
+
+#. module: payment_mistertango
+#: selection:payment.acquirer,mistertango_market:0
+msgid "Slovakia"
+msgstr "Slovakija"
+
+#. module: payment_mistertango
+#: selection:payment.acquirer,mistertango_market:0
+msgid "Spain"
+msgstr "Ispanija"
+
+#. module: payment_mistertango
+#: selection:payment.acquirer,mistertango_default_lang:0
+msgid "Spanish"
+msgstr "Ispanų"
+
+#. module: payment_mistertango
+#. openerp-web
+#: code:addons/payment_mistertango/static/src/js/payment_mistertango.js:96
+#, python-format
+msgid "There was a problem while contacting Mistertango. Please make sure that you disable any ad blocking plugins in your browser and then try again after refreshing this page."
+msgstr "Įvyko komunikacijos su „Mistertango“ klaida. Įsitikinkite, jog savo naršyklėje išjungėte visus reklamos blokavimo įskiepius ir pabandykite dar kartą įkėlę šį puslapį iš naujo."
+
+#. module: payment_mistertango
+#: selection:payment.acquirer,mistertango_market:0
+msgid "Ukraine"
+msgstr "Ukraina"
+
+#. module: payment_mistertango
+#: selection:payment.acquirer,mistertango_default_lang:0
+msgid "Ukrainian"
+msgstr "Ukrainiečių"
+
+#. module: payment_mistertango
+#: model:ir.model.fields,field_description:payment_mistertango.field_payment_acquirer_mistertango_username
+msgid "Username"
+msgstr "Naudotojo vardas"
+
