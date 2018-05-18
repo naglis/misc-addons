@@ -75,9 +75,9 @@ class OpenProjectImporter(Component):
             tzinfo=None)
         return sync_date > openproject_date
 
-    def _preprocess_data(self, data, **kwargs):
+    def _preprocess_record(self, record, **kwargs):
         '''Intended to be overriden in a subclass.'''
-        return data
+        return record
 
     def _after_import(self, binding, record, for_create=False):
         pass
@@ -130,9 +130,9 @@ class OpenProjectImporter(Component):
             except IDMissingInBackend:
                 return _('Record no longer exists on OpenProject')
         else:
-            data = self._preprocess_data(data, **kwargs)
             record, external_id = data, data['id']
 
+        record = self._preprocess_record(record, **kwargs)
         binding = self.binder.to_internal(external_id)
         exists = bool(binding)
 
