@@ -1,0 +1,28 @@
+# Copyright 2018 Naglis Jonaitis
+# License AGPL-3 or later (https://www.gnu.org/licenses/agpl).
+
+# NOTE: `website` module must not be installed during testing, as `website`
+# will return the `Page Not Found` page but status will be 200.
+name: Test XML-RPC is disabled
+format: "1.0"
+headers:
+    User-Agent: Rigor Testing Profile
+    Content-Type: application/xml
+
+steps:
+
+    - description: Test that XML-RPC endpoints are disabled
+      iterate:
+          endpoint: [
+            'xmlrpc/db',
+            'xmlrpc/2/db',
+            'xmlrpc/common',
+            'xmlrpc/2/common',
+            'xmlrpc/object',
+            'xmlrpc/2/object',
+          ]
+      request:
+          method: POST
+          path: '{iterate.endpoint}'
+          status: [404]
+          data: <?xml version="1.0" encoding="utf-8"?><methodCall><methodName>foo</methodName><params></params></methodCall>
