@@ -79,11 +79,14 @@ class PaymentTransaction(models.Model):
         params = data.get('params', {})
         check_keys_not_empty(params, ('projectid', 'requestid'))
 
-        the_data = data.get('data')
+        the_data = data.get('data', '')
 
-        ss1_received = data.get('ss1')
+        ss1_received = bytes(data.get('ss1'), 'ascii')
         ss1_computed = paysera.md5_sign(
-            the_data, bytes(self.acquirer_id.paysera_sign_password, 'ascii'))
+            bytes(the_data, 'ascii'),
+            bytes(self.acquirer_id.paysera_sign_password, 'ascii')
+        )
+
         if not ss1_computed == ss1_received:
             invalid_parameters.append(('ss1', ss1_received, ss1_computed))
 

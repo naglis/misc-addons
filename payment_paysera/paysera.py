@@ -98,7 +98,7 @@ def _encode_dict_vals(old_dict):
 
 def md5_sign(data: bytes, sign_password: bytes) -> bytes:
     '''Returns the MD5 hash of (data + paysera_sign_password).'''
-    return hashlib.md5(data + sign_password).hexdigest()
+    return bytes(hashlib.md5(data + sign_password).hexdigest(), 'ascii')
 
 
 def verify_rsa_signature(signature, data):
