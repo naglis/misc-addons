@@ -79,6 +79,19 @@ Known issues / Roadmap
 
 * OpenProject time entry API endpoint currently does not support *updatedAt* filtering. See also: https://goo.gl/Kst39h.
 
+FAQ
+===
+
+Are you planning on making it bidirectional?
+--------------------------------------------
+
+Personally, no, as currently I do not have a need for it. If you want to give a
+try yourself, please note that the current version of the OpenProject API (at
+the time of writing: API v3 on OpenProject 7.4) `does not support
+<http://docs.openproject.org/apiv3-doc/#projects>`_ creating projects via API,
+same goes for time entries, but at least for time entries `create support is
+planned <https://community.openproject.com/projects/openproject/work_packages/26108/activity>`_.
+
 Credits
 =======
 
