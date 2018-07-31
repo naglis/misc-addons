@@ -6,7 +6,7 @@
     'version': '10.0.1.0.9',
     'author': 'Naglis Jonaitis',
     'category': 'Connector',
-    'website': 'https://github.com/naglis',
+    'website': 'https://naglis.me/',
     'license': 'AGPL-3',
     'summary': 'Synchronize OpenProject with Odoo',
     'external_dependencies': {

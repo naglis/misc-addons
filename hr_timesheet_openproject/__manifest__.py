@@ -6,7 +6,7 @@
     'version': '10.0.1.0.0',
     'author': 'Naglis Jonaitis',
     'category': 'Human Resources',
-    'website': 'https://github.com/naglis/',
+    'website': 'https://naglis.me/',
     'license': 'AGPL-3',
     'summary': 'Import timesheets from OpenProject',
     'depends': [
