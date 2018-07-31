@@ -6,7 +6,7 @@
     'version': '11.0.1.0.0',
     'author': 'Naglis Jonaitis',
     'category': 'Technical Settings',
-    'website': 'https://naglis.me/addon/web_ir_actions_act_window_qr_code/',
+    'website': 'https://naglis.me/',
     'license': 'LGPL-3',
     'summary': 'Display QR code pop-ups from Python code',
     'depends': [

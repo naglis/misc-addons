@@ -6,7 +6,7 @@
     'version': '11.0.1.0.0',
     'author': 'Naglis Jonaitis',
     'category': 'Extra Tools',
-    'website': 'https://github.com/naglis',
+    'website': 'https://naglis.me/',
     'license': 'AGPL-3',
     'summary': 'Respect the privacy of your customers',
     'depends': [
