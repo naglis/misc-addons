@@ -6,7 +6,7 @@
     'version': '8.0.0.2.0',
     'author': 'Naglis Jonaitis',
     'category': 'Human Resources',
-    'website': 'https://github.com/naglis/',
+    'website': 'https://naglis.me/',
     'licence': 'AGPL-3',
     'summary': 'OpenProject time entries CSV import.',
     'depends': [
