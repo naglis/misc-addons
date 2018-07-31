@@ -6,7 +6,7 @@
     'version': '7.0.0.2.0',
     'author': 'Naglis Jonaitis',
     'category': 'Human Resources',
-    'website': 'https://github.com/naglis/',
+    'website': 'https://naglis.me/',
     'licence': 'AGPL-3',
     'summary': 'OpenProject time entries CSV import.',
     'description': 'Allows import of employee time entries from OpenProject.',
