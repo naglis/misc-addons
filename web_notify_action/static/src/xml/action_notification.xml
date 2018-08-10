@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<template>
+
+<!-- Copyright 2018 Naglis Jonaitis
+     License LGPL-3 or later (https://www.gnu.org/licenses/lgpl). -->
+
+<t t-name="ActionNotification">
+    <div class="o_notification o_action_notification" t-translation="off">
+        <a t-if="widget.params.allow_dismiss" class="fa fa-times o_close" href="#"/>
+
+        <div class="o_notification_title">
+            <span t-attf-class="o_icon #{widget.params.icon}"/>
+            <t t-esc="widget.title"/>
+        </div>
+
+        <div class="o_notification_content">
+            <div class="row">
+                <t t-set="text_width" t-value="widget.params.image_url &amp;&amp; 9 || 12"/>
+                <div t-attf-class="col-sm-#{text_width}">
+                    <p t-esc="widget.text"/>
+                </div>
+                <div t-if="widget.params.image_url" class="col-sm-3">
+                    <img class="img-responsive" t-att-src="widget.params.image_url"/>
+                </div>
+            </div>
+            <div class="row mt8">
+                <div class="col-sm-12">
+                    <t t-foreach="widget.params.buttons" t-as="button">
+                        <t t-if="button.tag">
+                            <t t-set="button_class" t-value="button.class || 'btn btn-default'"/>
+                            <button type="button" t-att-data-action-tag="button.tag" t-attf-class="#{button_class} notify_action_button">
+                                <span t-if="button.icon" t-att-class="button.icon" aria-hidden="true"/>
+                                <t t-esc="button.label"/>
+                            </button>
+                        </t>
+                    </t>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</t>
+
+</template>
