@@ -17,7 +17,7 @@
             <div class="row">
                 <t t-set="text_width" t-value="widget.params.image_url &amp;&amp; 9 || 12"/>
                 <div t-attf-class="col-sm-#{text_width}">
-                    <p t-esc="widget.text"/>
+                    <p><t t-esc="widget.text"/></p>
                 </div>
                 <div t-if="widget.params.image_url" class="col-sm-3">
                     <img class="img-responsive" t-att-src="widget.params.image_url"/>
