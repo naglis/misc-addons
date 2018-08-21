@@ -5,7 +5,7 @@
     <field name="name">openproject.account.analytic.line.tree</field>
     <field name="model">openproject.account.analytic.line</field>
     <field name="arch" type="xml">
-        <tree editable="top">
+        <tree editable="top" create="false">
             <field name="date"/>
             <field name="user_id"/>
             <field name="project_id"/>
