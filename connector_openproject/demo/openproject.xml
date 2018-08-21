@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<record id="backend_1" model="openproject.backend">
+    <field name="name">Test Backend</field>
+    <field name="instance_url">mock://localhost</field>
+    <field name="company_id" ref="base.main_company"/>
+    <field name="api_key">dummy</field>
+    <field name="timeout" eval="1.0"/>
+    <field name="debug" eval="False"/>
+</record>
+
+</odoo>

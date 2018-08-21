@@ -31,6 +31,9 @@
         'views/openproject_project_task.xml',
         'views/openproject_project_project.xml',
     ],
+    'demo': [
+        'demo/openproject.xml',
+    ],
     'images': [
         'static/description/main_screenshot.png',
     ],
