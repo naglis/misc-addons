@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Naglis Jonaitis
+# Copyright 2017-2018 Naglis Jonaitis
 # License AGPL-3 or later (https://www.gnu.org/licenses/agpl).
 
 import base64
@@ -354,7 +354,7 @@ class OpenProjectMailMessageImporter(Component):
         enabled_for = project.sync_activities
         activity_type = record['_type']
         if should_skip_activity(activity_type, enabled_for):
-            return _(u'Skipping sync for activity type: %s' % activity_type)
+            return _(u'Skipping sync for activity type: %s') % activity_type
 
     def import_dependencies(self, record):
         self._import_link_dependency(record, OP_WORK_PACKAGE_LINK)
@@ -388,13 +388,13 @@ class ImageImporter(AbstractComponent):
         try:
             PIL.Image.open(buf).verify()
         except Exception:
-            return _(u'Not a valid image: %s' % url)
+            return _(u'Not a valid image: %s') % url
 
         binding = self.env[binding_model].browse(record_id)
         binding.write({
             image_field: base64.b64encode(image),
         })
-        return _('Image set on record: %s' % binding)
+        return _('Image set on record: %s') % binding
 
 
 class OpenProjectImageImporter(Component):
