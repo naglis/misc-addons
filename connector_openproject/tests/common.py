@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Naglis Jonaitis
+# Copyright 2017-2018 Naglis Jonaitis
 # License AGPL-3 or later (https://www.gnu.org/licenses/agpl).
 
 import json
@@ -29,27 +29,30 @@ def json_test_file(filename, path_getter=test_file):
 def get_openproject_mocker(projects_response_file='projects.json'):
     mocker = requests_mock.Mocker()
 
-    mocker.get('http://op/api/v3/users/1', json=json_test_file('users_1.json'))
+    mocker.get(
+        'mock://localhost/api/v3/users/1',
+        json=json_test_file('users_1.json'))
     mocker.get('https://gravatar/avatar', headers={
         'Content-Type': 'image/png',
     }, body=open(test_file('image.png')))
     mocker.get(
-        'http://op/api/v3/projects',
+        'mock://localhost/api/v3/projects',
         json=json_test_file(projects_response_file),
     )
     mocker.get(
-        'http://op/api/v3/statuses/1', json=json_test_file('statuses_1.json'))
+        'mock://localhost/api/v3/statuses/1',
+        json=json_test_file('statuses_1.json'))
     mocker.get(
-        'http://op/api/v3/work_packages',
+        'mock://localhost/api/v3/work_packages',
         json=json_test_file('work_packages_project_6.json'))
     mocker.get(
-        'http://op/api/v3/work_packages/1528',
+        'mock://localhost/api/v3/work_packages/1528',
         json=json_test_file('work_packages_1528.json'))
     mocker.get(
-        'http://op/api/v3/work_packages/1528/activities',
+        'mock://localhost/api/v3/work_packages/1528/activities',
         json=json_test_file('work_packages_1528_activities.json'))
     mocker.get(
-        'http://op/api/v3/time_entries',
+        'mock://localhost/api/v3/time_entries',
         json=json_test_file('project_1_time_entries.json'))
 
     return mocker
@@ -59,14 +62,7 @@ class OpenProjectBackendTestCase(common.TransactionComponentCase):
 
     def setUp(self):
         super(OpenProjectBackendTestCase, self).setUp()
-        self.backend = self.env['openproject.backend'].create({
-            'name': 'Test Backend',
-            'company_id': self.ref('base.main_company'),
-            'instance_url': 'http://op/',
-            'api_key': 'dummy',
-            'debug': False,
-            'timeout': 1,
-        })
+        self.backend = self.env.ref('connector_openproject.backend_1')
 
     def assertLen(self, collection, expected, msg=None):
         actual = len(collection)
