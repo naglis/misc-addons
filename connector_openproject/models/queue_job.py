@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Naglis Jonaitis
+# Copyright 2017-2018 Naglis Jonaitis
 # License AGPL-3 or later (https://www.gnu.org/licenses/agpl).
 
 from odoo import api, models
@@ -12,7 +12,6 @@ class QueueJob(models.Model):
     def related_action_openproject_link(self):
         '''Open the record on the OpenProject instance.'''
         self.ensure_one()
-        # backend = self.env['openproject.backend'].browse(self.record_ids)
         backend, external_id = self.args[:2]
 
         with backend.work_on(self.model_name) as work:
