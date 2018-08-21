@@ -5,7 +5,7 @@
     <field name="name">openproject.project.project.tree</field>
     <field name="model">openproject.project.project</field>
     <field name="arch" type="xml">
-        <tree editable="top">
+        <tree editable="top" create="false">
             <field name="op_sync"/>
             <field name="openproject_id"/>
             <field name="name" string="Name"/>
