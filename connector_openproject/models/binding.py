@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Naglis Jonaitis
+# Copyright 2017-2018 Naglis Jonaitis
 # License AGPL-3 or later (https://www.gnu.org/licenses/agpl).
 
 from odoo import api, fields, models
@@ -28,6 +28,26 @@ class OpenProjectAgeMixin(models.AbstractModel):
         string='OpenProject Last Update Date',
         readonly=True,
     )
+
+
+class OpenProjectExternalURLMixin(models.AbstractModel):
+    _name = 'openproject.external.url.mixin'
+
+    @api.multi
+    def action_open_external_url(self):
+        '''
+        Returns an `ir.actions.act_url` action to open the resource's URL on
+        the OpenProject instance.
+        '''
+        self.ensure_one()
+        with self.backend_id.work_on(self._name) as work:
+            external_url = work.component(
+                usage='binder').get_external_url(self.openproject_id)
+            return {
+                'type': 'ir.actions.act_url',
+                'url': external_url,
+                'target': 'new',
+            } if external_url else {}
 
 
 class OpenProjectBinding(models.AbstractModel):

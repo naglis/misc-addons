@@ -30,29 +30,29 @@ def get_openproject_mocker(projects_response_file='projects.json'):
     mocker = requests_mock.Mocker()
 
     mocker.get(
-        'mock://localhost/api/v3/users/1',
+        'http://openproject/api/v3/users/1',
         json=json_test_file('users_1.json'))
     mocker.get('https://gravatar/avatar', headers={
         'Content-Type': 'image/png',
     }, body=open(test_file('image.png')))
     mocker.get(
-        'mock://localhost/api/v3/projects',
+        'http://openproject/api/v3/projects',
         json=json_test_file(projects_response_file),
     )
     mocker.get(
-        'mock://localhost/api/v3/statuses/1',
+        'http://openproject/api/v3/statuses/1',
         json=json_test_file('statuses_1.json'))
     mocker.get(
-        'mock://localhost/api/v3/work_packages',
+        'http://openproject/api/v3/work_packages',
         json=json_test_file('work_packages_project_6.json'))
     mocker.get(
-        'mock://localhost/api/v3/work_packages/1528',
+        'http://openproject/api/v3/work_packages/1528',
         json=json_test_file('work_packages_1528.json'))
     mocker.get(
-        'mock://localhost/api/v3/work_packages/1528/activities',
+        'http://openproject/api/v3/work_packages/1528/activities',
         json=json_test_file('work_packages_1528_activities.json'))
     mocker.get(
-        'mock://localhost/api/v3/time_entries',
+        'http://openproject/api/v3/time_entries',
         json=json_test_file('project_1_time_entries.json'))
 
     return mocker

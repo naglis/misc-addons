@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Naglis Jonaitis
+# Copyright 2017-2018 Naglis Jonaitis
 # License AGPL-3 or later (https://www.gnu.org/licenses/agpl).
 
 import collections
 import json
 import logging
-import urlparse
 
 import requests
 
@@ -55,23 +54,12 @@ class BaseOpenProjectAdapter(AbstractComponent):
     _collection_endpoint = None
     _paginated_collection = True
 
-    # Used for building the URL of record on the OpenProject instance.
-    _external_url_fmt = None
-
     # Version of OpenProject API.
     API_VERSION = 'v3'
 
     def __init__(self, *a, **kw):
         super(BaseOpenProjectAdapter, self).__init__(*a, **kw)
         self.session = requests.Session()
-
-    def get_external_url(self, external_id):
-        if self._external_url_fmt is None:
-            return None
-        if isinstance(external_id, collections.Mapping):
-            external_id = external_id['id']
-        path = self._external_url_fmt.format(id=external_id)
-        return urlparse.urljoin(self.backend_record.instance_url, path)
 
     @property
     def paginated(self):
@@ -174,7 +162,6 @@ class OpenProjectResUsersAdapter(Component):
     _apply_on = 'openproject.res.users'
     _single_endpoint = '/users/{id}'
     _collection_endpoint = '/users'
-    _external_url_fmt = _single_endpoint
 
 
 class OpenProjectProjectProjectAdapter(Component):
@@ -183,7 +170,6 @@ class OpenProjectProjectProjectAdapter(Component):
     _apply_on = 'openproject.project.project'
     _single_endpoint = '/projects/{id}'
     _collection_endpoint = '/projects'
-    _external_url_fmt = _single_endpoint
 
 
 class OpenProjectProjectTaskTypeAdapter(Component):
@@ -200,7 +186,6 @@ class OpenProjectProjectTaskAdapter(Component):
     _apply_on = 'openproject.project.task'
     _single_endpoint = '/work_packages/{id}'
     _collection_endpoint = '/work_packages'
-    _external_url_fmt = _single_endpoint
 
 
 class OpenProjectMailMessageAdapter(Component):

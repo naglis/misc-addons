@@ -15,8 +15,7 @@ class QueueJob(models.Model):
         backend, external_id = self.args[:2]
 
         with backend.work_on(self.model_name) as work:
-            adapter = work.component(usage='backend.adapter')
-            url = adapter.get_external_url(external_id)
+            url = work.component(usage='binder').get_external_url(external_id)
             if url:
                 return {
                     'type': 'ir.actions.act_url',

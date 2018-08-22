@@ -11,6 +11,7 @@
             <field name="project_id"/>
             <field name="op_create_date"/>
             <field name="op_write_date"/>
+            <button string="Open External URL" type="object" name="action_open_external_url" icon="fa-external-link"/>
         </tree>
     </field>
 </record>
