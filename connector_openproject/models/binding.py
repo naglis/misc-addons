@@ -71,7 +71,7 @@ class OpenProjectBinding(models.AbstractModel):
         ondelete='cascade',
     )
     openproject_id = fields.Char(
-        'OpenProject ID',
+        string='OpenProject ID',
         index=True,
         readonly=True,
         help='Record\'s identifier on the OpenProject instance',
