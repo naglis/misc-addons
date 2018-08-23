@@ -3,7 +3,7 @@
 # License AGPL-3 or later (https://www.gnu.org/licenses/agpl).
 {
     'name': 'OpenProject Connector',
-    'version': '10.0.1.0.13',
+    'version': '10.0.1.0.14',
     'author': 'Naglis Jonaitis',
     'category': 'Connector',
     'website': 'https://naglis.me/',
