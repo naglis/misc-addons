@@ -58,7 +58,7 @@
                     <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
                         <field name="active" widget="boolean_button" options="{'terminology': 'archive'}"/>
                     </button>
-                    <button name="toggle_debug" type="object" class="oe_stat_button" icon="fa-terminal" groups="base.group_no_one">
+                    <button name="toggle_debug" type="object" class="oe_stat_button" icon="fa-terminal">
                         <field name="debug" widget="boolean_button" options="{'terminology': {
                             'string_true': 'Debug Mode',
                             'hover_true': 'Switch to quiet mode',
@@ -104,7 +104,7 @@
                         <field name="instance_url" widget="url"/>
                         <field name="sync_project_status"/>
                     </group>
-                    <group name="advanced" groups="base.group_no_one">
+                    <group name="advanced">
                         <field name="api_key" password="True"/>
                         <field name="timeout"/>
                         <field name="page_size"/>
