@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Naglis Jonaitis
+# Copyright 2017-2018 Naglis Jonaitis
 # License AGPL-3 or later (https://www.gnu.org/licenses/agpl).
 
 from odoo import fields, models
@@ -11,6 +11,7 @@ class OpenProjectProjectTask(models.Model):
         'openproject.binding',
         'openproject.age.mixin',
         'openproject.syncable.mixin',
+        'openproject.external.url.mixin',
     ]
     _inherits = {
         'project.task': 'odoo_id',

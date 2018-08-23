@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Naglis Jonaitis
+# Copyright 2017-2018 Naglis Jonaitis
 # License AGPL-3 or later (https://www.gnu.org/licenses/agpl).
 
 from odoo import fields, models
@@ -10,6 +10,7 @@ class OpenProjectAccountAnalyticLine(models.Model):
     _inherit = [
         'openproject.binding',
         'openproject.age.mixin',
+        'openproject.external.url.mixin',
     ]
     _inherits = {
         'account.analytic.line': 'odoo_id',

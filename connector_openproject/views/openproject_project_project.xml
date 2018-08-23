@@ -15,6 +15,7 @@
             <field name="op_write_date"/>
             <field name="last_work_package_update"/>
             <field name="last_time_entry_update"/>
+            <button string="Open External URL" type="object" name="action_open_external_url" icon="fa-external-link"/>
         </tree>
     </field>
 </record>

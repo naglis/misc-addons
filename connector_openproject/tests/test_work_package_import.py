@@ -45,3 +45,12 @@ class TestWorkPackageImport(OpenProjectBackendTestCase):
         self.assertEqual(user.email, 'shep@mail.com')
         self.assertEqual(user.op_create_date, '2014-05-21 08:51:20')
         self.assertEqual(user.op_write_date, '2014-05-21 08:51:20')
+
+    def test_external_url_action(self):
+        with get_openproject_mocker():
+            self.backend.import_project_work_packages(delay=False)
+        action = self.env['openproject.project.task'].search([
+            ('backend_id', '=', self.backend.id),
+        ]).action_open_external_url()
+        self.assertEqual(
+            action['url'], 'http://openproject/work_packages/1528')

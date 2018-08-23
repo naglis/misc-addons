@@ -12,6 +12,7 @@
             <field name="task_id"/>
             <field name="name"/>
             <field name="unit_amount" widget="float_time" sum="Total time"/>
+            <button string="Open External URL" type="object" name="action_open_external_url" icon="fa-external-link"/>
         </tree>
     </field>
 </record>
