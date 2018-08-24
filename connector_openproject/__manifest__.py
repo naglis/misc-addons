@@ -14,6 +14,7 @@
             'isodate',
             'requests',
             'requests_mock',
+            'slugify',
         ],
     },
     'depends': [

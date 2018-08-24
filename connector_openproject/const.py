@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Naglis Jonaitis
+# Copyright 2017-2018 Naglis Jonaitis
 # License AGPL-3 or later (https://www.gnu.org/licenses/agpl).
 
 import collections
@@ -44,3 +44,8 @@ ACTIVITY_SYNC_NONE = 'none'
 ACTIVITY_SYNC_COMMENTS = 'comments'
 ACTIVITY_SYNC_UPDATES = 'updates'
 ACTIVITY_SYNC_ALL = 'all'
+
+OP_USER_STATUS_ACTIVE = 'active'
+OP_USER_STATUS_REGISTERED = 'registered'
+OP_USER_STATUS_LOCKED = 'locked'
+OP_USER_STATUS_INVITED = 'invited'

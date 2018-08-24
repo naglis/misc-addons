@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Naglis Jonaitis
+# Copyright 2017-2018 Naglis Jonaitis
 # License AGPL-3 or later (https://www.gnu.org/licenses/agpl).
 
 import contextlib
 import datetime
 import itertools
 import re
-import string
 
 from odoo import fields
 
@@ -25,7 +24,6 @@ from .const import (
 )
 
 
-ALPHANUMERIC = frozenset(string.ascii_letters + string.digits)
 PRIORITY_MAP = {
     'openproject.res.users': PRIORITY_USER,
     'openproject.project.project': PRIORITY_PROJECT,
@@ -40,21 +38,6 @@ def parse_openproject_link_relation(link, endpoint):
     pattern = re.compile(r'^(?x)/api/v\d/%s/(?P<id>\d+)$' % endpoint)
     match = pattern.match(link.get('href') or '')
     return None if match is None else match.group('id')
-
-
-def slugify(s, replacement='_'):
-    r, prev = [], None
-    for c in s:
-        if c in ALPHANUMERIC:
-            r.append(c)
-            prev = c
-        else:
-            if prev == replacement:
-                continue
-            r.append(replacement)
-            prev = replacement
-
-    return ''.join(r).strip(replacement).lower()
 
 
 def job_func(rec, func_name, delay=True, priority=None, **kwargs):
