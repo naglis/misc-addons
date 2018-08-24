@@ -1,0 +1,18 @@
+{
+    "_type": "User",
+    "id": 1,
+    "subtype": "User",
+    "name": "John Sheppärd",
+    "email": "shep@mail.com",
+    "status": "locked",
+    "_links": {
+        "self": {
+            "href": "/api/v3/users/1",
+            "title": "John Sheppärd"
+        },
+        "showUser": {
+            "href": "/users/1",
+            "type": "text/html"
+        }
+    }
+}

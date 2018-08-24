@@ -26,9 +26,7 @@
         }
     },
     "id": 1,
-    "login": "j.sheppard",
-    "firstName": "John",
-    "lastName": "Sheppard",
+    "name": "John Sheppärd",
     "email": "shep@mail.com",
     "admin": true,
     "avatar": "https://gravatar/avatar",

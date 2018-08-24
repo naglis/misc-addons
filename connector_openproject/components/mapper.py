@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Naglis Jonaitis
+# Copyright 2017-2018 Naglis Jonaitis
 # License AGPL-3 or later (https://www.gnu.org/licenses/agpl).
 
 import logging
@@ -16,9 +16,10 @@ from ..const import (
     OP_PROJECT_LINK,
     OP_STATUS_LINK,
     OP_USER_LINK,
+    OP_USER_STATUS_LOCKED,
     OP_WORK_PACKAGE_LINK,
 )
-from ..utils import parse_openproject_link_relation, slugify
+from ..utils import parse_openproject_link_relation
 
 _logger = logging.getLogger(__name__)
 
@@ -26,6 +27,10 @@ try:
     import isodate
 except ImportError:
     _logger.info('Missing dependency: isodate')
+try:
+    import slugify
+except ImportError:
+    _logger.info('Missing dependency: python-slugify')
 
 
 def openproject_text(field, fmt='html'):
@@ -165,24 +170,55 @@ class OpenProjectUserMapper(Component):
         'openproject.res.users',
     ]
 
+    def _get_name_fallback(self, record):
+        return _(u'OpenProject User (%(instance)s:%(id)s)') % {
+            'instance': self.backend_record.name,
+            'id': record['id'],
+        }
+
+    def _get_login_fallback(self, record):
+        return u'__op_%(instance_id)s_deleted_user_%(id)s' % {
+            'instance_id': self.backend_record.id,
+            'id': record['id'],
+        }
+
     @mapping
-    def main(self, record):
-        is_deleted = record.get('subtype') == 'DeletedUser'
-        firstname, lastname = map(record.get, ('firstName', 'lastName'))
-        if firstname and lastname:
-            name = u' '.join((firstname, lastname))
-        else:
-            name = record.get('name')
-        active = False if is_deleted else record.get('status') != 'locked'
-        # The 'login' of a deleted user is empty.
-        login = ('__op_deleted_user_%(id)s' % record
-                 if is_deleted else record.get('login') or slugify(name))
+    @only_create
+    def name(self, record):
         return {
-            'active': active,
-            'name': name,
+            'name': record.get('name') or self._get_name_fallback(record),
+        }
+
+    @mapping
+    def active(self, record):
+        is_deleted = record.get('subtype') == 'DeletedUser'
+        return {
+            'active': (False if is_deleted
+                       else record.get('status') != OP_USER_STATUS_LOCKED),
+        }
+
+    @mapping
+    def email(self, record):
+        # NOTE: Users can choose to hide their email address on OpenProject.
+        return {
+            'email': record.get('email') or False,
+        }
+
+    @mapping
+    @only_create
+    def login(self, record):
+        is_deleted = record.get('subtype') == 'DeletedUser'
+        # NOTE: The 'login' and 'name' of a deleted user are empty.
+        # NOTE: We only get 'login' with an administrator's API key, so we
+        # fallback on building login from user name.
+        fallback_name = self._get_name_fallback(record)
+        fallback_login = self._get_login_fallback(record)
+        name = record.get('name') or fallback_name
+        login = (
+            fallback_login if is_deleted else
+            (record.get('login') or slugify.slugify(name, separator=u'_')))
+        return {
             'login': login,
-            'email': False if is_deleted else (
-                record.get('email') or record.get('login')),
         }
 
     @mapping
