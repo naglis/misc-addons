@@ -27,7 +27,6 @@ class TestWorkPackageImport(OpenProjectBackendTestCase):
         self.assertEqual(wp.date_start, '2014-08-30 00:00:00')
         self.assertEqual(wp.date_deadline, '2014-09-01')
         self.assertEqual(wp.project_id.name, 'A project')
-        self.assertEqual(wp.user_id.name, 'John Sheppard')
         self.assertEqual(wp.stage_id.name, 'New')
         self.assertEqual(
             wp.description, '<p>Develop super cool OpenProject API.</p>')
@@ -35,16 +34,22 @@ class TestWorkPackageImport(OpenProjectBackendTestCase):
         self.assertEqual(wp.op_create_date, '2014-08-29 12:40:53')
         self.assertEqual(wp.op_write_date, '2014-08-29 12:44:41')
 
+    def test_work_package_assignee_is_set(self):
+        with get_openproject_mocker():
+            self.backend.import_project_work_packages(delay=False)
+        wp = self.env['openproject.project.task'].search([
+            ('backend_id', '=', self.backend.id),
+        ])
+        user = self.backend.op_user_ids
+        self.assertLen(user, 1)
+        self.assertEqual(wp.user_id, user.odoo_id)
+
     def test_user_dependency_is_created(self):
         with get_openproject_mocker():
             self.backend.import_project_work_packages(delay=False)
         user = self.backend.op_user_ids
         self.assertLen(user, 1)
         self.assertEqual(user.openproject_id, '1')
-        self.assertEqual(user.name, 'John Sheppard')
-        self.assertEqual(user.email, 'shep@mail.com')
-        self.assertEqual(user.op_create_date, '2014-05-21 08:51:20')
-        self.assertEqual(user.op_write_date, '2014-05-21 08:51:20')
 
     def test_external_url_action(self):
         with get_openproject_mocker():

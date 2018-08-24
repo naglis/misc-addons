@@ -1,0 +1,19 @@
+{
+    "_type": "User",
+    "id": 1,
+    "subtype": "DeletedUser",
+    "name": "Deleted user",
+    "email": null,
+    "avatar": "",
+    "status": "builtin",
+    "_links": {
+        "self": {
+            "href": "/api/v3/users/1",
+            "title": "Deleted user"
+        },
+        "showUser": {
+            "href": "/users/1",
+            "type": "text/html"
+        }
+    }
+}
