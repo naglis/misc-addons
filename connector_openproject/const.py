@@ -24,7 +24,7 @@ OP_WORK_PACKAGE_LINK = OpenProjectLink(
 
 IMPORT_DELTA_BUFFER = datetime.timedelta(seconds=30)
 
-USER_AGENT = '{r.product_name} {r.series}'.format(r=release)
+USER_AGENT = '{r.product_name}/{r.series}'.format(r=release)
 
 (
     PRIORITY_USER,
