@@ -3,7 +3,7 @@
 # License LGPL-3 or later (https://www.gnu.org/licenses/lgpl).
 {
     'name': 'QR Code Window Action',
-    'version': '11.0.1.0.0',
+    'version': '11.0.1.0.1',
     'author': 'Naglis Jonaitis',
     'category': 'Technical Settings',
     'website': 'https://naglis.me/',
