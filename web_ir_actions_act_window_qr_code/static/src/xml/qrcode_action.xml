@@ -8,7 +8,7 @@
         <div class="col-sm-12">
             <p t-if="help_text" t-esc="help_text"/>
             <div class="text-center">
-                <img class="o_qr_code img-responsive center-block" style="display: none;" draggable="false" alt="QR Code"/>
+                <img class="o_qr_code" style="display: none;" draggable="false" alt="QR Code"/>
             </div>
             <div class="o_spinner text-center">
                 <i class="fa fa-4x fa-spinner fa-spin"/>
