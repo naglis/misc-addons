@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2018 Naglis Jonaitis
+     License LGPL-3 or later (https://www.gnu.org/licenses/lgpl). -->
+<templates xml:space="preserve">
+
+<t t-name="QRCode">
+    <div class="row">
+        <div class="col-sm-12">
+            <p t-if="help_text" t-esc="help_text"/>
+            <div class="text-center">
+                <img class="o_qr_code img-responsive center-block" style="display: none;" draggable="false" alt="QR Code"/>
+            </div>
+            <div class="o_spinner text-center">
+                <i class="fa fa-4x fa-spinner fa-spin"/>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <a t-if="flags.is_url" t-att-href="data" target="_blank" rel="noopener noreferrer nofollow" class="btn btn-sm btn-link" role="button">
+                Open Link <i class="fa fa-external-link" aria-hidden="true"/>
+            </a>
+            <t t-if="!flags.hide_value">
+                <button class="btn btn-sm btn-link" data-target=".o_qrcode_value" data-toggle="collapse">Show QR code data</button>
+                <div class="collapse o_qrcode_value">
+                    <textarea class="form-control" rows="5" readonly="readonly"><t t-esc="data"/></textarea>
+                </div>
+            </t>
+        </div>
+    </div>
+</t>
+
+<t t-name="QRCodeError">
+    <div class="alert alert-warning clearfix" role="alert">
+        <p><strong>An error occurred</strong></p>
+        <p t-esc="error"/>
+    </div>
+</t>
+
+</templates>
