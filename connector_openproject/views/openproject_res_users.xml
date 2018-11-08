@@ -5,11 +5,12 @@
     <field name="name">openproject.res.users.tree</field>
     <field name="model">openproject.res.users</field>
     <field name="arch" type="xml">
-        <tree create="false">
+        <tree editable="top" create="false">
             <field name="openproject_id"/>
-            <field name="name"/>
+            <field name="name" readonly="1"/>
             <field name="op_create_date"/>
             <field name="op_write_date"/>
+            <field name="odoo_id"/>
             <button string="Open External URL" type="object" name="action_open_external_url" icon="fa-external-link"/>
         </tree>
     </field>
