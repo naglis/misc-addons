@@ -119,7 +119,7 @@ class PaymentTransaction(models.Model):
                 'state': 'cancel',
             })
         elif status == paysera.PAYSERA_STATUS_PAYMENT_SUCCESSFULL:
-            _LOG.info(u'Order ID %s paid' % params.get('orderid'))
+            _LOG.info(u'Order ID %s paid', params.get('orderid'))
             self.write({
                 'state': 'done',
                 'date_validate': fields.datetime.now(),

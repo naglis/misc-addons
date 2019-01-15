@@ -12,6 +12,10 @@ Requirements
 Changelog
 ~~~~~~~~~
 
+v2.0.3 (2019-01-15)
+-------------------
+- Small refactorings
+
 v2.0.2 (2017-09-16)
 -------------------
 - Small refactorings
