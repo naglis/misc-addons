@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright 2018 Naglis Jonaitis
+<!-- Copyright 2018-2019 Naglis Jonaitis
      License AGPL-3 or later (https://www.gnu.org/licenses/agpl). -->
 <odoo>
 
@@ -10,8 +10,9 @@
     <field name="arch" type="xml">
         <xpath expr='//group[@name="acquirer"]' position="after">
             <group name="paysera" string="Paysera" attrs="{'invisible': [('provider', '!=', 'paysera')]}">
-                <field name="paysera_project_id"/>
-                <field name="paysera_sign_password" password="True"/>
+                <field name="paysera_project_id" attrs="{'required': [('provider', '=', 'paysera')]}"/>
+                <field name="paysera_sign_password" password="True" attrs="{'required': [('provider', '=', 'paysera')]}"/>
+                <field name="paysera_validate_paid_amount"/>
             </group>
         </xpath>
     </field>

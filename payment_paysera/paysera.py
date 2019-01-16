@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2018 Naglis Jonaitis
+# Copyright 2018-2019 Naglis Jonaitis
 # License AGPL-3 or later (https://www.gnu.org/licenses/agpl).
 
 import base64
@@ -90,10 +90,10 @@ def _maybe_encode(value, encoding='ascii'):
 
 def _encode_dict_vals(old_dict):
     '''Encodes Unicode values in the dict using UTF-8.'''
-    return {
-        _maybe_encode(k, 'utf-8'): _maybe_encode(v, 'utf-8')
+    return type(old_dict)([
+        (_maybe_encode(k, 'utf-8'), _maybe_encode(v, 'utf-8'))
         for k, v in old_dict.items()
-    }
+    ])
 
 
 def md5_sign(data, sign_password):
@@ -110,8 +110,11 @@ def verify_rsa_signature(signature, data):
     :param data: data of which the signature is verified
     :rtype: bool
     '''
-    signature = base64.urlsafe_b64decode(_maybe_encode(signature))
-    valid = True
+    try:
+        signature = base64.urlsafe_b64decode(_maybe_encode(signature))
+    except (TypeError, AttributeError):
+        return False
+
     try:
         _get_paysera_public_key().verify(
             signature,
@@ -119,9 +122,9 @@ def verify_rsa_signature(signature, data):
             PKCS1v15(),
             hashes.SHA1(),
         )
+        return True
     except exceptions.InvalidSignature:
-        valid = False
-    return valid
+        return False
 
 
 def get_form_values(value_dict, sign_password):
@@ -135,3 +138,8 @@ def get_form_values(value_dict, sign_password):
         'data': data,
         'signature': signature,
     }
+
+
+def get_amount_string(currency, amount):
+    currency.ensure_one()
+    return str(int(currency.round(amount) / currency.rounding))

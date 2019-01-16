@@ -12,6 +12,13 @@ Requirements
 Changelog
 ~~~~~~~~~
 
+v2.1.0 (2019-01-16)
+-------------------
+- Allows to validate actually paid amount/currency (#14)
+- Adds validation of callback amount, currency and test mode parameters
+- Added more test cases
+- Various small fixes, improvements and refactorings
+
 v2.0.3 (2019-01-15)
 -------------------
 - Small refactorings

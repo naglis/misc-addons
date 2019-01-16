@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
-# Copyright 2018 Naglis Jonaitis
+# Copyright 2018-2019 Naglis Jonaitis
 # License AGPL-3 or later (https://www.gnu.org/licenses/agpl).
 
-import urlparse
+from odoo import api, fields, models
 
-from odoo import api, fields, models, tools
-
-from .. import paysera
+from .. import paysera, utils
 from ..controllers.main import PayseraController
 
 # ISO-639-1 -> ISO-639-2/B
@@ -45,6 +43,21 @@ class PaymentAcquirer(models.Model):
              u'choosing “General settings” on a specific project.',
         groups='base.group_user',
     )
+    paysera_validate_paid_amount = fields.Boolean(
+        string='Validate Paid Amount',
+        default=True,
+        help='If enabled, the actual paid amount and currency will be '
+             'validated against values stored on the transaction.'
+             'If at least one of them does not match, the transaction will '
+             'be put in "error" state, to be reviewed by a manager. '
+             'This can happen e.g., if the customer pays in another currency.',
+    )
+
+    @api.multi
+    def ensure_paysera(self):
+        if not set(self.mapped('provider')) == {'paysera'}:
+            raise ValueError('Expected Paysera acquirer: %s' % self)
+        return self
 
     @api.model
     def _get_paysera_urls(self):
@@ -56,11 +69,9 @@ class PaymentAcquirer(models.Model):
     @api.multi
     def paysera_form_generate_values(self, values):
         '''Generates the values used to render the form button template.'''
-        self.ensure_one()
-        base_url = self.env['ir.config_parameter'].get_param('web.base.url')
+        self.ensure_one().ensure_paysera()
 
-        def full_url(path):
-            return urlparse.urljoin(base_url, path)
+        full_url = utils.make_full_url_getter(self.env)
 
         lang = values['billing_partner_lang'] or ''
         if '_' in lang:
@@ -68,14 +79,15 @@ class PaymentAcquirer(models.Model):
 
         country_code = (
             values['billing_partner_country'].code
-            if values['billing_partner_country'] else ''
+            if values.get('billing_partner_country') else ''
         )
+        currency = values['currency']
         paysera_params = dict(
             projectid=self.paysera_project_id,
             orderid=values['reference'],
             lang=lang,
-            amount='%d' % int(tools.float_round(values['amount'], 2) * 100),
-            currency=values['currency'] and values['currency'].name or '',
+            amount=paysera.get_amount_string(currency, values['amount']),
+            currency=currency.name,
             accepturl=full_url(PayseraController._accept_url),
             cancelurl=full_url(PayseraController._cancel_url),
             callbackurl=full_url(PayseraController._callback_url),
@@ -99,5 +111,5 @@ class PaymentAcquirer(models.Model):
     @api.multi
     def paysera_get_form_action_url(self):
         '''Returns the form action URL.'''
-        self.ensure_one()
+        self.ensure_one().ensure_paysera()
         return self._get_paysera_urls()['paysera_standard_api_url']
