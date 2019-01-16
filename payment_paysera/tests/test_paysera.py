@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
-# Copyright 2018 Naglis Jonaitis
+# Copyright 2018-2019 Naglis Jonaitis
 # License AGPL-3 or later (https://www.gnu.org/licenses/agpl).
 
+import collections
 import unittest
 import xml.etree.ElementTree as ET
 
+from mock import patch
 from odoo.addons.payment.models.payment_acquirer import ValidationError
 from odoo.addons.payment.tests.common import PaymentAcquirerCommon
 from odoo.tools import mute_logger
@@ -12,20 +14,43 @@ from odoo.tools import mute_logger
 from .. import paysera
 
 PAYSERA_PROJECT_ID = '53203'
-PAYSERA_SIGN_PASSWORD = '7324e13b502b18674c59bb2015818e78'
-PAYSERA_TEST_DATA = (
-    u'bGFuZz0mcmVmZXJlbmNlPVNPMDEyJnBfY2l0eT1TaW4rQ2l0eSZwcm9qZWN0aWQ9NTMyMDMm'
-    u'Y3VycmVuY3lfaWQ9MSZjdXJyZW5jeT1FVVImcF9lbWFpbD1ub3JiZXJ0LmJ1eWVyJTQwZXhh'
-    u'bXBsZS5jb20mcF9zdHJlZXQ9SHVnZStTdHJlZXQrMiUyRjU0MyZwYXJ0bmVyPXJlcy5wYXJ0'
-    u'bmVyJTI4MyUyQyUyOSZwX2NvdW50cnljb2RlPUJFJm9yZGVyaWQ9U08wMTImY291bnRyeT1C'
-    u'RSZwX2ZpcnN0bmFtZT1CdXllciZwX3ppcD0xMDAwJmFtb3VudD0zMjAwMCZ2ZXJzaW9uPTEu'
-    u'NiZwX2xhc3RuYW1lPU5vcmJlcnQmdGVzdD0xJnJldHVybl91cmw9JTJGc2hvcCUyRnBheW1l'
-    u'bnQlMkZ2YWxpZGF0ZSZwYXltZW50PWRpcmVjdGViYmUmcGF5dGV4dD1VJUM1JUJFc2FreW1h'
-    u'cytuciUzQStTTzAxMitodHRwJTNBJTJGJTJGbG9jYWxob3N0K3Byb2pla3RlLislMjhQYXJk'
-    u'YXYlQzQlOTdqYXMlM0ErTmFnbGlzK0pvbmFpdGlzJTI5JnN0YXR1cz0xJnJlcXVlc3RpZD02'
-    u'MzA1NzE5NCZwYXlhbW91bnQ9MzIwMDAmcGF5Y3VycmVuY3k9RVVSJm5hbWU9VUFCJnN1cmVu'
-    u'YW1lPU1vayVDNCU5N2ppbWFpLmx0'
-)
+PAYSERA_SIGN_PASSWORD_1 = '7323e13b502b18674c59bb2015818e78'
+PAYSERA_SIGN_PASSWORD_2 = '7324e13b502b18674c59bb2015818e78'
+PAYSERA_TEST_DICT = collections.OrderedDict([
+    (u'lang', u''),
+    (u'reference', u'SO012'),
+    (u'p_city', u'Sin City'),
+    (u'projectid', u'53203'),
+    (u'currency_id', u'1'),
+    (u'currency', u'EUR'),
+    (u'p_email', u'norbert.buyer@example.com'),
+    (u'p_street', u'Huge Street 2/543'),
+    (u'partner', u'res.partner(3,)'),
+    (u'p_countrycode', u'BE'),
+    (u'orderid', u'SO012'),
+    (u'country', u'BE'),
+    (u'p_firstname', u'Buyer'),
+    (u'p_zip', u'1000'),
+    (u'amount', u'32000'),
+    (u'version', u'1.6'),
+    (u'p_lastname', u'Norbert'),
+    (u'test', u'1'),
+    (u'return_url', u'/shop/payment/validate'),
+    (u'payment', u'directebbe'),
+    (
+        u'paytext',
+        u'Užsakymas nr: SO012 http://localhost projekte. (Pardavėjas: Naglis '
+        u'Jonaitis)',
+    ),
+    (u'status', u'1'),
+    (u'requestid', u'63057194'),
+    (u'payamount', u'32000'),
+    (u'paycurrency', u'EUR'),
+    (u'name', u'UAB'),
+    (u'surename', u'Mokėjimai.lt'),
+])
+PAYSERA_TEST_DATA = paysera.get_form_values(
+    PAYSERA_TEST_DICT, PAYSERA_SIGN_PASSWORD_1)['data']
 PAYSERA_TEST_SS1 = u'e899774b6649616cc841113512111120'
 PAYSERA_TEST_SS2 = (
     u'uRdNt8ugz2JhxiEeS8BNUBrujDwsfMwgY7iugUcFbqQVg-M2VfICrGt3kVyEP9IDx4ywxa-w'
@@ -37,6 +62,11 @@ PAYSERA_TEST_POST_DATA = {
     'ss1': PAYSERA_TEST_SS1,
     'ss2': PAYSERA_TEST_SS2,
 }
+LOGGER_NAME_ACQUIRER = 'odoo.addons.payment.models.payment_acquirer'
+
+
+def dummy_verify_rsa_signature(signature, data):
+    return True
 
 
 class PayseraUtils(unittest.TestCase):
@@ -45,7 +75,8 @@ class PayseraUtils(unittest.TestCase):
         test_data = {
             u'ačiū': u'prašom',
         }
-        form_values = paysera.get_form_values(test_data, PAYSERA_SIGN_PASSWORD)
+        form_values = paysera.get_form_values(
+            test_data, PAYSERA_SIGN_PASSWORD_2)
         self.assertEqual(
             form_values['signature'],
             '78663a229e34a6f0b1067779d0fe8ba0',
@@ -69,20 +100,25 @@ class PayseraCommon(PaymentAcquirerCommon):
         self.tx_obj = self.env['payment.transaction']
         self.acquirer = self.env.ref(
             'payment_paysera.payment_acquirer_paysera')
-
-        self.tx_values = {
-            'reference': 'SO012',
-            'currency': self.currency_euro.id,
-            'amount': 320.00,
-        }
         self.acquirer.write({
             'paysera_project_id': '53203',
-            'paysera_sign_password': '7323e13b502b18674c59bb2015818e78',
+            'paysera_sign_password': PAYSERA_SIGN_PASSWORD_1,
         })
 
     def assertTestEnv(self):
         self.assertEqual(
             self.acquirer.environment, 'test', 'Not a test environment')
+
+    def create_transaction(self, **overrides):
+        values = {
+            'amount': 320.0,
+            'acquirer_id': self.acquirer.id,
+            'currency_id': self.currency_euro.id,
+            'reference': 'SO012',
+            'partner_id': self.buyer_id,
+        }
+        values.update(overrides)
+        return self.tx_obj.create(values)
 
     def test_form_render(self):
         self.assertTestEnv()
@@ -100,46 +136,15 @@ class PayseraCommon(PaymentAcquirerCommon):
     @mute_logger('odoo.addons.payment_paysera.models.payment_transaction',
                  'ValidationError')
     def test_transaction_management(self):
-        '''
-        PAYSERA_TEST_DATA = {
-            'lang': '',
-            'reference': u'SO012',
-            'p_city': 'Sin City',
-            'projectid': '53203',
-            'currency_id': 1,
-            'currency': u'EUR',
-            'p_email': 'norbert.buyer@example.com',
-            'p_street': 'Huge Street 2/543',
-            'cancelurl': 'http://localhost:8069/payment/paysera/cancel',
-            'partner': res.partner(3,),
-            'p_countrycode': u'BE',
-            'callbackurl': 'http://localhost:8069/payment/paysera/callback',
-            'orderid': 'SO012',
-            'country': 'BE',
-            'p_firstname': 'Buyer',
-            'p_zip': '1000',
-            'amount': '32000',
-            'version': '1.6',
-            'p_lastname': 'Norbert',
-            'test': '1',
-            'accepturl': 'http://localhost:8069/payment/paysera/accept',
-            'return_url': '/shop/payment/validate'
-        }
-        '''
-
         self.assertTestEnv()
 
-        # Should raise an error about non-existent order ID.
-        with self.assertRaises(ValidationError):
+        with self.assertRaisesRegexp(
+            ValidationError,
+            r'.*received data for reference ID.*no order found.*',
+        ):
             self.tx_obj.form_feedback(PAYSERA_TEST_POST_DATA, 'paysera')
 
-        tx = self.tx_obj.create({
-            'amount': 32000,
-            'acquirer_id': self.acquirer.id,
-            'currency_id': self.currency_euro.id,
-            'reference': 'SO012',
-            'partner_id': self.buyer_id,
-        })
+        tx = self.create_transaction()
 
         # Validate again.
         self.tx_obj.form_feedback(PAYSERA_TEST_POST_DATA, 'paysera')
@@ -148,3 +153,103 @@ class PayseraCommon(PaymentAcquirerCommon):
         self.assertEqual(
             tx.state, 'done',
             'paysera: validation did not put tx into done state')
+
+    def test_amount_mismatch_transaction_not_validated(self):
+        self.assertTestEnv()
+        tx = self.create_transaction(amount=319.99)
+
+        with mute_logger(LOGGER_NAME_ACQUIRER):
+            self.tx_obj.form_feedback(PAYSERA_TEST_POST_DATA, 'paysera')
+
+        # Check transaction was not validated.
+        self.assertEqual(tx.state, 'draft')
+        # Set the correct amount.
+        tx.amount = 320.0
+        # Validate again.
+        self.tx_obj.form_feedback(PAYSERA_TEST_POST_DATA, 'paysera')
+        # Check transaction is not validated.
+        self.assertEqual(tx.state, 'done')
+
+    def test_currency_mismatch_transaction_not_validated(self):
+        self.assertTestEnv()
+        tx = self.create_transaction(currency_id=self.ref('base.USD'))
+
+        with mute_logger(LOGGER_NAME_ACQUIRER):
+            self.tx_obj.form_feedback(PAYSERA_TEST_POST_DATA, 'paysera')
+
+        # Check transaction was not validated.
+        self.assertEqual(tx.state, 'draft')
+        # Set the correct currency.
+        tx.currency_id = self.currency_euro
+        # Validate again.
+        self.tx_obj.form_feedback(PAYSERA_TEST_POST_DATA, 'paysera')
+        # Check transaction is not validated.
+        self.assertEqual(tx.state, 'done')
+
+    def test_test_mode_mismatch_transaction_not_validated(self):
+        tx = self.create_transaction()
+        tx.acquirer_id.environment = 'prod'
+
+        with mute_logger(LOGGER_NAME_ACQUIRER):
+            self.tx_obj.form_feedback(PAYSERA_TEST_POST_DATA, 'paysera')
+
+        # Check transaction was not validated.
+        self.assertEqual(tx.state, 'draft')
+        # Set the correct acquirer environment.
+        tx.acquirer_id.environment = 'test'
+        # Validate again.
+        self.tx_obj.form_feedback(PAYSERA_TEST_POST_DATA, 'paysera')
+        # Check transaction is not validated.
+        self.assertEqual(tx.state, 'done')
+
+    def test_transaction_in_error_mode_is_not_validated(self):
+        self.assertTestEnv()
+        tx = self.create_transaction(state='error')
+
+        self.tx_obj.form_feedback(PAYSERA_TEST_POST_DATA, 'paysera')
+
+        self.assertEqual(tx.state, 'error')
+
+    def test_paid_amount_mismatch_transaction_set_to_error_state(self):
+        self.acquirer.paysera_validate_paid_amount = True
+        test_dict = PAYSERA_TEST_DICT.copy()
+        test_dict.update({
+            u'payamount': '32001',
+        })
+        post_data = paysera.get_form_values(
+            test_dict, self.acquirer.paysera_sign_password)
+        post_data.update({
+            'ss1': post_data.pop('signature'),
+            'ss2': 'foo',
+        })
+        tx = self.create_transaction()
+
+        with patch.object(
+                paysera, 'verify_rsa_signature', dummy_verify_rsa_signature):
+            self.tx_obj.form_feedback(post_data, 'paysera')
+
+        self.assertEqual(tx.state, 'error')
+        self.assertRegexpMatches(
+            tx.state_message, r'.*amount.*does not match.*')
+
+    def test_paid_currency_mismatch_transaction_set_to_error_state(self):
+        self.acquirer.paysera_validate_paid_amount = True
+        test_dict = PAYSERA_TEST_DICT.copy()
+        test_dict.update({
+            u'paycurrency': 'USD',
+        })
+        post_data = paysera.get_form_values(
+            test_dict, self.acquirer.paysera_sign_password)
+        post_data.update({
+            'ss1': post_data.pop('signature'),
+            'ss2': 'foo',
+        })
+        tx = self.create_transaction()
+
+        with patch.object(
+                paysera, 'verify_rsa_signature', dummy_verify_rsa_signature):
+            self.tx_obj.form_feedback(post_data, 'paysera')
+
+        self.assertEqual(tx.state, 'error')
+        self.assertRegexpMatches(
+            tx.state_message, r'.*currency.*does not match.*')

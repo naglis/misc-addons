@@ -1,30 +1,15 @@
 # -*- coding: utf-8 -*-
-# Copyright 2018 Naglis Jonaitis
+# Copyright 2018-2019 Naglis Jonaitis
 # License AGPL-3 or later (https://www.gnu.org/licenses/agpl).
 
-import base64
 import logging
-import urlparse
 
 from odoo import _, api, fields, models
 from odoo.addons.payment.models.payment_acquirer import ValidationError
 
-from .. import paysera
+from .. import paysera, utils
 
 _LOG = logging.getLogger(__name__)
-
-
-def decode_form_data(encoded_data):
-    '''
-    Decodes base64 encoded string, parses it and returns a dict of parameters
-
-    :param encoded_data: base64 encoded URL parameters list
-    :type encoded_data: str
-    :rtype: dict
-    '''
-    decoded = base64.urlsafe_b64decode(encoded_data.encode('ascii'))
-    parsed = urlparse.parse_qsl(decoded, keep_blank_values=True)
-    return {k: v.decode('utf-8') for k, v in parsed}
 
 
 class PaymentTransaction(models.Model):
@@ -36,7 +21,7 @@ class PaymentTransaction(models.Model):
 
         Returns the corresponding transaction.'''
         # Decode the encoded parameters and write them into `data` dict.
-        data['params'] = decode_form_data(data.get('data', ''))
+        data['params'] = utils.decode_form_data(data.get('data', ''))
 
         reference = data['params'].get('orderid')
         if not reference:
@@ -67,6 +52,7 @@ class PaymentTransaction(models.Model):
         Transaction will not be validated if there is at least one
         invalid parameter.'''
         self.ensure_one()
+        self.acquirer_id.ensure_paysera()
 
         invalid_parameters = []
 
@@ -93,6 +79,28 @@ class PaymentTransaction(models.Model):
         if not paysera.verify_rsa_signature(ss2_received, the_data):
             invalid_parameters.append(('ss2', ss2_received, 'VALID_SS2'))
 
+        # Check `amount` is the same as stored on transaction.
+        amount_received = params.get('amount')
+        amount_expected = paysera.get_amount_string(
+            self.currency_id, self.amount)
+        if amount_received != amount_expected:
+            invalid_parameters.append(
+                ('amount', amount_received, amount_expected))
+
+        # Check `currency` is the same as stored on transaction.
+        currency_received = params.get('currency')
+        if currency_received != self.currency_id.name:
+            invalid_parameters.append(
+                ('currency', currency_received, self.currency_id.name))
+
+        # Check test mode parameter is the same as on acquirer.
+        test_mode_received = params.get('test')
+        test_mode_expected = (
+            '1' if self.acquirer_id.environment == 'test' else '0')
+        if test_mode_received != test_mode_expected:
+            invalid_parameters.append(
+                ('test', test_mode_received, test_mode_expected))
+
         # Check if `projectid`'s match.
         if not params.get('projectid') == self.acquirer_id.paysera_project_id:
             invalid_parameters.append((
@@ -103,15 +111,31 @@ class PaymentTransaction(models.Model):
         return invalid_parameters
 
     @api.multi
+    def _paysera_validate_paid_amount(self, amount, currency):
+        self.ensure_one()
+        self.acquirer_id.ensure_paysera()
+
+        if not (amount or currency):
+            return True
+
+        amount_expected = paysera.get_amount_string(
+            self.currency_id, self.amount)
+        currency_expected = self.currency_id.name
+
+        return amount == amount_expected and currency == currency_expected
+
+    @api.multi
     def _paysera_form_validate(self, data):
         self.ensure_one()
-        # Transaction has already been completed or canceled.
-        # We should not handle this request.
-        if self.state in ('done', 'cancel'):
+        self.acquirer_id.ensure_paysera()
+
+        # Only handle draft and pending transactions.
+        if self.state not in ('draft', 'pending'):
             return False
 
         params = data['params']
-        status = params.get('status', paysera.PAYSERA_STATUS_PAYMENT_ACCEPTED)
+        status = params.get('status')
+        validate_amount = self.acquirer_id.paysera_validate_paid_amount
 
         ret_val = True
         if status == paysera.PAYSERA_STATUS_NOT_EXECUTED:
@@ -119,13 +143,37 @@ class PaymentTransaction(models.Model):
                 'state': 'cancel',
             })
         elif status == paysera.PAYSERA_STATUS_PAYMENT_SUCCESSFULL:
-            _LOG.info(u'Order ID %s paid', params.get('orderid'))
-            self.write({
-                'state': 'done',
-                'date_validate': fields.datetime.now(),
-                'state_message': params.get('paytext', ''),
-                'acquirer_reference': params.get('requestid'),
-            })
+            paid_amount, paid_currency = (
+                params['payamount'], params['paycurrency'])
+            if validate_amount and not self._paysera_validate_paid_amount(
+                    paid_amount, paid_currency):
+                state_msg = _(
+                    u'The amount/currency (in cents) on the transaction ('
+                    u'%(transaction_amount)s %(transaction_currency)s) does '
+                    u'not match the actually paid amount/currency '
+                    u'(%(paid_amount)s %(paid_currency)s).',
+                ) % {
+                    'transaction_amount': paysera.get_amount_string(
+                        self.currency_id, self.amount),
+                    'transaction_currency': self.currency_id.name,
+                    'paid_amount': paid_amount,
+                    'paid_currency': paid_currency,
+                }
+                self.write({
+                    'state': 'error',
+                    'state_message': state_msg,
+                    'acquirer_reference': params.get('requestid'),
+                })
+                ret_val = False
+            else:
+                _LOG.info(
+                    u'Transaction "%s" sucessfully validated', self.reference)
+                self.write({
+                    'state': 'done',
+                    'date_validate': fields.Datetime.now(),
+                    'state_message': params.get('paytext', ''),
+                    'acquirer_reference': params.get('requestid'),
+                })
         elif status == paysera.PAYSERA_STATUS_PAYMENT_ACCEPTED:
             self.write({
                 'state': 'pending',
@@ -133,6 +181,7 @@ class PaymentTransaction(models.Model):
                 'acquirer_reference': params.get('requestid'),
             })
         elif status == paysera.PAYSERA_STATUS_ADDITIONAL_INFO:
+            # NOTE: Currently we do not handle this status.
             pass
         else:
             error = _(u'Paysera: unknown payment status: %s') % status
