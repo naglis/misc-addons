@@ -66,12 +66,29 @@ class PaymentAcquirer(models.Model):
             'paysera_standard_api_url': paysera.PAYSERA_API_URL,
         }
 
+    @api.model
+    def _get_paysera_redirect_urls(self):
+        '''
+        Returns a dictionary of Paysera redirect URLs.
+
+        - `accepturl`: full address (URL), to which the client is directed
+        after a successful payment;
+        - `cancelurl': full address (URL), to which the client is directed
+        after an unsuccessful payment or cancellation;
+        - `callbackurl`: full address (URL), to which a seller will get
+        information about performed payment.
+        '''
+        full_url = utils.make_full_url_getter(self.env)
+        return {
+            'accepturl': full_url(PayseraController._accept_url),
+            'cancelurl': full_url(PayseraController._cancel_url),
+            'callbackurl': full_url(PayseraController._callback_url),
+        }
+
     @api.multi
     def paysera_form_generate_values(self, values):
         '''Generates the values used to render the form button template.'''
         self.ensure_one().ensure_paysera()
-
-        full_url = utils.make_full_url_getter(self.env)
 
         lang = values['billing_partner_lang'] or ''
         if '_' in lang:
@@ -88,9 +105,6 @@ class PaymentAcquirer(models.Model):
             lang=lang,
             amount=paysera.get_amount_string(currency, values['amount']),
             currency=currency.name,
-            accepturl=full_url(PayseraController._accept_url),
-            cancelurl=full_url(PayseraController._cancel_url),
-            callbackurl=full_url(PayseraController._callback_url),
             country=country_code,
             p_firstname=values['billing_partner_first_name'],
             p_lastname=values['billing_partner_last_name'],
@@ -102,6 +116,10 @@ class PaymentAcquirer(models.Model):
             test='1' if self.environment == 'test' else '0',
             version=paysera.PAYSERA_API_VERSION,
         )
+        paysera_params.update({
+            k: v for k, v in self._get_paysera_redirect_urls().items()
+            if k in ('accepturl', 'cancelurl', 'callbackurl')
+        })
         values.update(paysera.get_form_values(
             paysera_params,
             self.paysera_sign_password,

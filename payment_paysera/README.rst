@@ -12,6 +12,10 @@ Requirements
 Changelog
 ~~~~~~~~~
 
+v2.1.1 (2019-01-17)
+-------------------
+- Allows to change Paysera redirect URLs via `_get_paysera_redirect_urls()`.
+
 v2.1.0 (2019-01-16)
 -------------------
 - Allows to validate actually paid amount/currency (#14)
