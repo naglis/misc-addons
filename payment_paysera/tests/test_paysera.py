@@ -7,8 +7,10 @@ import unittest
 import xml.etree.ElementTree as ET
 
 from mock import patch
+from odoo import exceptions
 from odoo.addons.payment.models.payment_acquirer import ValidationError
 from odoo.addons.payment.tests.common import PaymentAcquirerCommon
+from odoo.tests import common
 from odoo.tools import mute_logger
 
 from .. import paysera
@@ -63,6 +65,7 @@ PAYSERA_TEST_POST_DATA = {
     'ss2': PAYSERA_TEST_SS2,
 }
 LOGGER_NAME_ACQUIRER = 'odoo.addons.payment.models.payment_acquirer'
+LOGGER_NAME_MODELS = 'odoo.models'
 
 
 def dummy_verify_rsa_signature(signature, data):
@@ -253,3 +256,68 @@ class PayseraCommon(PaymentAcquirerCommon):
         self.assertEqual(tx.state, 'error')
         self.assertRegexpMatches(
             tx.state_message, r'.*currency.*does not match.*')
+
+
+class TestPayseraAccess(common.TransactionCase):
+
+    def setUp(self):
+        super(TestPayseraAccess, self).setUp()
+        self.user = self.env.ref('base.user_demo')
+        self.group_employee = self.env.ref('base.group_user')
+        self.group_admin = self.env.ref('base.group_system')
+        self.user.write({
+            'groups_id': [
+                (5,),
+                (4, self.group_employee.id),
+            ],
+        })
+        self.acquirer = self.env.ref(
+            'payment_paysera.payment_acquirer_paysera').sudo(user=self.user.id)
+
+    @mute_logger(LOGGER_NAME_MODELS)
+    def test_employee_cannot_read_project_id_and_sign_password(self):
+        with self.assertRaises(exceptions.AccessError):
+            self.acquirer.read(['paysera_project_id'])
+        with self.assertRaises(exceptions.AccessError):
+            self.acquirer.read(['paysera_sign_password'])
+
+    @mute_logger(LOGGER_NAME_MODELS)
+    def test_employee_cannot_write_project_id_and_sign_password(self):
+        with self.assertRaises(exceptions.AccessError):
+            self.acquirer.write({
+                'paysera_project_id': '123',
+            })
+        with self.assertRaises(exceptions.AccessError):
+            self.acquirer.write({
+                'paysera_sign_password': 'foo',
+            })
+
+    def test_admin_employee_can_read_project_id_and_sign_password(self):
+        self.user.write({
+            'groups_id': [
+                (4, self.group_admin.id),
+            ],
+        })
+        try:
+            self.acquirer.read(['paysera_project_id'])
+        except exceptions.AccessError:
+            self.fail('Admin user cannot read `paysera_project_id`.')
+        try:
+            self.acquirer.read(['paysera_sign_password'])
+        except exceptions.AccessError:
+            self.fail('Admin user cannot read `paysera_sign_password`.')
+
+    def test_admin_employee_can_write_project_id_and_sign_password(self):
+        self.user.write({
+            'groups_id': [
+                (4, self.group_admin.id),
+            ],
+        })
+        try:
+            self.acquirer.write({'paysera_project_id': 'foo'})
+        except exceptions.AccessError:
+            self.fail('Admin user cannot write `paysera_project_id`.')
+        try:
+            self.acquirer.write({'paysera_sign_password': '123'})
+        except exceptions.AccessError:
+            self.fail('Admin user cannot write `paysera_sign_password`.')

@@ -32,7 +32,7 @@ class PaymentAcquirer(models.Model):
         size=11,
         required_if_provider='paysera',
         help='Unique Paysera project number',
-        groups='base.group_user',
+        groups='base.group_system',
     )
     paysera_sign_password = fields.Char(
         string='Sign password',
@@ -41,7 +41,7 @@ class PaymentAcquirer(models.Model):
         help=u'Project password, which can be found by logging in to '
              u'Paysera.com system, selecting “Service management” and '
              u'choosing “General settings” on a specific project.',
-        groups='base.group_user',
+        groups='base.group_system',
     )
     paysera_validate_paid_amount = fields.Boolean(
         string='Validate Paid Amount',
@@ -100,7 +100,7 @@ class PaymentAcquirer(models.Model):
         )
         currency = values['currency']
         paysera_params = dict(
-            projectid=self.paysera_project_id,
+            projectid=self.sudo().paysera_project_id,
             orderid=values['reference'],
             lang=lang,
             amount=paysera.get_amount_string(currency, values['amount']),
@@ -122,7 +122,7 @@ class PaymentAcquirer(models.Model):
         })
         values.update(paysera.get_form_values(
             paysera_params,
-            self.paysera_sign_password,
+            self.sudo().paysera_sign_password,
         ))
         return values
 

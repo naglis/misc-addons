@@ -71,7 +71,7 @@ class PaymentTransaction(models.Model):
 
         ss1_received = data.get('ss1')
         ss1_computed = paysera.md5_sign(
-            the_data, self.acquirer_id.paysera_sign_password)
+            the_data, self.acquirer_id.sudo().paysera_sign_password)
         if not ss1_computed == ss1_received:
             invalid_parameters.append(('ss1', ss1_received, ss1_computed))
 
@@ -102,11 +102,12 @@ class PaymentTransaction(models.Model):
                 ('test', test_mode_received, test_mode_expected))
 
         # Check if `projectid`'s match.
-        if not params.get('projectid') == self.acquirer_id.paysera_project_id:
+        if (not params.get('projectid') ==
+                self.acquirer_id.sudo().paysera_project_id):
             invalid_parameters.append((
                 'projectid',
                 params.get('projectid'),
-                self.acquirer_id.paysera_project_id,
+                self.acquirer_id.sudo().paysera_project_id,
             ))
         return invalid_parameters
 

@@ -12,6 +12,11 @@ Requirements
 Changelog
 ~~~~~~~~~
 
+v2.1.2 (2019-01-22)
+-------------------
+- Allow only user with admin permissions to read/write acquirer project ID and
+  sign password.
+
 v2.1.1 (2019-01-17)
 -------------------
 - Allows to change Paysera redirect URLs via `_get_paysera_redirect_urls()`.
