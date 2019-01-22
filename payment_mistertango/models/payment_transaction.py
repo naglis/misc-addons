@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2018 Naglis Jonaitis
+# Copyright 2018-2019 Naglis Jonaitis
 # License AGPL-3 or later (https://www.gnu.org/licenses/agpl).
 
 import json
@@ -88,7 +88,8 @@ class PaymentTransaction(models.Model):
         # not that it is actually safe (ie. authenticated).
 
         # Decrypt and load custom data from 'hash'.
-        secret_key = self.acquirer_id.mistertango_secret_key.encode('ascii')
+        secret_key = self.acquirer_id.sudo().mistertango_secret_key.encode(
+            'utf-8')
         unsafe_data = data
         safe_data = json.loads(decrypt(unsafe_data['hash'], secret_key))
         unsafe_custom = json.loads(unsafe_data['custom'])
@@ -124,12 +125,14 @@ class PaymentTransaction(models.Model):
         return invalid_parameters
 
     def _mistertango_form_validate(self, data):
+        self.ensure_one()
         callback_uuid = data['callback_uuid']
         # This callback was already processed, do nothing.
         if self.mistertango_callback_uuid == callback_uuid:
             return True
 
-        secret_key = self.acquirer_id.mistertango_secret_key.encode('ascii')
+        secret_key = self.acquirer_id.sudo().mistertango_secret_key.encode(
+            'utf-8')
         safe_data = json.loads(decrypt(data['hash'], secret_key))
         custom = json.loads(safe_data['custom'])
         payment_data = custom['data']

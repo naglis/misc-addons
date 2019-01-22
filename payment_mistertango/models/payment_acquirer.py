@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2018 Naglis Jonaitis
+# Copyright 2018-2019 Naglis Jonaitis
 # License AGPL-3 or later (https://www.gnu.org/licenses/agpl).
 
 from odoo import _, api, fields, models
@@ -27,7 +27,7 @@ class PaymentAcquirer(models.Model):
     mistertango_secret_key = fields.Char(
         string='Secret Key',
         required_if_provider='mistertango',
-        groups='base.group_user',
+        groups='base.group_system',
     )
     mistertango_payment_type = fields.Selection(
         string='Payment Type',
@@ -58,6 +58,7 @@ class PaymentAcquirer(models.Model):
     @api.multi
     def mistertango_form_generate_values(self, values):
         '''Generates the values used to render the form button template.'''
+        self.ensure_one()
         values = values.copy()
         lang = (self.mistertango_default_lang or
                 values['billing_partner_lang'] or '')

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright 2018 Naglis Jonaitis
+# Copyright 2018-2019 Naglis Jonaitis
 # License AGPL-3 or later (https://www.gnu.org/licenses/agpl).
 {
     'name': 'Mistertango Payment Acquirer',
-    'version': '10.0.1.0.3',
+    'version': '10.0.1.0.4',
     'author': 'Naglis Jonaitis',
     'category': 'eCommerce',
     'website': 'https://naglis.me/',
