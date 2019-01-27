@@ -100,7 +100,7 @@ class PaymentAcquirer(models.Model):
         )
         currency = values['currency']
         paysera_params = dict(
-            projectid=self.sudo().paysera_project_id,
+            projectid=self.paysera_project_id,
             orderid=values['reference'],
             lang=lang,
             amount=paysera.get_amount_string(currency, values['amount']),
@@ -122,7 +122,7 @@ class PaymentAcquirer(models.Model):
         })
         values.update(paysera.get_form_values(
             paysera_params,
-            self.sudo().paysera_sign_password,
+            self.paysera_sign_password,
         ))
         return values
 

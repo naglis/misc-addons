@@ -12,6 +12,10 @@ Requirements
 Changelog
 ~~~~~~~~~
 
+v2.1.3 (2019-01-27)
+-------------------
+- Drops sudo() on sign password access.
+
 v2.1.2 (2019-01-22)
 -------------------
 - Allow only user with admin permissions to read/write acquirer project ID and
