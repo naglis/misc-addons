@@ -88,8 +88,7 @@ class PaymentTransaction(models.Model):
         # not that it is actually safe (ie. authenticated).
 
         # Decrypt and load custom data from 'hash'.
-        secret_key = self.acquirer_id.sudo().mistertango_secret_key.encode(
-            'utf-8')
+        secret_key = self.acquirer_id.mistertango_secret_key.encode('utf-8')
         unsafe_data = data
         safe_data = json.loads(decrypt(unsafe_data['hash'], secret_key))
         unsafe_custom = json.loads(unsafe_data['custom'])
@@ -131,8 +130,7 @@ class PaymentTransaction(models.Model):
         if self.mistertango_callback_uuid == callback_uuid:
             return True
 
-        secret_key = self.acquirer_id.sudo().mistertango_secret_key.encode(
-            'utf-8')
+        secret_key = self.acquirer_id.mistertango_secret_key.encode('utf-8')
         safe_data = json.loads(decrypt(data['hash'], secret_key))
         custom = json.loads(safe_data['custom'])
         payment_data = custom['data']
