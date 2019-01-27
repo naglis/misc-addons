@@ -2,7 +2,7 @@
 # License AGPL-3 or later (https://www.gnu.org/licenses/agpl).
 {
     'name': 'Mistertango Payment Acquirer',
-    'version': '11.0.1.0.2',
+    'version': '11.0.1.0.3',
     'author': 'Naglis Jonaitis',
     'category': 'eCommerce',
     'website': 'https://naglis.me/',
