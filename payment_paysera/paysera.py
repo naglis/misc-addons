@@ -142,4 +142,4 @@ def get_form_values(value_dict, sign_password):
 
 def get_amount_string(currency, amount):
     currency.ensure_one()
-    return str(int(currency.round(amount) / currency.rounding))
+    return str(int(currency.round(currency.round(amount) / currency.rounding)))
