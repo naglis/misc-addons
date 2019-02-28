@@ -12,6 +12,10 @@ Requirements
 Changelog
 ~~~~~~~~~
 
+v2.1.4 (2019-02-28)
+-------------------
+- Fixes amount formatting in `get_amount_string()`.
+
 v2.1.3 (2019-01-27)
 -------------------
 - Drops sudo() on sign password access.
