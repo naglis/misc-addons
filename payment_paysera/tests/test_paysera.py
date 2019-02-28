@@ -321,3 +321,21 @@ class TestPayseraAccess(common.TransactionCase):
             self.acquirer.write({'paysera_sign_password': '123'})
         except exceptions.AccessError:
             self.fail('Admin user cannot write `paysera_sign_password`.')
+
+
+class TestGetAmountString(common.SingleTransactionCase):
+
+    def test_amount_formatted_correctly(self):
+        EUR = self.env.ref('base.EUR')
+        test_cases = [
+            (EUR, 0.0, '0'),
+            (EUR, 1.00, '100'),
+            (EUR, -1.23, '-123'),
+            (EUR, 1.1 + 2.2, '330'),
+            (EUR, 316.46, '31646'),
+            (EUR, 1.11999999, '112'),
+            (EUR, 39.0 / 100.0 + 1, '139'),
+        ]
+        for currency, amount, expected in test_cases:
+            actual = paysera.get_amount_string(currency, amount)
+            self.assertEqual(expected, actual)

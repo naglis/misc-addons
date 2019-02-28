@@ -11,6 +11,7 @@ from cryptography import exceptions, x509
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric.padding import PKCS1v15
+from odoo import tools
 
 PAYSERA_API_VERSION = '1.6'
 PAYSERA_API_URL = 'https://www.paysera.com/pay/'
@@ -142,4 +143,5 @@ def get_form_values(value_dict, sign_password):
 
 def get_amount_string(currency, amount):
     currency.ensure_one()
-    return str(int(currency.round(amount) / currency.rounding))
+    return '%.0f' % tools.float_round(
+        amount / currency.rounding, precision_digits=0)
