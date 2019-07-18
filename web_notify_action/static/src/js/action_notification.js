@@ -1,4 +1,4 @@
-/* Copyright 2018 Naglis Jonaitis
+/* Copyright 2018-2019 Naglis Jonaitis
  * License LGPL-3 or later (https://www.gnu.org/licenses/lgpl). */
 odoo.define('web_notify_action.action_notification', function (require) {
     'use strict';
