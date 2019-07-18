@@ -9,10 +9,10 @@ class NotifyActionBusController(BusController):
 
     def _poll(self, dbname, channels, last, options):
         if request.session.uid:
+            channels = list(channels)
             channels.append((
                 request.db,
                 'web_notify_action.notify_action',
                 request.env.user.id,
             ))
-        return super(NotifyActionBusController, self)._poll(
-            dbname, channels, last, options)
+        return super()._poll(dbname, channels, last, options)

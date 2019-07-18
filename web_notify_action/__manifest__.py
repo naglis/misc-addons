@@ -17,5 +17,8 @@
     'qweb': [
         'static/src/xml/action_notification.xml',
     ],
+    'images': [
+        'static/description/main_screenshot.png',
+    ],
     'installable': True,
 }

@@ -3,132 +3,84 @@
 odoo.define('web_notify_action.action_notification', function (require) {
     'use strict';
 
-    var bus = require('bus.bus').bus;
-    var WebClient = require('web.WebClient');
-    var Widget = require('web.Widget');
+    var Notification = require('web.Notification');
+    var AbstractService = require('web.AbstractService');
+    var core = require('web.core');
 
-    /**
-    * params:
-    * - title: title of the notification.
-    * - text: text of the notification.
-    * - allow_dismiss: boolean if the notification has a close button. Default:
-    *   true.
-    * - animate: boolean if the notification show/hide should be animated.
-    *   Default: true.
-    * - timeout: duration in miliseconds after which the notification is
-    *   closed. Default: 2500. Set to 0 if you want to disable the timeout.
-    * - type: one of ('notification', 'error'). Default: 'notification'.
-    * - icon: notification icon CSS classes. Could be Font-Awesome icons or
-    *   other (if available). Default: 'fa fa-3x fa-lightbulb-o'.
-    * - image_url: URL of an image to be displayed on the side of the text.
-    * - buttons: an array of action buttons. See below for options available
-    *   for a button.
-    *
-    * button:
-    * - tag: a slug-like tag for the action (required). If not set, the button
-    *   will not be displayed.
-    * - class: CSS classes for the button element. Default: 'btn btn-default'.
-    * - icon: button icon CSS classes. Could be Font-Awesome icons or
-    *   other (if available). By default no icon is added.
-    * - label: the button label text.
-    * - action: a hash of any action that can be executed by the action
-    *   manager.
-    */
-    var ActionNotification = Widget.extend({
+    var ActionNotification = Notification.extend({
         template: 'ActionNotification',
-        events: {
-            'click .o_close': 'on_close_click',
-            'click .notify_action_button': 'on_action_click'
-        },
+
+        /**
+        * @override
+        * @param {Notification} parent
+        * @param {Object} params
+        * @param {string} params.title notification title (plaintext)
+        * @param {string} params.message notification main message (plaintext)
+        * @param {string} params.type 'notification' or 'warning'
+        * @param {boolean} [params.sticky=false] if true, the notification will stay
+        *   visible until the user clicks on it (timeout will be ignored)
+        * @param {integer} [params.timeout=2500] delay in miliseconds before
+        *   the notification is closed
+        * @param {string} [params.className] className to add on the dom
+        * @param {string} [params.icon] font-awesome class
+        * @param {string} [params.image_url] URL of an image to display alongside
+        *   the message
+        * @param {function} [params.onClose] callback when the user click on the x
+        *   or when the notification is auto close (no sticky)
+        * @param {Object[]} params.buttons
+        * @param {function} params.buttons[0].click callback on click
+        * @param {boolean} [params.buttons[0].primary] display the button as primary
+        * @param {string} [params.buttons[0].text] button label
+        * @param {string} [params.buttons[0].icon] font-awesome className or image src
+        * @param {Object} [params.buttons[0].action] a hash of an action that can
+        *   be executed by the action manager
+        */
         init: function(parent, params) {
-            this._super.apply(this, arguments);
-            this.title = params.title;
-            this.text = params.text;
-            this.params = _.defaults(params || {}, {
-                'buttons': [],
-                'allow_dismiss': true,
-                'animate': true,
-                'timeout': 2500,
-                'type': 'notification',
-                'icon': 'fa fa-3x fa-lightbulb-o'
-            });
-
-            this.tag_actions = {};
-            for(var i = 0; i < this.params.buttons.length; i++) {
-                var button = this.params.buttons[i];
-                var tag = button.tag;
-                if(tag) {
-                    this.tag_actions[tag] = button.action;
-                }
-            }
-        },
-        start: function() {
-            this._super.apply(this, arguments);
-            if(this.params.type === 'error') {
-                this.$el.addClass('o_error');
-            }
-
-            var self = this,
-                timeout = this.params.timeout;
-            if(this.params.animate) {
-                this.$el.animate({opacity: 1.0}, {
-                    duration: 'normal',
-                    easing: 'swing',
-                    complete: function() {
-                        if(timeout) {
-                            setTimeout(self.destroy.bind(self), timeout);
-                        }
-                    }
-                });
-            } else {
-                this.$el.css('opacity', 1.0);
-                if(timeout) {
-                    setTimeout(this.destroy.bind(this), timeout);
-                }
-            }
-
-        },
-        destroy: function() {
-            if(!this.params.animate) {
-                return this._super.apply(this, arguments);
-            }
-            this.$el.animate({opacity: 0.0}, {
-                'duration': 'normal',
-                'easing': 'swing',
-                'complete': this._super.bind(this)
-            });
-        },
-        on_action_click: function(event) {
-            event.preventDefault();
-            var action = this.tag_actions[$(event.target).data('action-tag')] || false;
-            if(action) {
-                this.do_action(action).then(this.destroy.bind(this));
-            } else {
-                this.destroy();
-            }
-        },
-        on_close_click: function(event) {
-            event.preventDefault();
-            this.destroy();
-        }
-    });
-
-    WebClient.include({
-        show_application: function() {
             var self = this;
-            bus.on('notification', this, function(notifications) {
-                _.each(notifications, (function(notification) {
-                    if (notification[0][1] === 'web_notify_action.notify_action') {
-                        this.notification_manager.display(new ActionNotification(this.notification_manager, notification[1]));
+            var buttons = params.buttons || [];
+            for(var i = 0; i < buttons.length; i++) {
+                if (buttons[i].action) {
+                    buttons[i].click = function() {
+                        self.do_action(this.action);
                     }
-                }).bind(self));
-            });
-            return this._super.apply(this, arguments);
+                }
+            }
+            this._super(parent, params);
+
+            this.image_url = params.image_url;
+            this._autoCloseDelay = params.timeout || this._autoCloseDelay;
+            this.icon = params.icon || this.icon;
+            this.sticky = params.sticky;
         }
     });
+
+    var ActionNotificationManager =  AbstractService.extend({
+        dependencies: ['bus_service'],
+        start: function () {
+            this._super.apply(this, arguments);
+            this._listenOnBuses();
+        },
+        _listenOnBuses: function () {
+            this.call('bus_service', 'onNotification', this, this._onNotification);
+        },
+        _onNotification: function (notifications) {
+            var self = this;
+            _.each(notifications, (function(notification) {
+                if (notification[0][1] === 'web_notify_action.notify_action') {
+                    debugger;
+                    self.call('notification', 'notify', _.extend(notification[1] || {}, {
+                        Notification: ActionNotification,
+                    }));
+                }
+            }).bind(self));
+        }
+    });
+
+    core.serviceRegistry.add('action_notification_manager_service', ActionNotificationManager);
 
     return {
-        ActionNotification: ActionNotification
+        ActionNotification: ActionNotification,
+        ActionNotificationManager: ActionNotificationManager
     };
 
 });
