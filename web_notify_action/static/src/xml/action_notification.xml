@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<template>
+
+<!-- Copyright 2018-2019 Naglis Jonaitis
+     License LGPL-3 or later (https://www.gnu.org/licenses/lgpl). -->
+
+<t t-name="ActionNotification" t-extend="Notification">
+
+    <t t-jquery=".o_notification_title > t" t-operation="replace">
+        <!-- Use `t-esc` instead of `t-raw`. -->
+        <t t-esc="widget.title"/>
+    </t>
+
+    <t t-jquery=".o_notification_content" t-operation="replace">
+        <div class="o_notification_content">
+            <div class="row">
+                <t t-set="text_width" t-value="widget.image_url &amp;&amp; 9 || 12"/>
+                <div t-attf-class="col-sm-#{text_width}">
+                    <!-- Use `t-esc` instead of `t-raw`. -->
+                    <p><t t-esc="widget.message"/></p>
+                </div>
+                <div t-if="widget.image_url" class="col-sm-3">
+                    <img class="img-fluid" alt="Notification Image" t-att-src="widget.image_url"/>
+                </div>
+            </div>
+        </div>
+    </t>
+
+</t>
+
+</template>

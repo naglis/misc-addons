@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2018-2019 Naglis Jonaitis
+     License LGPL-3 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+
+<template id="assets_backend" name="web_notify_action backend assets" inherit_id="web.assets_backend">
+    <xpath expr="." position="inside">
+        <script type="text/javascript" src="/web_notify_action/static/src/js/action_notification.js"></script>
+    </xpath>
+</template>
+
+</odoo>
