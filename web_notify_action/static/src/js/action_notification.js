@@ -29,7 +29,7 @@ odoo.define('web_notify_action.action_notification', function (require) {
     *   will not be displayed.
     * - class: CSS classes for the button element. Default: 'btn btn-default'.
     * - icon: button icon CSS classes. Could be Font-Awesome icons or
-    *   other (if available). By the default no icon is added.
+    *   other (if available). By default no icon is added.
     * - label: the button label text.
     * - action: a hash of any action that can be executed by the action
     *   manager.
