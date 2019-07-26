@@ -24,7 +24,7 @@
     <field name="name">openproject.project.project.search</field>
     <field name="model">openproject.project.project</field>
     <field name="arch" type="xml">
-        <search string="OpenProject Projects">
+        <search>
             <field name="openproject_id" string="Project ID"/>
             <field name="name" string="Name"/>
             <separator/>

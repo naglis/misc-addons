@@ -21,7 +21,7 @@
     <field name="name">openproject.account.analytic.line.search</field>
     <field name="model">openproject.account.analytic.line</field>
     <field name="arch" type="xml">
-        <search string="OpenProject Work Packages">
+        <search>
             <field name="date"/>
             <field name="user_id"/>
             <field name="project_id"/>

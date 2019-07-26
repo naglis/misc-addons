@@ -20,7 +20,7 @@
     <field name="name">openproject.project.task.search</field>
     <field name="model">openproject.project.task</field>
     <field name="arch" type="xml">
-        <search string="OpenProject Work Packages">
+        <search>
             <field name="openproject_id" string="Work Package ID"/>
             <field name="name" string="Subject"/>
             <separator/>
