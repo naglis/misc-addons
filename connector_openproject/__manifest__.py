@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017-2018 Naglis Jonaitis
+# Copyright 2017-2019 Naglis Jonaitis
 # License AGPL-3 or later (https://www.gnu.org/licenses/agpl).
 {
     'name': 'OpenProject Connector',
-    'version': '10.0.2.0.2',
+    'version': '10.0.2.0.3',
     'author': 'Naglis Jonaitis',
     'category': 'Connector',
     'website': 'https://naglis.me/',

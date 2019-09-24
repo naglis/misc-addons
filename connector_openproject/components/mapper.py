@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017-2018 Naglis Jonaitis
+# Copyright 2017-2019 Naglis Jonaitis
 # License AGPL-3 or later (https://www.gnu.org/licenses/agpl).
 
 import logging
+import operator
 
 from odoo import _
 from odoo.addons.component.core import AbstractComponent, Component
@@ -37,7 +38,7 @@ def openproject_text(field, fmt='html'):
     if fmt not in ('html', 'raw'):
         raise ValueError('Unknown OpenProject text format: "%s"' % fmt)
 
-    def modifier(self, record, to_attr):
+    def modifier(self, record, __):
         text_field = record[field]
         if fmt not in text_field:
             raise KeyError(
@@ -45,6 +46,12 @@ def openproject_text(field, fmt='html'):
                     fmt, field))
         return text_field[fmt]
     return modifier
+
+
+account_analytic_line_name_getter_7_3 = operator.itemgetter('comment')
+account_analytic_line_name_getter_9_0 = openproject_text('comment', fmt='raw')
+mail_message_body_getter = openproject_text('comment', fmt='html')
+project_task_description_getter = openproject_text('description', fmt='html')
 
 
 def openproject_duration(field, raise_err=False, allow_none=True):
@@ -279,7 +286,7 @@ class OpenProjectTaskMapper(Component):
     def description(self, record):
         project = self._map_op_link(record, OP_PROJECT_LINK, unwrap=False)
         return {
-            'description': openproject_text('description')(
+            'description': project_task_description_getter(
                 self, record, 'description'),
         } if project.sync_wp_description else {}
 
@@ -323,8 +330,16 @@ class OpenProjectAccountAnalyticLineMapper(Component):
 
     @mapping
     def comment(self, record):
+        version = self.backend_record.version
+        if version == '7.3':
+            name = account_analytic_line_name_getter_7_3(record)
+        elif version == '9.0':
+            name = account_analytic_line_name_getter_9_0(self, record, 'name')
+        else:
+            raise NotImplementedError(
+                'Unsupported OpenProject base version: %s' % version)
         return {
-            'name': record.get('comment') or u'/',
+            'name': name or u'/',
         }
 
     @mapping
@@ -353,7 +368,7 @@ class OpenProjectMailMessageMapper(Component):
             body = '<br/>'.join(d['raw'] for d in record.get('details', []))
             subtype_xml_id = 'mail_message_subtype_wp_update'
         else:
-            body = openproject_text('comment')(self, record, 'body')
+            body = mail_message_body_getter(self, record, 'body')
             subtype_xml_id = 'mail_message_subtype_wp_comment'
         subtype = self.env.ref(
             'connector_openproject.%s' % subtype_xml_id,
