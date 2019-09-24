@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017-2018 Naglis Jonaitis
+# Copyright 2017-2019 Naglis Jonaitis
 # License AGPL-3 or later (https://www.gnu.org/licenses/agpl).
 
 import json
@@ -26,7 +26,8 @@ def json_test_file(filename, path_getter=test_file):
         return json.load(f)
 
 
-def get_openproject_mocker(projects_response_file='projects.json'):
+def get_openproject_mocker(
+        projects_response_file='projects.json', base_version='7.3'):
     mocker = requests_mock.Mocker()
 
     mocker.get(
@@ -51,9 +52,18 @@ def get_openproject_mocker(projects_response_file='projects.json'):
     mocker.get(
         'http://openproject/api/v3/work_packages/1528/activities',
         json=json_test_file('work_packages_1528_activities.json'))
-    mocker.get(
-        'http://openproject/api/v3/time_entries',
-        json=json_test_file('project_1_time_entries.json'))
+
+    if base_version == '7.3':
+        mocker.get(
+            'http://openproject/api/v3/time_entries',
+            json=json_test_file('project_1_time_entries_7_3.json'))
+    elif base_version == '9.0':
+        mocker.get(
+            'http://openproject/api/v3/time_entries',
+            json=json_test_file('project_1_time_entries_9_0.json'))
+    else:
+        raise NotImplementedError(
+            'Unsupported OpenProject base version: %s' % base_version)
 
     return mocker
 

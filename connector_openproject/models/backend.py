@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Naglis Jonaitis
+# Copyright 2017-2019 Naglis Jonaitis
 # License AGPL-3 or later (https://www.gnu.org/licenses/agpl).
 
 from odoo import api, fields, models
@@ -25,12 +25,13 @@ class OpenProjectBackend(models.Model):
     def select_versions(self):
         return [
             ('7.3', '7.3+'),
+            ('9.0', '9.0+'),
         ]
 
     version = fields.Selection(
         selection='select_versions',
         required=True,
-        default='7.3',
+        default='9.0',
     )
     active = fields.Boolean(
         default=True,
