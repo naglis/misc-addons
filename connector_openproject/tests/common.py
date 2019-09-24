@@ -27,7 +27,7 @@ def json_test_file(filename, path_getter=test_file):
 
 
 def get_openproject_mocker(
-        projects_response_file='projects.json', base_version='7.3'):
+        projects_response_file='projects.json', base_version='9.0'):
     mocker = requests_mock.Mocker()
 
     mocker.get(
