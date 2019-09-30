@@ -2,7 +2,7 @@
 # Copyright 2019 Naglis Jonaitis
 # License AGPL-3 or later (https://www.gnu.org/licenses/agpl).
 
-import json
+import ast
 import logging
 
 from odoo import SUPERUSER_ID, api
@@ -18,11 +18,11 @@ def mark_analytic_entries_as_not_synced(env):
         ('name', '=like', '{%}'),
     ]):
         try:
-            desc = json.loads(line.name)
-        except ValueError:
+            desc = ast.literal_eval(line.name.strip())
+        except (SyntaxError, ValueError, IndentationError):
             pass
         else:
-            if sorted(desc) == KEYS:
+            if isinstance(desc, dict) and sorted(desc) == KEYS:
                 to_update |= line
 
     if to_update:
