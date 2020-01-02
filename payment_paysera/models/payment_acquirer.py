@@ -66,6 +66,12 @@ class PaymentAcquirer(models.Model):
             'paysera_standard_api_url': paysera.PAYSERA_API_URL,
         }
 
+    @api.multi
+    def _get_paysera_override_values(self, paysera_params, values):
+        '''Returns values which will override sent paysera data'''
+        self.ensure_one().ensure_paysera()
+        return {}
+
     @api.model
     def _get_paysera_redirect_urls(self):
         '''
@@ -120,6 +126,9 @@ class PaymentAcquirer(models.Model):
             k: v for k, v in self._get_paysera_redirect_urls().items()
             if k in ('accepturl', 'cancelurl', 'callbackurl')
         })
+        paysera_params.update(
+            self._get_paysera_override_values(paysera_params, values) or {}
+        )
         values.update(paysera.get_form_values(
             paysera_params,
             self.paysera_sign_password,
