@@ -1,0 +1,83 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* payment_paysera
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 10.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-09-16 19:35+0000\n"
+"PO-Revision-Date: 2017-09-16 19:35+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: payment_paysera
+#: model:payment.acquirer,cancel_msg:payment_paysera.payment_acquirer_paysera
+msgid "<span><i>Cancel,</i> Your payment has been cancelled.</span>"
+msgstr "<span><i>Atšauktas,</i> Jūsų mokėjimas buvo atšauktas.</span>"
+
+#. module: payment_paysera
+#: model:payment.acquirer,done_msg:payment_paysera.payment_acquirer_paysera
+msgid "<span><i>Done,</i> Your online payment has been successfully processed. Thank you for your order.</span>"
+msgstr "<span><i>Įvykdytas,</i> Jūsų mokėjimas sėkmingai apdorotas. Dėkojame už jūsų užsakymą.</span>"
+
+#. module: payment_paysera
+#: model:payment.acquirer,error_msg:payment_paysera.payment_acquirer_paysera
+msgid "<span><i>Error,</i> Please be aware that an error occurred during the transaction. The order has been confirmed but will not be paid. Do not hesitate to contact us if you have any questions on the status of your order.</span>"
+msgstr "<span><i>Klaida,</i> Transakcijos metu įvyko klaida. Užsakymas buvo patvirtintas, tačiau nebuvo apmokėtas. Prašome nedvejoti susisiekti su mumis, jei turite klausimų dėl užsakymo būsenos.</span>"
+
+#. module: payment_paysera
+#: model:payment.acquirer,pending_msg:payment_paysera.payment_acquirer_paysera
+msgid "<span><i>Pending,</i> Your online payment has been successfully processed. But your order is not validated yet.</span>"
+msgstr "<span><i>Laukiama patvirtinimo,</i> Jūsų mokėjimas sėkmingai apdorotas, tačiau užsakymas dar nėra patvirtintas.</span>"
+
+#. module: payment_paysera
+#: model:ir.model,name:payment_paysera.model_payment_acquirer
+msgid "Payment Acquirer"
+msgstr "Apmokėjimo gaviklis"
+
+#. module: payment_paysera
+#: model:ir.model,name:payment_paysera.model_payment_transaction
+msgid "Payment Transaction"
+msgstr "Apmokėjimo transakcija"
+
+#. module: payment_paysera
+#: model:ir.ui.view,arch_db:payment_paysera.view_payment_acquirer_form
+#: model:payment.acquirer,name:payment_paysera.payment_acquirer_paysera
+msgid "Paysera"
+msgstr "Paysera"
+
+#. module: payment_paysera
+#: code:addons/payment_paysera/models/payment_transaction.py:136
+#, python-format
+msgid "Paysera: unknown payment status: %s"
+msgstr "Paysera: nežinoma mokėjimo būklė: %s"
+
+#. module: payment_paysera
+#: model:ir.model.fields,field_description:payment_paysera.field_payment_acquirer_paysera_project_id
+msgid "Project ID"
+msgstr "Projekto ID"
+
+#. module: payment_paysera
+#: model:ir.model.fields,help:payment_paysera.field_payment_acquirer_paysera_sign_password
+msgid "Project password, which can be found by logging in to Paysera.com system, selecting “Service management” and choosing “General settings” on a specific project."
+msgstr "Projekto slaptažodis, kurį galite rasti prisijungę prie Paysera.com sistemos su savo naudotojo duomenimis, išsirinkus „Paslaugų valdymas“ ir prie konkretaus projekto pasirinkus „Bendri nustatymai“."
+
+#. module: payment_paysera
+#: model:ir.model.fields,field_description:payment_paysera.field_payment_acquirer_paysera_sign_password
+msgid "Sign password"
+msgstr "Projekto slaptažodis"
+
+#. module: payment_paysera
+#: model:ir.model.fields,help:payment_paysera.field_payment_acquirer_paysera_project_id
+msgid "Unique Paysera project number"
+msgstr "Unikalus Paysera projekto numeris"
+
+#. module: payment_paysera
+#: model:payment.acquirer,pre_msg:payment_paysera.payment_acquirer_paysera
+msgid "You will be redirected to the Paysera payment website after clicking on the <i>Pay Now</i> button."
+msgstr "Paspaudę apmokėjimo mygtuką būsite nukreipti į „Paysera“ mokėjimų svetainę."

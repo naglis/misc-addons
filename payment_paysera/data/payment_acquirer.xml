@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2018 Naglis Jonaitis
+     License AGPL-3 or later (https://www.gnu.org/licenses/agpl). -->
+<odoo noupdate="1">
+
+<record id="payment_acquirer_paysera" model="payment.acquirer">
+    <field name="name">Paysera</field>
+    <field name="image" type="base64" file="payment_paysera/static/src/img/paysera_icon.png"/>
+    <field name="provider">paysera</field>
+    <field name="company_id" ref="base.main_company"/>
+    <field name="view_template_id" ref="paysera_acquirer_button"/>
+    <field name="environment">test</field>
+    <field name="pre_msg"><![CDATA[
+<p>You will be redirected to the Paysera payment website after clicking on the <i>Pay Now</i> button.</p>]]></field>
+    <field name="paysera_project_id">REPLACE_ME</field>
+    <field name="paysera_sign_password">REPLACE_ME</field>
+    <field name="description" type="html">
+        <p>
+            A payment gateway to accept online payments via Paysera.
+        </p>
+        <ul>
+            <li><i class="fa fa-check"/>Online Payment</li>
+            <li><i class="fa fa-check"/>Payment Status Tracking</li>
+        </ul>
+    </field>
+</record>
+
+</odoo>
