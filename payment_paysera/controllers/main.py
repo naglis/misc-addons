@@ -27,7 +27,7 @@ class PayseraController(http.Controller):
             request.env['payment.transaction'].sudo().form_feedback(
                 params, 'paysera')
         except Exception:
-            _LOG.exception(u'Error while validating Paysera accept callback.')
+            _LOG.exception('Error while validating Paysera accept callback.')
 
         return werkzeug.utils.redirect('/shop/payment/validate')
 
@@ -46,5 +46,5 @@ class PayseraController(http.Controller):
                 post_data, 'paysera')
             return 'OK'
         except Exception:
-            _LOG.exception(u'Error while validating Paysera callback.')
+            _LOG.exception('Error while validating Paysera callback.')
             return 'NOT OK'

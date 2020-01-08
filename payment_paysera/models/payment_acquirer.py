@@ -37,9 +37,9 @@ class PaymentAcquirer(models.Model):
         string='Sign password',
         size=255,
         required_if_provider='paysera',
-        help=u'Project password, which can be found by logging in to '
-             u'Paysera.com system, selecting “Service management” and '
-             u'choosing “General settings” on a specific project.',
+        help='Project password, which can be found by logging in to '
+             'Paysera.com system, selecting “Service management” and '
+             'choosing “General settings” on a specific project.',
         groups='base.group_system',
     )
     paysera_validate_paid_amount = fields.Boolean(
@@ -116,7 +116,7 @@ class PaymentAcquirer(models.Model):
             version=paysera.PAYSERA_API_VERSION,
         )
         paysera_params.update({
-            k: v for k, v in self._get_paysera_redirect_urls().items()
+            k: v for k, v in list(self._get_paysera_redirect_urls().items())
             if k in ('accepturl', 'cancelurl', 'callbackurl')
         })
         values.update(paysera.get_form_values(

@@ -24,7 +24,7 @@ class PaymentTransaction(models.Model):
 
         reference = data['params'].get('orderid')
         if not reference:
-            msg = u'Paysera: missing order ID in received data'
+            msg = 'Paysera: missing order ID in received data'
             _LOG.error(msg)
             raise ValidationError(msg)
 
@@ -32,11 +32,11 @@ class PaymentTransaction(models.Model):
             ('reference', '=', reference),
         ])
         if not txs or len(txs) > 1:
-            msg = u'Paysera: received data for reference ID: %s' % reference
+            msg = 'Paysera: received data for reference ID: %s' % reference
             if not txs:
-                msg += u'; no order found'
+                msg += '; no order found'
             else:
-                msg += u'; multiple orders found'
+                msg += '; multiple orders found'
             _LOG.error(msg)
             raise ValidationError(msg)
         return txs[0]
@@ -147,10 +147,10 @@ class PaymentTransaction(models.Model):
             if validate_amount and not self._paysera_validate_paid_amount(
                     paid_amount, paid_currency):
                 state_msg = _(
-                    u'The amount/currency (in cents) on the transaction ('
-                    u'%(transaction_amount)s %(transaction_currency)s) does '
-                    u'not match the actually paid amount/currency '
-                    u'(%(paid_amount)s %(paid_currency)s).',
+                    'The amount/currency (in cents) on the transaction ('
+                    '%(transaction_amount)s %(transaction_currency)s) does '
+                    'not match the actually paid amount/currency '
+                    '(%(paid_amount)s %(paid_currency)s).',
                 ) % {
                     'transaction_amount': paysera.get_amount_string(
                         self.currency_id, self.amount),
@@ -166,10 +166,10 @@ class PaymentTransaction(models.Model):
                 ret_val = False
             else:
                 _LOG.info(
-                    u'Transaction "%s" sucessfully validated', self.reference)
+                    'Transaction "%s" sucessfully validated', self.reference)
                 self.write({
                     'state': 'done',
-                    'date_validate': fields.Datetime.now(),
+                    'date': fields.Datetime.now(),
                     'state_message': params.get('paytext', ''),
                     'acquirer_reference': params.get('requestid'),
                 })
@@ -183,7 +183,7 @@ class PaymentTransaction(models.Model):
             # NOTE: Currently we do not handle this status.
             pass
         else:
-            error = _(u'Paysera: unknown payment status: %s') % status
+            error = _('Paysera: unknown payment status: %s') % status
             _LOG.error(error)
             self.write({
                 'state': 'error',

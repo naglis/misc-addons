@@ -18,45 +18,45 @@ PAYSERA_PROJECT_ID = '53203'
 PAYSERA_SIGN_PASSWORD_1 = '7323e13b502b18674c59bb2015818e78'
 PAYSERA_SIGN_PASSWORD_2 = '7324e13b502b18674c59bb2015818e78'
 PAYSERA_TEST_DICT = collections.OrderedDict([
-    (u'lang', u''),
-    (u'reference', u'SO012'),
-    (u'p_city', u'Sin City'),
-    (u'projectid', u'53203'),
-    (u'currency_id', u'1'),
-    (u'currency', u'EUR'),
-    (u'p_email', u'norbert.buyer@example.com'),
-    (u'p_street', u'Huge Street 2/543'),
-    (u'partner', u'res.partner(3,)'),
-    (u'p_countrycode', u'BE'),
-    (u'orderid', u'SO012'),
-    (u'country', u'BE'),
-    (u'p_firstname', u'Buyer'),
-    (u'p_zip', u'1000'),
-    (u'amount', u'32000'),
-    (u'version', u'1.6'),
-    (u'p_lastname', u'Norbert'),
-    (u'test', u'1'),
-    (u'return_url', u'/shop/payment/validate'),
-    (u'payment', u'directebbe'),
+    ('lang', ''),
+    ('reference', 'SO012'),
+    ('p_city', 'Sin City'),
+    ('projectid', '53203'),
+    ('currency_id', '1'),
+    ('currency', 'EUR'),
+    ('p_email', 'norbert.buyer@example.com'),
+    ('p_street', 'Huge Street 2/543'),
+    ('partner', 'res.partner(3,)'),
+    ('p_countrycode', 'BE'),
+    ('orderid', 'SO012'),
+    ('country', 'BE'),
+    ('p_firstname', 'Buyer'),
+    ('p_zip', '1000'),
+    ('amount', '32000'),
+    ('version', '1.6'),
+    ('p_lastname', 'Norbert'),
+    ('test', '1'),
+    ('return_url', '/shop/payment/validate'),
+    ('payment', 'directebbe'),
     (
-        u'paytext',
-        u'Užsakymas nr: SO012 http://localhost projekte. (Pardavėjas: Naglis '
-        u'Jonaitis)',
+        'paytext',
+        'Užsakymas nr: SO012 http://localhost projekte. (Pardavėjas: Naglis '
+        'Jonaitis)',
     ),
-    (u'status', u'1'),
-    (u'requestid', u'63057194'),
-    (u'payamount', u'32000'),
-    (u'paycurrency', u'EUR'),
-    (u'name', u'UAB'),
-    (u'surename', u'Mokėjimai.lt'),
+    ('status', '1'),
+    ('requestid', '63057194'),
+    ('payamount', '32000'),
+    ('paycurrency', 'EUR'),
+    ('name', 'UAB'),
+    ('surename', 'Mokėjimai.lt'),
 ])
 PAYSERA_TEST_DATA = paysera.get_form_values(
     PAYSERA_TEST_DICT, PAYSERA_SIGN_PASSWORD_1)['data']
-PAYSERA_TEST_SS1 = u'e899774b6649616cc841113512111120'
+PAYSERA_TEST_SS1 = 'e899774b6649616cc841113512111120'
 PAYSERA_TEST_SS2 = (
-    u'uRdNt8ugz2JhxiEeS8BNUBrujDwsfMwgY7iugUcFbqQVg-M2VfICrGt3kVyEP9IDx4ywxa-w'
-    u'w85UPFlUlutZnslodkb7cmdNidw9CBJxKdp0NK7ESlRWiSAnVqT8LdgZP42IU2M3OyIs1nM9'
-    u'TMG3GevU04FbCBTCg_NM2EGUolc='
+    'uRdNt8ugz2JhxiEeS8BNUBrujDwsfMwgY7iugUcFbqQVg-M2VfICrGt3kVyEP9IDx4ywxa-w'
+    'w85UPFlUlutZnslodkb7cmdNidw9CBJxKdp0NK7ESlRWiSAnVqT8LdgZP42IU2M3OyIs1nM9'
+    'TMG3GevU04FbCBTCg_NM2EGUolc='
 )
 PAYSERA_TEST_POST_DATA = {
     'data': PAYSERA_TEST_DATA,
@@ -75,7 +75,7 @@ class PayseraUtils(unittest.TestCase):
 
     def test_get_form_values(self):
         test_data = {
-            u'ačiū': u'prašom',
+            'ačiū': 'prašom',
         }
         form_values = paysera.get_form_values(
             test_data, PAYSERA_SIGN_PASSWORD_2)
@@ -140,7 +140,7 @@ class PayseraCommon(PaymentAcquirerCommon):
     def test_transaction_management(self):
         self.assertTestEnv()
 
-        with self.assertRaisesRegexp(
+        with self.assertRaisesRegex(
             ValidationError,
             r'.*received data for reference ID.*no order found.*',
         ):
@@ -216,7 +216,7 @@ class PayseraCommon(PaymentAcquirerCommon):
         self.acquirer.paysera_validate_paid_amount = True
         test_dict = PAYSERA_TEST_DICT.copy()
         test_dict.update({
-            u'payamount': '32001',
+            'payamount': '32001',
         })
         post_data = paysera.get_form_values(
             test_dict, self.acquirer.paysera_sign_password)
@@ -231,14 +231,14 @@ class PayseraCommon(PaymentAcquirerCommon):
             self.tx_obj.form_feedback(post_data, 'paysera')
 
         self.assertEqual(tx.state, 'error')
-        self.assertRegexpMatches(
+        self.assertRegex(
             tx.state_message, r'.*amount.*does not match.*')
 
     def test_paid_currency_mismatch_transaction_set_to_error_state(self):
         self.acquirer.paysera_validate_paid_amount = True
         test_dict = PAYSERA_TEST_DICT.copy()
         test_dict.update({
-            u'paycurrency': 'USD',
+            'paycurrency': 'USD',
         })
         post_data = paysera.get_form_values(
             test_dict, self.acquirer.paysera_sign_password)
@@ -253,7 +253,7 @@ class PayseraCommon(PaymentAcquirerCommon):
             self.tx_obj.form_feedback(post_data, 'paysera')
 
         self.assertEqual(tx.state, 'error')
-        self.assertRegexpMatches(
+        self.assertRegex(
             tx.state_message, r'.*currency.*does not match.*')
 
 
