@@ -3,7 +3,7 @@
 
 import logging
 
-from odoo import _, api, fields, models
+from odoo import _, api, models
 from odoo.addons.payment.models.payment_acquirer import ValidationError
 
 from .. import paysera, utils
