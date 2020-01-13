@@ -116,7 +116,7 @@ class PaymentAcquirer(models.Model):
             version=paysera.PAYSERA_API_VERSION,
         )
         paysera_params.update({
-            k: v for k, v in list(self._get_paysera_redirect_urls().items())
+            k: v for k, v in self._get_paysera_redirect_urls().items()
             if k in ('accepturl', 'cancelurl', 'callbackurl')
         })
         values.update(paysera.get_form_values(

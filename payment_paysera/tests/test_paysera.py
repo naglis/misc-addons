@@ -129,8 +129,15 @@ class PayseraCommon(PaymentAcquirerCommon):
             'SO012', 320.00, self.currency_euro.id, values=self.buyer_values)
 
         root = ET.fromstring(res)
+
+        data_set = root.findall('input[@name="data_set"]')
         self.assertEqual(
-            root.attrib.get('action'),
+            len(data_set),
+            1,
+            'paysera: Found %d "data_set" input instead of 1' % len(data_set),
+        )
+        self.assertEqual(
+            data_set[0].get('data-action-url'),
             paysera.PAYSERA_API_URL,
             'Wrong form POST url',
         )

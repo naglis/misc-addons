@@ -3,7 +3,7 @@
 
 import base64
 import hashlib
-import urllib.request, urllib.parse, urllib.error
+import urllib
 
 # pylint: disable=W7935
 from cryptography import exceptions, x509
@@ -88,15 +88,7 @@ def _maybe_encode(value, encoding='ascii'):
     return value
 
 
-def _encode_dict_vals(old_dict):
-    '''Encodes Unicode values in the dict using UTF-8.'''
-    return type(old_dict)([
-        (_maybe_encode(k, 'utf-8'), _maybe_encode(v, 'utf-8'))
-        for k, v in list(old_dict.items())
-    ])
-
-
-def md5_sign(data, sign_password):
+def md5_sign(data: str, sign_password: str):
     '''Returns the MD5 hash of (data + paysera_sign_password).'''
     value = b''.join(map(_maybe_encode, (data, sign_password)))
     return hashlib.md5(value).hexdigest()
@@ -128,15 +120,13 @@ def verify_rsa_signature(signature, data):
 
 
 def get_form_values(value_dict, sign_password):
-    # urlencode needs bytes
-    encoded_params = _encode_dict_vals(value_dict)
-
     # Concatenate the parameters into a single line and b64encode it.
-    data = base64.urlsafe_b64encode(_maybe_encode(urllib.parse.urlencode(encoded_params), 'utf-8'))
-    signature = md5_sign(data, sign_password)
+    encoding = 'utf-8'
+    encoded_params = urllib.parse.urlencode(value_dict, encoding=encoding)
+    data = base64.urlsafe_b64encode(encoded_params.encode(encoding))
     return {
         'data': data,
-        'signature': signature,
+        'signature': md5_sign(data, sign_password),
     }
 
 

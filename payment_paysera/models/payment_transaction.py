@@ -137,10 +137,12 @@ class PaymentTransaction(models.Model):
         validate_amount = self.acquirer_id.paysera_validate_paid_amount
 
         ret_val = True
+        tx_values = {
+            'acquirer_reference': params.get('requestid', ''),
+        }
         if status == paysera.PAYSERA_STATUS_NOT_EXECUTED:
-            self.write({
-                'state': 'cancel',
-            })
+            self._set_transaction_cancel()
+            self.write(tx_values)
         elif status == paysera.PAYSERA_STATUS_PAYMENT_SUCCESSFULL:
             paid_amount, paid_currency = (
                 params['payamount'], params['paycurrency'])
@@ -158,36 +160,25 @@ class PaymentTransaction(models.Model):
                     'paid_amount': paid_amount,
                     'paid_currency': paid_currency,
                 }
-                self.write({
-                    'state': 'error',
-                    'state_message': state_msg,
-                    'acquirer_reference': params.get('requestid'),
-                })
+                self._set_transaction_error(state_msg)
+                self.write(tx_values)
                 ret_val = False
             else:
                 _LOG.info(
                     'Transaction "%s" sucessfully validated', self.reference)
-                self.write({
-                    'state': 'done',
-                    'date': fields.Datetime.now(),
-                    'state_message': params.get('paytext', ''),
-                    'acquirer_reference': params.get('requestid'),
-                })
+                tx_values.update(state_message=params.get('paytext', ''))
+                self._set_transaction_done()
+                self.write(tx_values)
         elif status == paysera.PAYSERA_STATUS_PAYMENT_ACCEPTED:
-            self.write({
-                'state': 'pending',
-                'state_message': params.get('paytext', ''),
-                'acquirer_reference': params.get('requestid'),
-            })
+            self._set_transaction_pending()
+            self.write(tx_values)
         elif status == paysera.PAYSERA_STATUS_ADDITIONAL_INFO:
             # NOTE: Currently we do not handle this status.
             pass
         else:
             error = _('Paysera: unknown payment status: %s') % status
             _LOG.error(error)
-            self.write({
-                'state': 'error',
-                'state_message': error,
-            })
+            self._set_transaction_error(error)
+            self.write(tx_values)
             ret_val = False
         return ret_val
