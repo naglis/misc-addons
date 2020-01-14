@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2018 Naglis Jonaitis
+     License AGPL-3 or later (https://www.gnu.org/licenses/agpl). -->
+<odoo noupdate="1">
+
+<template id="paysera_acquirer_button" name="Paysera Acquirer Button">
+    <div t-if="acquirer.paysera_project_id and acquirer.paysera_sign_password">
+        <input type="hidden" name="data_set" t-att-data-action-url="tx_url" data-remove-me=""/>
+        <input type="hidden" name="data" t-att-value="data"/>
+        <input type="hidden" name="sign" t-att-value="signature"/>
+    </div>
+</template>
+
+</odoo>

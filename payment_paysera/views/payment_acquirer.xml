@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2018-2019 Naglis Jonaitis
+     License AGPL-3 or later (https://www.gnu.org/licenses/agpl). -->
+<odoo>
+
+<record id="view_payment_acquirer_form" model="ir.ui.view">
+    <field name="name">Paysera Payment Acquirer Form</field>
+    <field name="model">payment.acquirer</field>
+    <field name="inherit_id" ref="payment.acquirer_form"/>
+    <field name="arch" type="xml">
+        <xpath expr='//group[@name="acquirer"]' position="after">
+            <group name="paysera" string="Paysera" attrs="{'invisible': [('provider', '!=', 'paysera')]}">
+                <field name="paysera_project_id" attrs="{'required': [('provider', '=', 'paysera')]}"/>
+                <field name="paysera_sign_password" password="True" attrs="{'required': [('provider', '=', 'paysera')]}"/>
+                <field name="paysera_validate_paid_amount"/>
+            </group>
+        </xpath>
+    </field>
+</record>
+
+</odoo>
