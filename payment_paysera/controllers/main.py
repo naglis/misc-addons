@@ -29,7 +29,7 @@ class PayseraController(http.Controller):
         except Exception:
             _LOG.exception('Error while validating Paysera accept callback.')
 
-        return werkzeug.utils.redirect('/shop/payment/validate')
+        return werkzeug.utils.redirect('/payment/process')
 
     @http.route([
         '/payment/paysera/cancel',
