@@ -5,8 +5,8 @@ import base64
 import urllib.parse
 
 
-def make_full_url_getter(env):
-    base_url = env['ir.config_parameter'].sudo().get_param('web.base.url')
+def make_full_url_getter(payment_acquirer):
+    base_url = payment_acquirer.get_base_url()
 
     def getter(path):
         return urllib.parse.urljoin(base_url, path)

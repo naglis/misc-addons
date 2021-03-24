@@ -77,7 +77,7 @@ class PaymentAcquirer(models.Model):
         - `callbackurl`: full address (URL), to which a seller will get
         information about performed payment.
         '''
-        full_url = utils.make_full_url_getter(self.env)
+        full_url = utils.make_full_url_getter(self)
         return {
             'accepturl': full_url(PayseraController._accept_url),
             'cancelurl': full_url(PayseraController._cancel_url),
