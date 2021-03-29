@@ -263,6 +263,24 @@ class PayseraCommon(PaymentAcquirerCommon):
         self.assertRegex(
             tx.state_message, r'.*currency.*does not match.*')
 
+    def test_get_paysera_redirect_urls(self):
+        """Test paysera redirect urls with website domain.
+
+        In this case web.base.url is different than website domain.
+        """
+        my_website_domain = 'http://www.example.com'
+        website = self.env.ref('website.website2')
+        website.domain = my_website_domain
+        self.acquirer.website_id = website.id
+        expected_result = {
+            'accepturl': my_website_domain + '/payment/paysera/accept',
+            'cancelurl': my_website_domain + 'payment/paysera/cancel',
+            'callbackurl': my_website_domain + 'payment/paysera/callback'
+        }
+        self.assertEqual(
+            self.acquirer._get_paysera_redirect_urls(), expected_result
+        )
+
 
 class TestPayseraAccess(common.TransactionCase):
 
